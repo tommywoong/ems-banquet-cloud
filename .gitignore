@@ -1,0 +1,5 @@
+python_runtime/
+tools/nssm.exe
+__pycache__/
+*.pyc
+*.log

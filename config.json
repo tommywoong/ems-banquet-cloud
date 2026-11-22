@@ -1,0 +1,20 @@
+{
+  "mode": "google_sheets",
+  "hotel_name": "TRUNG TÂM HỘI NGHỊ & TIỆC CƯỚI",
+  "hotel_subtitle": "Hệ Thống Quản Lý Tiệc Cưới & Sự Kiện",
+  "hotel_address": "",
+  "hotel_phone": "",
+  "logo_url": "",
+  "db_server": "localhost\\MSSQLSERVER2016",
+  "db_name": "EMS_BANQUET",
+  "db_user": "sa",
+  "db_password": "",
+  "port_web": 5090,
+  "port_analytics": 5088,
+  "port_ai": 5092,
+  "port_wizard": 5888,
+  "ai_master_password": "Admin@EMS2026",
+  "google_sheet_id": "",
+  "google_credentials_file": "",
+  "google_webhook_url": ""
+}

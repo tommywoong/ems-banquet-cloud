@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EMS Banquet - Bộ Kích Hoạt & Cài Đặt Hệ Thống (Setup Wizard)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #3b82f6;
+      --accent: #d97706;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: white;
+      padding: 1.5rem 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header .brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .header .logo {
+      font-size: 1.8rem;
+      background: white;
+      color: var(--primary);
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+    .header h1 { font-size: 1.35rem; font-weight: 600; }
+    .header p { font-size: 0.85rem; opacity: 0.85; }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      flex: 1;
+    }
+
+    /* Stepper */
+    .stepper {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    .stepper::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--border);
+      z-index: 1;
+      transform: translateY(-50%);
+    }
+    .step-item {
+      position: relative;
+      z-index: 2;
+      background: var(--bg);
+      padding: 0 0.8rem;
+      text-align: center;
+      cursor: pointer;
+    }
+    .step-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin: 0 auto 0.4rem;
+      color: var(--text-muted);
+      transition: all 0.25s ease;
+    }
+    .step-item.active .step-circle {
+      border-color: var(--primary-light);
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+    }
+    .step-item.completed .step-circle {
+      border-color: var(--success);
+      background: var(--success);
+      color: white;
+    }
+    .step-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .step-item.active .step-label {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Card */
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+    .card h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #1e293b;
+    }
+    .card .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Option Cards */
+    .option-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .option-card {
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .option-card:hover {
+      border-color: var(--primary-light);
+      transform: translateY(-2px);
+    }
+    .option-card.selected {
+      border-color: var(--primary-light);
+      background: #eff6ff;
+    }
+    .option-card input[type="radio"] {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      accent-color: var(--primary);
+      transform: scale(1.2);
+    }
+    .option-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+    .option-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+    .badge-primary { background: #dbeafe; color: #1e40af; }
+    .badge-accent { background: #fef3c7; color: #b45309; }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.35rem;
+      color: #334155;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    .form-control:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    /* Logs Area */
+    .log-box {
+      background: #0f172a;
+      color: #f1f5f9;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.8rem;
+      padding: 1rem;
+      border-radius: 6px;
+      height: 180px;
+      overflow-y: auto;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+      line-height: 1.4;
+    }
+
+    /* Actions */
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #334155;
+    }
+    .btn-secondary:hover {
+      background: #cbd5e1;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    .alert {
+      padding: 0.8rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .alert-info { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+    .alert-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .alert-warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+
+    .step-content { display: none; }
+    .step-content.active { display: block; }
+
+    .portal-link-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 0.8rem;
+      background: #fafafa;
+    }
+    .portal-link-card .info h4 { font-size: 0.95rem; font-weight: 600; color: #1e293b; }
+    .portal-link-card .info p { font-size: 0.8rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="brand">
+      <div class="logo">E</div>
+      <div>
+        <h1>EMS Banquet Setup Wizard</h1>
+        <p id="wizard-brand-subtitle">Hệ Thống Quản Lý Tiệc Cưới & Hội Nghị</p>
+      </div>
+    </div>
+    <div style="font-size: 0.8rem; background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 4px;">
+      Phiên bản: 2.1.0 Portable
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Stepper Header -->
+    <div class="stepper">
+      <div class="step-item active" id="step-ind-1" onclick="goToStep(1)">
+        <div class="step-circle">1</div>
+        <div class="step-label">Mô hình</div>
+      </div>
+      <div class="step-item" id="step-ind-2" onclick="goToStep(2)">
+        <div class="step-circle">2</div>
+        <div class="step-label">Cơ sở dữ liệu</div>
+      </div>
+      <div class="step-item" id="step-ind-3" onclick="goToStep(3)">
+        <div class="step-circle">3</div>
+        <div class="step-label">Cấu hình Cổng</div>
+      </div>
+      <div class="step-item" id="step-ind-4" onclick="goToStep(4)">
+        <div class="step-circle">4</div>
+        <div class="step-label">Hoàn tất</div>
+      </div>
+    </div>
+
+    <!-- Step 1: Chọn Mô hình -->
+    <div class="card step-content active" id="step-1">
+      <h2>Bước 1: Thiết Lập Thương Hiệu & Mô Hình Dữ Liệu</h2>
+      <p class="subtitle">Tùy biến tên thương hiệu riêng của bạn và chọn nền tảng lưu trữ phù hợp.</p>
+
+      <!-- Khối Cá Nhân Hóa Tên Thương Hiệu -->
+      <div style="margin-bottom: 1.25rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 1rem;">
+        <h4 style="margin: 0 0 0.4rem 0; color: #166534; font-size: 0.95rem; font-weight: 600;">✨ Tên Thương Hiệu / Khách Sạn Của Bạn:</h4>
+        <div class="form-group" style="margin-bottom: 0;">
+          <input type="text" class="form-control" id="hotel_name" value="TRUNG TÂM HỘI NGHỊ & TIỆC CƯỚI" placeholder="Nhập tên riêng khách sạn / trung tâm tiệc cưới của bạn (ví dụ: Diamond Palace, Riverside Center...)">
+          <span style="font-size: 0.75rem; color: #15803d; margin-top: 4px; display: block;">(Tên này sẽ tự động hiển thị làm thương hiệu riêng trên toàn bộ Web Chính, Dashboard Báo Cáo và Phiếu In BEO của bạn)</span>
+        </div>
+      </div>
+
+      <div class="option-grid">
+        <div class="option-card selected" id="opt-card-sql" onclick="selectMode('sql_server')">
+          <input type="radio" name="db_mode" id="mode_sql" value="sql_server" checked>
+          <span class="badge badge-primary">Doanh nghiệp</span>
+          <h3>Microsoft SQL Server</h3>
+          <p>Dành cho khách sạn có máy chủ CSDL nội bộ hoặc máy trạm độc lập. Tương thích hoàn toàn với dữ liệu EMS Desktop cũ.</p>
+        </div>
+
+        <div class="option-card" id="opt-card-gsheet" onclick="selectMode('google_sheets')">
+          <input type="radio" name="db_mode" id="mode_gsheet" value="google_sheets">
+          <span class="badge badge-accent">Cloud Miễn Phí</span>
+          <h3>Pure Google Sheets</h3>
+          <p>Gọn nhẹ, không cần cài đặt SQL Server. Toàn bộ thông tin tiệc, BEO và doanh thu được đồng bộ trực tiếp lên Google Spreadsheet.</p>
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        💡 <strong>Gợi ý:</strong> Nếu bạn đang triển khai trên máy tính mới chưa có SQL Server, bạn có thể chọn Google Sheets để chạy ngay trong 1 phút, hoặc chọn SQL Server nếu đã cài SQL Server Express.
+      </div>
+
+      <div class="action-row">
+        <div></div>
+        <button class="btn btn-primary" onclick="goToStep(2)">Tiếp tục &rarr;</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Cấu hình Cơ sở dữ liệu -->
+    <div class="card step-content" id="step-2">
+      <h2>Bước 2: Cấu hình & Nạp Dữ liệu Khởi tạo</h2>
+      <p class="subtitle">Hệ thống sẽ tự động tạo các bảng DDL và nạp sẵn Danh mục chuẩn 20 nhóm doanh thu A-T, Sảnh, Phòng.</p>
+
+      <!-- Panel SQL Server -->
+      <div id="panel-sql">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Địa chỉ Máy chủ SQL (Server / Instance)</label>
+            <input type="text" class="form-control" id="sql_server" value="localhost\MSSQLSERVER2016" placeholder="localhost\MSSQLSERVER2016 hoặc 10.17.10.12\MSSQLSERVER2016">
+          </div>
+          <div class="form-group">
+            <label>Tên Cơ sở dữ liệu (Database Name)</label>
+            <input type="text" class="form-control" id="sql_db" value="EMS_BANQUET" placeholder="EMS_BANQUET hoặc EMS_KHAIVY">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tài khoản SQL (Username)</label>
+            <input type="text" class="form-control" id="sql_user" value="sa">
+          </div>
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label style="margin: 0;">Mật khẩu (Password)</label>
+              <a href="javascript:void(0)" onclick="document.getElementById('sql_pwd').value='Sa!123123#;'" style="font-size: 0.75rem; color: #2563eb; text-decoration: underline;">Điền mẫu Sa!123123#;</a>
+            </div>
+            <input type="password" class="form-control" id="sql_pwd" value="" placeholder="Nhập mật khẩu sa...">
+            <span style="font-size: 0.72rem; color: #64748b;">(Gợi ý: Mật khẩu SA chuẩn khách sạn là <code>Sa!123123#;</code> - có dấu chấm phẩy <code>;</code> ở cuối)</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="sql_include_samples" checked style="accent-color: var(--primary);">
+            <span>Nạp 5 Đơn tiệc & BEO mẫu kiểm thử (Tuyệt Trâm 2 trang, Buffet 46 món, Tasting Ms Hương, Tasting Ms Anh Thư, Minh Việt)</span>
+          </label>
+        </div>
+
+        <div style="display: flex; gap: 0.8rem; margin: 1rem 0;">
+          <button class="btn btn-secondary" onclick="checkSQLConnection()">🔍 Kiểm tra kết nối SQL</button>
+          <button class="btn btn-primary" onclick="initSQLDatabase()">⚡ Tự động Tạo Bảng & Nạp Dữ Liệu</button>
+        </div>
+      </div>
+
+      <!-- Panel Google Sheets -->
+      <div id="panel-gsheet" style="display: none;">
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 1rem; margin-bottom: 1.25rem;">
+          <h4 style="margin: 0 0 0.5rem 0; color: #166534; font-size: 0.95rem; font-weight: 600;">📋 Hướng Dẫn Triển Khai Nhanh Pure Google Sheets (Free 1C & Paid 2A):</h4>
+          <ol style="margin: 0; padding-left: 1.25rem; font-size: 0.85rem; color: #15803d; line-height: 1.6;">
+            <li><strong>Bước 1:</strong> Tải về <strong>File Mẫu Excel (.xlsx)</strong> chứa đầy đủ 38 Bảng & Master Data danh mục chuẩn và <strong>File Mã Nguồn Google Apps Script (.gs)</strong> bên dưới.</li>
+            <li><strong>Bước 2:</strong> Kéo thả file Excel lên <a href="https://drive.google.com" target="_blank" style="color: #15803d; text-decoration: underline;">Google Drive</a> &rarr; Mở bằng <em>Google Trang tính</em> &rarr; Chọn <em>Tệp &rarr; Lưu dưới dạng Google Trang tính</em>.</li>
+            <li><strong>Bước 3 (Phương án Free 1C):</strong> Trong Google Sheet, vào <em>Tiện ích mở rộng (Extensions) &rarr; Apps Script</em>, dán nội dung file <code>Google_Apps_Script_Backend.gs</code> vào và bấm <strong>Triển khai (Deploy) &rarr; Ứng dụng web (Web App)</strong> (Quyền truy cập: <em>Bất kỳ ai / Anyone</em>). Copy URL Web App và Spreadsheet ID dán vào bên dưới.</li>
+          </ol>
+          <div style="margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.6rem;">
+            <a href="/api/download-gsheet-template" class="btn" style="background: #16a34a; color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem;">
+              📥 1. Tải File Mẫu Excel (.xlsx) Đầy Đủ 38 Bảng CSDL
+            </a>
+            <a href="/api/download-gas-script" class="btn" style="background: #0284c7; color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem;">
+              ⚡ 2. Tải Mã Nguồn Google Apps Script (Code.gs - Free 1C)
+            </a>
+          </div>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1.25rem;">
+          <div style="font-size: 0.82rem; font-weight: 600; color: #334155; margin-bottom: 0.4rem;">
+            Bộ CSDL Google Sheets gồm 38 Bảng nghiệp vụ hoàn chỉnh (Tự động khởi tạo & đồng bộ 2 chiều):
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 4px; font-size: 0.75rem;">
+            <span style="background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px;">stUser (26 Users)</span>
+            <span style="background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px;">stGroup (15 Nhóm)</span>
+            <span style="background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px;">stUserGroup (27 Quyền)</span>
+            <span style="background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px;">stPhong (12 Sảnh)</span>
+            <span style="background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px;">stDoanhThu_Loai (82 Nhóm A-T)</span>
+            <span style="background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px;">stSetMenu (79 Sets)</span>
+            <span style="background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px;">stLinhVuc (60 Phân khúc)</span>
+            <span style="background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px;">stSuKien (36 Sự kiện)</span>
+            <span style="background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px;">stDepartment (9 Bộ phận BEO)</span>
+            <span style="background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px;">stKhachHang & NguoiLH (CRM)</span>
+            <span style="background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px;">stBooking & stBookFunctionRoom</span>
+            <span style="background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px;">stMaster_EO & stSKLK & stRoom_Setup</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Google Spreadsheet ID (Mã trang tính từ URL Google Sheet)</label>
+          <input type="text" class="form-control" id="gsheet_id" placeholder="Ví dụ: 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms">
+        </div>
+        <div class="form-group">
+          <label>Google Apps Script Webhook URL (Phương án Free 1C - Khuyên dùng, không cần Service Account)</label>
+          <input type="text" class="form-control" id="gsheet_webhook" placeholder="Ví dụ: https://script.google.com/macros/s/AKfycb.../exec">
+        </div>
+        <div class="form-group">
+          <label>Hoặc đường dẫn file Google Service Account Key (JSON - Tùy chọn nâng cao)</label>
+          <input type="text" class="form-control" id="gsheet_creds" placeholder="credentials.json (Để trống nếu đã dùng Apps Script Webhook URL ở trên)">
+        </div>
+        <div style="margin: 1rem 0;">
+          <button class="btn btn-primary" onclick="initGSheet()">⚡ Xác Nhận Cấu Trúc Bảng Google Sheets</button>
+        </div>
+      </div>
+
+      <!-- Log Output -->
+      <label style="font-size: 0.85rem; font-weight: 500; color: #334155;">Nhật ký thực thi:</label>
+      <div class="log-box" id="exec-log">Sẵn sàng thực hiện cấu hình...</div>
+
+      <div class="action-row">
+        <button class="btn btn-secondary" onclick="goToStep(1)">&larr; Quay lại</button>
+        <button class="btn btn-primary" onclick="goToStep(3)">Tiếp tục &rarr;</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Cổng kết nối & AI Agent -->
+    <div class="card step-content" id="step-3">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <h2>Bước 3: Cấu hình Cổng Mạng & Phân hệ AI Agent</h2>
+        <button class="btn btn-secondary" onclick="autoDetectFreePorts()" style="padding: 0.4rem 0.8rem; font-size: 0.82rem;">
+          ⚡ Quét Server & Gợi Ý Cổng Trống
+        </button>
+      </div>
+      <p class="subtitle">Hệ thống tự động phát hiện và cảnh báo nếu có cổng nào đang bị ứng dụng khác chiếm giữ trên máy chủ.</p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>EMS Banquet Web Port (Trang chính & Soạn BEO)</label>
+          <input type="number" class="form-control" id="port_web" value="5090" oninput="debouncePortScan()">
+          <div id="badge_web" style="margin-top: 4px; font-size: 0.8rem;">Đang quét trạng thái cổng...</div>
+        </div>
+        <div class="form-group">
+          <label>EMS Banquet Analytics Port (Báo cáo & Phân tích)</label>
+          <input type="number" class="form-control" id="port_analytics" value="5088" oninput="debouncePortScan()">
+          <div id="badge_analytics" style="margin-top: 4px; font-size: 0.8rem;">Đang quét trạng thái cổng...</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Phân hệ AI Coding Agent Port (Cổng 5092)</label>
+          <input type="number" class="form-control" id="port_ai" value="5092" oninput="debouncePortScan()">
+          <div id="badge_ai" style="margin-top: 4px; font-size: 0.8rem;">Đang quét trạng thái cổng...</div>
+        </div>
+        <div class="form-group">
+          <label>Mật khẩu Quản trị Master cho AI Agent</label>
+          <input type="password" class="form-control" id="ai_master_pwd" value="Admin@EMS2026">
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        🛡️ <strong>Chống Trùng Cổng:</strong> Hệ thống mặc định sử dụng dải cổng an toàn <strong>5xxx</strong> (5090, 5088, 5092) để không xung đột với các dịch vụ đang chạy trên dải 8xxx. Nếu máy chủ đã có phần mềm khác chiếm cổng, hãy nhấn nút "Quét Server & Gợi Ý Cổng Trống" ở góc trên để hệ thống tự cấp phát cổng an toàn.
+      </div>
+
+      <!-- Bảng Quản Lý & Cho Phép Chọn Xóa Riêng Từng Cổng -->
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-top: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <h4 style="margin: 0; font-size: 0.9rem; color: #1e293b; font-weight: 600;">🔍 Quét & Cho Phép Chọn Tắt Riêng Từng Cổng Đang Chạy:</h4>
+          <button type="button" class="btn btn-secondary" onclick="scanActivePortsTable()" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">
+            🔄 Quét lại cổng
+          </button>
+        </div>
+        <div id="active-ports-container" style="font-size: 0.8rem; color: #64748b;">
+          Đang quét các cổng mạng trên máy chủ...
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-secondary" onclick="goToStep(2)">&larr; Quay lại</button>
+        <button class="btn btn-primary" onclick="saveConfiguration()">Lưu Cấu Hình &rarr;</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Hoàn tất & Khởi động -->
+    <div class="card step-content" id="step-4">
+      <h2>Bước 4: Sẵn Sàng Vận Hành!</h2>
+      <p class="subtitle">Toàn bộ cấu hình đã được ghi nhận. Bạn có thể khởi động ngay hoặc cài đặt làm Dịch vụ Windows chạy vĩnh viễn.</p>
+
+      <div class="portal-link-card">
+        <div class="info">
+          <h4>EMS Banquet Web (Cổng <span id="lbl-web-port">5090</span>)</h4>
+          <p>Lịch Sảnh, Soạn BEO, Danh mục 20 nhóm doanh thu A-T, Tra cứu đơn tiệc</p>
+        </div>
+        <a id="link-web" href="http://localhost:5090" target="_blank" class="btn btn-primary">Mở Ứng Dụng</a>
+      </div>
+
+      <div class="portal-link-card">
+        <div class="info">
+          <h4>EMS Banquet Analytics (Cổng <span id="lbl-analytics-port">5088</span>)</h4>
+          <p>Dashboard Doanh thu đa chiều, Thống kê Sảnh, Phân tích Thực đơn & Dịch vụ</p>
+        </div>
+        <a id="link-analytics" href="http://localhost:5088" target="_blank" class="btn btn-secondary">Mở Báo Cáo</a>
+      </div>
+
+      <div class="portal-link-card">
+        <div class="info">
+          <h4>EMS Banquet AI Coding Agent (Cổng <span id="lbl-ai-port">5092</span>)</h4>
+          <p>Phân hệ AI nội bộ hỗ trợ kiểm thử, debug, diff preview và phát triển độc lập</p>
+        </div>
+        <a id="link-ai" href="http://localhost:5092" target="_blank" class="btn btn-secondary">Mở AI Lab</a>
+      </div>
+
+      <div style="margin: 1.5rem 0; display: flex; gap: 1rem;">
+        <button class="btn btn-success" style="flex: 1; padding: 0.85rem;" onclick="startAllServices()">
+          🚀 KHỞI ĐỘNG HỆ THỐNG NGAY BÂY GIỜ
+        </button>
+      </div>
+
+      <div class="alert alert-success" id="start-status" style="display: none;">
+        ✓ Lệnh khởi động đã được phát đi! Bạn có thể click vào các nút "Mở Ứng Dụng" ở trên để truy cập.
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-secondary" onclick="goToStep(3)">&larr; Xem lại cấu hình</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let currentStep = 1;
+    let selectedMode = 'sql_server';
+
+    function selectMode(mode) {
+      selectedMode = mode;
+      document.getElementById('opt-card-sql').classList.toggle('selected', mode === 'sql_server');
+      document.getElementById('opt-card-gsheet').classList.toggle('selected', mode === 'google_sheets');
+      document.getElementById('mode_sql').checked = (mode === 'sql_server');
+      document.getElementById('mode_gsheet').checked = (mode === 'google_sheets');
+      
+      document.getElementById('panel-sql').style.display = (mode === 'sql_server') ? 'block' : 'none';
+      document.getElementById('panel-gsheet').style.display = (mode === 'google_sheets') ? 'block' : 'none';
+    }
+
+    function goToStep(step) {
+      document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.step-item').forEach(el => el.classList.remove('active'));
+
+      document.getElementById(`step-${step}`).classList.add('active');
+      document.getElementById(`step-ind-${step}`).classList.add('active');
+      
+      for (let i = 1; i < step; i++) {
+        document.getElementById(`step-ind-${i}`).classList.add('completed');
+      }
+      currentStep = step;
+      if (step === 3) {
+        scanPortsLive();
+        scanActivePortsTable();
+      }
+    }
+
+    function appendLog(msg) {
+      const box = document.getElementById('exec-log');
+      const time = new Date().toLocaleTimeString();
+      box.innerText += `\n[${time}] ${msg}`;
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function checkSQLConnection() {
+      const server = document.getElementById('sql_server').value.trim();
+      const user = document.getElementById('sql_user').value.trim();
+      const pwd = document.getElementById('sql_pwd').value;
+
+      if (!server) {
+        alert("Vui lòng nhập Địa chỉ Máy chủ SQL (Server / Instance)!");
+        document.getElementById('sql_server').focus();
+        return;
+      }
+
+      appendLog(`Đang kiểm tra kết nối tới SQL Server: ${server}...`);
+      try {
+        const res = await fetch('/api/check-sql', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            server: server,
+            database: 'master',
+            user: user,
+            password: pwd
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          appendLog(`✓ ${data.message} (${data.version})`);
+        } else {
+          appendLog(`❌ ${data.message}`);
+        }
+      } catch (err) {
+        appendLog(`❌ Lỗi kết nối API Wizard: ${err.message}`);
+      }
+    }
+
+    async function initSQLDatabase() {
+      const server = document.getElementById('sql_server').value.trim();
+      const db = document.getElementById('sql_db').value.trim();
+      const user = document.getElementById('sql_user').value.trim();
+      const pwd = document.getElementById('sql_pwd').value;
+
+      if (!server) {
+        alert("Vui lòng nhập Địa chỉ Máy chủ SQL!");
+        document.getElementById('sql_server').focus();
+        return;
+      }
+      if (!db) {
+        alert("Vui lòng nhập Tên Cơ sở dữ liệu (Database Name)!");
+        document.getElementById('sql_db').focus();
+        return;
+      }
+
+      const btn = event.target;
+      const originalText = btn.innerText;
+      btn.innerText = "⏳ Đang tạo bảng & nạp dữ liệu (vui lòng đợi)...";
+      btn.disabled = true;
+
+      appendLog(`Bắt đầu khởi tạo CSDL [${db}] trên máy chủ ${server}...`);
+      try {
+        const res = await fetch('/api/init-sql-db', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            server: server,
+            database: db,
+            user: user,
+            password: pwd,
+            include_sample_data: document.getElementById('sql_include_samples').checked
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          data.logs.forEach(l => appendLog(l));
+          appendLog(`🎉 ${data.message}`);
+          alert(data.message);
+        } else {
+          appendLog(`❌ Lỗi: ${data.detail || data.message}`);
+          alert("Lỗi cài đặt CSDL:\n" + (data.detail || data.message));
+        }
+      } catch (err) {
+        appendLog(`❌ Lỗi gọi API: ${err.message}`);
+        alert("Lỗi kết nối tới Setup Wizard:\n" + err.message);
+      } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }
+    }
+
+    async function initGSheet() {
+      appendLog("Đang cấu hình Pure Google Sheets...");
+      try {
+        const res = await fetch('/api/init-gsheet', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            sheet_id: document.getElementById('gsheet_id').value,
+            webhook_url: (document.getElementById('gsheet_webhook') ? document.getElementById('gsheet_webhook').value : ''),
+            credentials_json: document.getElementById('gsheet_creds').value
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          data.logs.forEach(l => appendLog(l));
+          appendLog(`🎉 ${data.message}`);
+          alert("Cấu hình Pure Google Sheets thành công!");
+        } else {
+          appendLog(`❌ Lỗi: ${data.detail || data.message}`);
+        }
+      } catch (err) {
+        appendLog(`❌ Lỗi gọi API: ${err.message}`);
+      }
+    }
+
+    let portScanTimeout = null;
+    let portsOccupied = false;
+
+    function debouncePortScan() {
+      clearTimeout(portScanTimeout);
+      portScanTimeout = setTimeout(scanPortsLive, 400);
+    }
+
+    async function scanPortsLive() {
+      const pWeb = parseInt(document.getElementById('port_web').value) || 5090;
+      const pAna = parseInt(document.getElementById('port_analytics').value) || 5088;
+      const pAi = parseInt(document.getElementById('port_ai').value) || 5092;
+
+      document.getElementById('badge_web').innerHTML = '<span style="color:#94a3b8;">Đang kiểm tra...</span>';
+      document.getElementById('badge_analytics').innerHTML = '<span style="color:#94a3b8;">Đang kiểm tra...</span>';
+      document.getElementById('badge_ai').innerHTML = '<span style="color:#94a3b8;">Đang kiểm tra...</span>';
+
+      try {
+        const res = await fetch(`/api/scan-system-ports?web=${pWeb}&analytics=${pAna}&ai=${pAi}`);
+        const data = await res.json();
+        
+        renderBadge('badge_web', data.web, pWeb);
+        renderBadge('badge_analytics', data.analytics, pAna);
+        renderBadge('badge_ai', data.ai, pAi);
+
+        portsOccupied = (!data.web.available || !data.analytics.available || !data.ai.available);
+      } catch (err) {
+        console.error("Port scan error:", err);
+      }
+    }
+
+    function renderBadge(elemId, status, portVal) {
+      const el = document.getElementById(elemId);
+      if (status.available) {
+        el.innerHTML = '<span style="color: #10b981; font-weight: 500;">✓ Cổng khả dụng (Sẵn sàng)</span>';
+      } else {
+        el.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; background: #fef2f2; border: 1px solid #fecaca; padding: 4px 8px; border-radius: 4px; margin-top: 4px;">
+            <span style="color: #ef4444; font-weight: 600; font-size: 0.78rem;">⚠ Cổng đang bị chiếm bởi: ${status.process_name} (PID: ${status.pid})</span>
+            <button type="button" class="btn" style="background: #dc2626; color: white; padding: 2px 8px; font-size: 0.75rem; border: none; border-radius: 4px; cursor: pointer;" onclick="killPortDirect(${portVal})">🔴 Giải Phóng</button>
+          </div>
+        `;
+      }
+    }
+
+    async function killPortDirect(port) {
+      if (!confirm(`Bạn có chắc chắn muốn đóng tiến trình đang chiếm cổng ${port}?`)) return;
+      try {
+        const res = await fetch('/api/kill-port', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({port: port})
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(data.message);
+          scanPortsLive();
+          scanActivePortsTable();
+        } else {
+          alert("❌ " + (data.detail || data.message));
+        }
+      } catch (err) {
+        alert("Lỗi khi giải phóng cổng: " + err.message);
+      }
+    }
+
+    async function scanActivePortsTable() {
+      const container = document.getElementById('active-ports-container');
+      if (!container) return;
+      container.innerHTML = '<span style="color: #94a3b8;">Đang quét các cổng mạng trên máy chủ...</span>';
+      try {
+        const res = await fetch('/api/active-ports');
+        const data = await res.json();
+        if (!data.active_ports || data.active_ports.length === 0) {
+          container.innerHTML = '<div style="color: #16a34a; font-weight: 500; padding: 4px 0;">✓ Tuyệt vời! Không có cổng nào trong dải 5xxx/8xxx bị chiếm. Tất cả cổng đều sẵn sàng.</div>';
+          return;
+        }
+        let html = `
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 6px;">
+            <thead>
+              <tr style="background: #e2e8f0; text-align: left;">
+                <th style="padding: 6px 8px; border: 1px solid #cbd5e1;">Cổng mạng</th>
+                <th style="padding: 6px 8px; border: 1px solid #cbd5e1;">Tiến trình (Process)</th>
+                <th style="padding: 6px 8px; border: 1px solid #cbd5e1;">PID</th>
+                <th style="padding: 6px 8px; border: 1px solid #cbd5e1; text-align: center;">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        data.active_ports.forEach(p => {
+          html += `
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+              <td style="padding: 6px 8px; font-weight: 600; color: #1e293b; border: 1px solid #cbd5e1;">Cổng ${p.port}</td>
+              <td style="padding: 6px 8px; color: #dc2626; font-weight: 500; border: 1px solid #cbd5e1;">${p.process_name}</td>
+              <td style="padding: 6px 8px; color: #64748b; border: 1px solid #cbd5e1;">${p.pid}</td>
+              <td style="padding: 6px 8px; text-align: center; border: 1px solid #cbd5e1;">
+                <button type="button" style="background: #dc2626; color: white; border: none; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 500;" onclick="killPortDirect(${p.port})">
+                  🔴 Đóng Cổng Này
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+      } catch (err) {
+        container.innerHTML = `<span style="color:red;">Lỗi quét cổng: ${err.message}</span>`;
+      }
+    }
+
+    async function autoDetectFreePorts() {
+      try {
+        const res = await fetch('/api/suggest-free-ports');
+        const data = await res.json();
+        document.getElementById('port_web').value = data.suggested_web;
+        document.getElementById('port_analytics').value = data.suggested_analytics;
+        document.getElementById('port_ai').value = data.suggested_ai;
+        scanPortsLive();
+      } catch (err) {
+        alert("Lỗi khi quét cổng trống: " + err.message);
+      }
+    }
+
+    async function saveConfiguration() {
+      const portWeb = parseInt(document.getElementById('port_web').value) || 5090;
+      const portAnalytics = parseInt(document.getElementById('port_analytics').value) || 5088;
+      const portAI = parseInt(document.getElementById('port_ai').value) || 5092;
+      const hotelName = document.getElementById('hotel_name').value.trim() || "TRUNG TÂM HỘI NGHỊ & TIỆC CƯỚI";
+
+      if (portsOccupied) {
+        if (!confirm("Cảnh báo: Có ít nhất 1 cổng đang bị phần mềm khác chiếm giữ trên máy chủ!\nNếu tiếp tục, dịch vụ có thể bị lỗi xung đột cổng.\n\nBạn có muốn tiếp tục lưu không? (Khuyến nghị: Nhấn Hủy và chọn 'Quét Server & Gợi Ý Cổng Trống')")) {
+          return;
+        }
+      }
+
+      document.getElementById('lbl-web-port').innerText = portWeb;
+      document.getElementById('lbl-analytics-port').innerText = portAnalytics;
+      document.getElementById('lbl-ai-port').innerText = portAI;
+
+      document.getElementById('link-web').href = `http://localhost:${portWeb}`;
+      document.getElementById('link-analytics').href = `http://localhost:${portAnalytics}`;
+      document.getElementById('link-ai').href = `http://localhost:${portAI}`;
+
+      try {
+        const res = await fetch('/api/save-config', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            mode: selectedMode,
+            hotel_name: hotelName,
+            hotel_subtitle: "Hệ Thống Quản Lý Tiệc Cưới & Hội Nghị",
+            db_server: document.getElementById('sql_server').value,
+            db_name: document.getElementById('sql_db').value,
+            db_user: document.getElementById('sql_user').value,
+            db_password: document.getElementById('sql_pwd').value,
+            port_web: portWeb,
+            port_analytics: portAnalytics,
+            port_ai: portAI,
+            ai_master_password: document.getElementById('ai_master_pwd').value,
+            google_sheet_id: document.getElementById('gsheet_id').value,
+            google_webhook_url: (document.getElementById('gsheet_webhook') ? document.getElementById('gsheet_webhook').value : ''),
+            google_credentials_file: document.getElementById('gsheet_creds').value
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          goToStep(4);
+        } else {
+          alert("Lỗi khi lưu cấu hình: " + (data.detail || data.message));
+        }
+      } catch (err) {
+        alert("Lỗi kết nối: " + err.message);
+      }
+    }
+
+    async function startAllServices() {
+      try {
+        const res = await fetch('/api/start-services', { method: 'POST' });
+        const data = await res.json();
+        document.getElementById('start-status').style.display = 'block';
+        document.getElementById('start-status').innerText = `✓ ${data.message}`;
+      } catch (err) {
+        alert("Lỗi khởi động: " + err.message);
+      }
+    }
+
+    // Load initial config if present
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('/api/get-config');
+        const data = await res.json();
+        if (data && !data.error) {
+          if (data.hotel_name) {
+            document.getElementById('hotel_name').value = data.hotel_name;
+            document.getElementById('wizard-brand-subtitle').innerText = data.hotel_name;
+          }
+          if (data.mode) selectMode(data.mode);
+          if (data.db_server) document.getElementById('sql_server').value = data.db_server;
+          if (data.db_name) document.getElementById('sql_db').value = data.db_name;
+          if (data.db_user) document.getElementById('sql_user').value = data.db_user;
+          if (data.port_web) document.getElementById('port_web').value = data.port_web;
+          if (data.port_analytics) document.getElementById('port_analytics').value = data.port_analytics;
+          if (data.port_ai) document.getElementById('port_ai').value = data.port_ai;
+          if (data.google_sheet_id) document.getElementById('gsheet_id').value = data.google_sheet_id;
+          if (data.google_webhook_url && document.getElementById('gsheet_webhook')) document.getElementById('gsheet_webhook').value = data.google_webhook_url;
+          if (data.google_credentials_file) document.getElementById('gsheet_creds').value = data.google_credentials_file;
+        }
+      } catch (e) {}
+    });
+  </script>
+</body>
+</html>

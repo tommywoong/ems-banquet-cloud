@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>EMS Banquet Mobile - Quản Lý Tiệc Cưới & Sự Kiện</title>
+    
+    <!-- Meta Anti-Cache -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="EMS Banquet">
+
+    <!-- Local Vendor Scripts -->
+    <script src="/vendor/tailwind.cdn.js"></script>
+    <script src="/vendor/lucide.min.js"></script>
+
+    <style>
+        /* Safe Area Padding for iPhone Notch / Dynamic Island / Android Nav Bar */
+        :root {
+            --sat: env(safe-area-inset-top, 0px);
+            --sab: env(safe-area-inset-bottom, 16px);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            padding-bottom: calc(72px + var(--sab));
+        }
+        /* Anti-Zoom on iOS Safari (Inputs must have 16px font-size to prevent automatic zoom) */
+        input, select, textarea {
+            font-size: 16px !important;
+        }
+        /* Smooth scrolling */
+        .smooth-scroll {
+            -webkit-overflow-scrolling: touch;
+        }
+        /* Custom scrollbar hide for mobile pills */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased select-none">
+
+    <!-- TOP HEADER BAR -->
+    <header class="sticky top-0 z-40 bg-slate-900 text-white shadow-md border-b border-slate-800" style="padding-top: var(--sat);">
+        <div class="px-3.5 py-2.5 flex items-center justify-between gap-2">
+            <!-- Brand & Logo -->
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-xs shadow-sm">
+                    EMS
+                </div>
+                <div>
+                    <h1 class="text-xs font-bold leading-tight flex items-center gap-1.5">
+                        <span id="mBrandTitle">EMS Banquet Mobile</span>
+                        <span class="px-1.5 py-0.2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded text-[9px] font-bold">MOBILE</span>
+                    </h1>
+                    <p class="text-[10px] text-slate-400" id="mBrandSub">Quản Lý Tiệc Cưới & Hội Nghị</p>
+                </div>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center gap-1">
+                <!-- User Profile Badge -->
+                <div id="mUserBadge" onclick="switchMobileTab('more')" class="flex items-center gap-1.5 bg-slate-800 px-2 py-1 rounded-lg border border-slate-700 cursor-pointer">
+                    <span id="mUserName" class="text-[11px] font-bold text-slate-200 max-w-[80px] truncate">Admin</span>
+                    <span id="mUserGroup" class="px-1 py-0.2 bg-blue-600/40 text-blue-300 text-[9px] font-mono font-bold rounded">G01</span>
+                </div>
+
+                <!-- Desktop View Switcher -->
+                <a href="/?view=desktop" title="Chuyển sang giao diện Máy tính PC" class="p-1.5 text-slate-300 hover:text-white bg-slate-800 rounded-lg border border-slate-700 transition">
+                    <i data-lucide="monitor" class="w-4 h-4"></i>
+                </a>
+
+                <!-- Logout -->
+                <button onclick="handleMobileLogout()" title="Đăng xuất" class="p-1.5 text-rose-400 hover:text-rose-300 bg-slate-800 rounded-lg border border-slate-700 transition">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN VIEWS CONTAINER -->
+    <main class="p-3 max-w-lg mx-auto space-y-3">
+
+        <!-- ========================================== -->
+        <!-- VIEW 1: LỊCH SẢNH TIỆC (SCHEDULER DAY VIEW) -->
+        <!-- ========================================== -->
+        <section id="mViewScheduler" class="space-y-3">
+            <!-- Date Navigator Card -->
+            <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200 space-y-2.5">
+                <div class="flex items-center justify-between gap-1">
+                    <button onclick="navigateMobileDate(-1)" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 transition">
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>
+                    <div class="text-center flex-1">
+                        <input type="date" id="mSchedulerDate" onchange="onMobileDateChanged()" class="font-bold text-slate-900 bg-transparent text-center focus:outline-none cursor-pointer text-sm">
+                        <div id="mSchedulerDateLabel" class="text-[11px] font-medium text-blue-600 mt-0.5">Hôm nay</div>
+                    </div>
+                    <button onclick="navigateMobileDate(1)" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 transition">
+                        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Quick Filters -->
+                <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
+                    <div class="flex items-center gap-1">
+                        <button onclick="setMobileShiftFilter('')" id="mBtnShiftAll" class="px-2.5 py-1 rounded-lg font-bold bg-blue-600 text-white text-[11px]">Tất cả ca</button>
+                        <button onclick="setMobileShiftFilter('L')" id="mBtnShiftL" class="px-2.5 py-1 rounded-lg font-bold bg-slate-100 text-slate-600 text-[11px]">Sáng (L)</button>
+                        <button onclick="setMobileShiftFilter('D')" id="mBtnShiftD" class="px-2.5 py-1 rounded-lg font-bold bg-slate-100 text-slate-600 text-[11px]">Tối (D)</button>
+                    </div>
+                    <button onclick="loadMobileScheduler()" class="p-1 text-slate-400 hover:text-slate-600">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Booking Cards Container -->
+            <div id="mSchedulerList" class="space-y-2.5">
+                <div class="p-8 text-center text-slate-400 text-xs bg-white rounded-2xl border border-slate-200">
+                    <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-blue-500 mb-2"></i>
+                    Đang nạp lịch sảnh...
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 2: QUẢN LÝ ĐƠN TIỆC (BOOKINGS LIST)   -->
+        <!-- ========================================== -->
+        <section id="mViewBookings" class="hidden space-y-3">
+            <!-- Search & Status Filter -->
+            <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200 space-y-2.5">
+                <div class="relative">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+                    <input type="text" id="mTxtBookingSearch" oninput="filterMobileBookings()" placeholder="Tìm theo mã tiệc, tên khách, SĐT..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs">
+                    <button onclick="setMobileStatusFilter('')" id="mTabStatAll" class="px-3 py-1 rounded-full font-bold whitespace-nowrap bg-blue-600 text-white text-[11px]">Tất cả</button>
+                    <button onclick="setMobileStatusFilter('D')" id="mTabStatD" class="px-3 py-1 rounded-full font-bold whitespace-nowrap bg-slate-100 text-slate-600 text-[11px]">Đã Chốt (D)</button>
+                    <button onclick="setMobileStatusFilter('T')" id="mTabStatT" class="px-3 py-1 rounded-full font-bold whitespace-nowrap bg-slate-100 text-slate-600 text-[11px]">Giữ Chỗ (T)</button>
+                    <button onclick="setMobileStatusFilter('C')" id="mTabStatC" class="px-3 py-1 rounded-full font-bold whitespace-nowrap bg-slate-100 text-slate-600 text-[11px]">Đã Hủy (C)</button>
+                </div>
+            </div>
+
+            <!-- Booking Cards List -->
+            <div id="mBookingsList" class="space-y-2.5">
+                <div class="p-8 text-center text-slate-400 text-xs bg-white rounded-2xl border border-slate-200">
+                    Đang nạp danh sách đơn tiệc...
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 3: LẬP & XEM LỆNH BEO (BEO MOBILE)     -->
+        <!-- ========================================== -->
+        <section id="mViewBEO" class="hidden space-y-3">
+            <!-- Select Booking for BEO -->
+            <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200 space-y-2">
+                <label class="block text-xs font-bold text-slate-700">Chọn Đơn Tiệc Để Soạn / Xem BEO:</label>
+                <div class="flex gap-2">
+                    <select id="mSelBeoBooking" onchange="onMobileBeoSelectChanged()" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <option value="">-- Đang nạp danh sách tiệc... --</option>
+                    </select>
+                    <button onclick="loadMobileBeoList()" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- BEO Content Card -->
+            <div id="mBeoContentBox" class="space-y-3">
+                <div class="p-8 text-center text-slate-400 text-xs bg-white rounded-2xl border border-slate-200">
+                    Vui lòng chọn một đơn tiệc ở trên để xem chi tiết BEO.
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 4: DANH BẠ KHÁCH HÀNG CRM (774 KHÁCH) -->
+        <!-- ========================================== -->
+        <section id="mViewCRM" class="hidden space-y-3">
+            <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200 space-y-2">
+                <div class="relative">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+                    <input type="text" id="mTxtCrmSearch" oninput="filterMobileCRM()" placeholder="Tìm khách theo tên, MST, SĐT, địa chỉ..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+                <div class="text-[11px] text-slate-500 flex items-center justify-between">
+                    <span>Tổng số: <strong id="mCrmTotalCount">0</strong> khách hàng</span>
+                    <span class="text-blue-600 font-medium">Bấm gọi hoặc Đặt tiệc</span>
+                </div>
+            </div>
+
+                <!-- Phân Nhóm 4 Đối Tượng Chiến Lược (Chuẩn Desktop) -->
+                <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-[11px] font-bold">
+                    <button type="button" onclick="setMobileCrmGroup('ALL')" id="mCrmChip_ALL" class="px-2.5 py-1 rounded-lg bg-slate-900 text-white shrink-0 shadow-2xs">Tất Cả (<span id="mCount_ALL">0</span>)</button>
+                    <button type="button" onclick="setMobileCrmGroup('TA')" id="mCrmChip_TA" class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 shrink-0">TA (<span id="mCount_TA">0</span>)</button>
+                    <button type="button" onclick="setMobileCrmGroup('CORP')" id="mCrmChip_CORP" class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 shrink-0">CORP (<span id="mCount_CORP">0</span>)</button>
+                    <button type="button" onclick="setMobileCrmGroup('PARTY')" id="mCrmChip_PARTY" class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 shrink-0">PARTY (<span id="mCount_PARTY">0</span>)</button>
+                    <button type="button" onclick="setMobileCrmGroup('WEDDING')" id="mCrmChip_WEDDING" class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-800 border border-rose-200 shrink-0">WEDDING (<span id="mCount_WEDDING">0</span>)</button>
+                </div>
+
+                <div class="text-[11px] text-slate-500 flex items-center justify-between pt-1 border-t border-slate-100">
+                    <span>Hiển thị: <strong id="mCrmTotalCount">0</strong> khách</span>
+                    <span class="text-blue-600 font-medium">Bấm Đặt tiệc hoặc Gọi</span>
+                </div>
+            </div>
+
+            <!-- Customer List -->
+            <div id="mCrmList" class="space-y-2.5">
+                <div class="p-8 text-center text-slate-400 text-xs bg-white rounded-2xl border border-slate-200">
+                    Đang nạp danh bạ khách hàng CRM...
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 5: TIỆN ÍCH & TÀI KHOẢN (MORE / ADMIN)-->
+        <!-- ========================================== -->
+        <section id="mViewMore" class="hidden space-y-3">
+            <!-- User Profile Box -->
+            <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-4 shadow-md space-y-3">
+                <div class="flex items-center gap-3">
+                    <div id="mAvatarBig" class="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-base shadow-inner">
+                        AD
+                    </div>
+                    <div>
+                        <h3 id="mUserFullNameBig" class="font-bold text-sm leading-snug">Administrator</h3>
+                        <p id="mUserDeptRoleBig" class="text-xs text-indigo-200/90">DORS (Kinh Doanh)</p>
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-white/10 flex items-center justify-between">
+                    <button onclick="openMobileChangePasswordModal()" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                        <i data-lucide="key-round" class="w-3.5 h-3.5 text-amber-300"></i>
+                        <span>Đổi Mật Khẩu Cá Nhân</span>
+                    </button>
+                    <a href="/?view=desktop" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                        <i data-lucide="monitor" class="w-3.5 h-3.5"></i>
+                        <span>Bản Máy Tính</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Master Data Lookups -->
+            <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200 space-y-2">
+                <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wide">Tra Cứu Dữ Liệu Gốc</h4>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <button onclick="openMobileMasterModal('rooms')" class="p-3 bg-slate-50 hover:bg-slate-100 rounded-xl text-left border border-slate-200/60 transition">
+                        <div class="font-bold text-slate-800 flex items-center gap-1.5">
+                            <i data-lucide="building" class="w-4 h-4 text-blue-600"></i>
+                            <span>12 Sảnh Tiệc</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-0.5">Sức chứa & Vị trí sảnh</p>
+                    </button>
+                    <button onclick="openMobileMasterModal('menus')" class="p-3 bg-slate-50 hover:bg-slate-100 rounded-xl text-left border border-slate-200/60 transition">
+                        <div class="font-bold text-slate-800 flex items-center gap-1.5">
+                            <i data-lucide="utensils" class="w-4 h-4 text-emerald-600"></i>
+                            <span>79 Set Menu</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-0.5">Bảng giá thực đơn tiệc</p>
+                    </button>
+                    <button onclick="openMobileMasterModal('charges')" class="p-3 bg-slate-50 hover:bg-slate-100 rounded-xl text-left border border-slate-200/60 transition col-span-2">
+                        <div class="font-bold text-slate-800 flex items-center gap-1.5">
+                            <i data-lucide="tag" class="w-4 h-4 text-amber-600"></i>
+                            <span>Biểu Phí & Dịch Vụ Phụ Thu (87 Dịch Vụ)</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-0.5">Âm thanh, ánh sáng, màn hình LED, phí phục vụ</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Section (Only for adminems & NTTL) -->
+            <div id="mAdminSection" class="hidden bg-white rounded-2xl p-3 shadow-sm border border-slate-200 space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-bold text-purple-700 uppercase tracking-wide flex items-center gap-1.5">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        <span>Quản Trị Người Dùng (Admin)</span>
+                    </h4>
+                    <span class="px-2 py-0.5 bg-purple-100 text-purple-800 rounded text-[10px] font-black">G017</span>
+                </div>
+                <p class="text-[11px] text-slate-500">Khóa tài khoản nhân viên nghỉ việc hoặc đặt lại mật khẩu khẩn cấp từ điện thoại.</p>
+                <div id="mAdminUsersContainer" class="space-y-2 pt-1">
+                    <!-- Dynamic users loaded here -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FLOATING ACTION BUTTON (TẠO ĐƠN TIỆC MỚI) -->
+    <button onclick="openMobileNewBookingModal()" class="fixed right-4 z-40 w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg shadow-blue-500/40 flex items-center justify-center transition active:scale-95" style="bottom: calc(80px + var(--sab));">
+        <i data-lucide="plus" class="w-6 h-6"></i>
+    </button>
+
+    <!-- BOTTOM NAVIGATION BAR -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-2xl" style="padding-bottom: var(--sab);">
+        <div class="max-w-lg mx-auto grid grid-cols-5 text-center text-[10px] font-bold">
+            <button onclick="switchMobileTab('scheduler')" id="mNavTabScheduler" class="py-2 text-blue-600 flex flex-col items-center gap-0.5 transition">
+                <i data-lucide="calendar" class="w-5 h-5"></i>
+                <span>Lịch Sảnh</span>
+            </button>
+            <button onclick="switchMobileTab('bookings')" id="mNavTabBookings" class="py-2 text-slate-400 hover:text-slate-600 flex flex-col items-center gap-0.5 transition">
+                <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+                <span>Đơn Tiệc</span>
+            </button>
+            <button onclick="switchMobileTab('beo')" id="mNavTabBEO" class="py-2 text-slate-400 hover:text-slate-600 flex flex-col items-center gap-0.5 transition">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+                <span>Lệnh BEO</span>
+            </button>
+            <button onclick="switchMobileTab('crm')" id="mNavTabCRM" class="py-2 text-slate-400 hover:text-slate-600 flex flex-col items-center gap-0.5 transition">
+                <i data-lucide="users" class="w-5 h-5"></i>
+                <span>Khách CRM</span>
+            </button>
+            <button onclick="switchMobileTab('more')" id="mNavTabMore" class="py-2 text-slate-400 hover:text-slate-600 flex flex-col items-center gap-0.5 transition">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+                <span>Thêm</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ========================================== -->
+    <!-- MODAL: ĐĂNG NHẬP (LOGIN MOBILE)            -->
+    <!-- ========================================== -->
+    <div id="modalMLogin" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden p-6 space-y-4">
+            <div class="text-center space-y-1">
+                <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white font-black text-lg flex items-center justify-center mx-auto shadow-md">
+                    EMS
+                </div>
+                <h3 class="text-base font-bold text-slate-900 pt-2">Đăng Nhập EMS Banquet</h3>
+                <p class="text-xs text-slate-500">Hệ Thống Quản Lý Tiệc Cưới & Hội Nghị</p>
+            </div>
+
+            <form onsubmit="submitMobileLogin(event)" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Tài khoản (Nhân viên) *</label>
+                    <select id="mTxtLoginUser" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <option value="">-- Chọn tài khoản --</option>
+                    </select>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-xs font-bold text-slate-700">Mật khẩu</label>
+                        <span class="text-[10px] text-slate-400">(Để trống nếu chưa đặt)</span>
+                    </div>
+                    <div class="relative">
+                        <input type="password" id="mTxtLoginPass" placeholder="Nhập mật khẩu..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <button type="button" onclick="toggleMobilePass('mTxtLoginPass')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="mTxtLoginError" class="hidden p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-600 text-xs font-medium"></div>
+
+                <button type="submit" id="mBtnSubmitLogin" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/20 transition flex items-center justify-center gap-1.5">
+                    <i data-lucide="log-in" class="w-4 h-4"></i>
+                    <span>Đăng Nhập</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL: ĐỔI MẬT KHẨU CÁ NHÂN               -->
+    <!-- ========================================== -->
+    <div id="modalMChangePwd" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden p-5 space-y-3.5">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                <h3 class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+                    <i data-lucide="key-round" class="w-4 h-4 text-amber-500"></i>
+                    <span>Đổi Mật Khẩu Cá Nhân</span>
+                </h3>
+                <button onclick="closeMobileModal('modalMChangePwd')" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form onsubmit="submitMobileChangePassword(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Mật khẩu hiện tại</label>
+                    <input type="password" id="mCpOldPwd" placeholder="Để trống nếu chưa đặt..." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Mật khẩu mới *</label>
+                    <input type="password" id="mCpNewPwd" required minlength="4" placeholder="Tối thiểu 4 ký tự..." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Xác nhận mật khẩu mới *</label>
+                    <input type="password" id="mCpConfirmPwd" required minlength="4" placeholder="Nhập lại mật khẩu mới..." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs">
+                </div>
+
+                <div id="mCpError" class="hidden text-xs text-rose-600 bg-rose-50 p-2.5 rounded-xl border border-rose-200"></div>
+
+                <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
+                    <button type="button" onclick="closeMobileModal('modalMChangePwd')" class="px-4 py-2 border border-slate-300 rounded-xl font-bold text-slate-700">Hủy</button>
+                    <button type="submit" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold shadow-sm">Lưu Mật Khẩu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL: TẠO ĐƠN TIỆC MỚI (MOBILE BOOKING)   -->
+    <!-- ========================================== -->
+    <div id="modalMNewBooking" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto smooth-scroll p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5 sticky top-0 bg-white z-10">
+                <h3 class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+                    <i data-lucide="plus-circle" class="w-4 h-4 text-blue-600"></i>
+                    <span>Tạo Đơn Đặt Tiệc Mới</span>
+                </h3>
+                <button onclick="closeMobileModal('modalMNewBooking')" class="text-slate-400 hover:text-slate-600 p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form onsubmit="submitMobileNewBooking(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Tên Tiệc / Sự Kiện *</label>
+                    <input type="text" id="mNbTitle" required placeholder="VD: Tiệc Cưới Anh A & Chị B..." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Sảnh Tiệc *</label>
+                        <select id="mNbRoom" required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <!-- Rooms loaded here -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Ngày Tổ Chức *</label>
+                        <input type="date" id="mNbDate" required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Giờ Vào (Time In) *</label>
+                        <input type="time" id="mNbTimeIn" value="17:00" required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Giờ Ra (Time Out) *</label>
+                        <input type="time" id="mNbTimeOut" value="21:30" required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Số Khách Dự Kiến (Pax) *</label>
+                        <input type="number" id="mNbPax" value="100" min="1" required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-bold text-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Tiền Đặt Cọc (VNĐ)</label>
+                        <input type="number" id="mNbDeposit" value="0" min="0" step="500000" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-bold text-emerald-700 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-200">
+                    <h4 class="font-bold text-slate-800 mb-2">Thông Tin Khách Hàng</h4>
+                    <div class="space-y-2">
+                        <input type="text" id="mNbGuestName" required placeholder="Tên khách hàng / Công ty *" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <input type="tel" id="mNbGuestPhone" required placeholder="Số điện thoại *" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <input type="text" id="mNbGuestAddress" placeholder="Địa chỉ khách hàng / trụ sở..." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-200">
+                    <h4 class="font-bold text-slate-800 mb-2">Thông Tin Hóa Đơn VAT (Nếu có)</h4>
+                    <div class="space-y-2">
+                        <input type="text" id="mNbBillCompany" placeholder="Tên đơn vị xuất hóa đơn VAT..." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <input type="text" id="mNbBillTaxCode" placeholder="Mã số thuế (MST)..." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <input type="text" id="mNbBillAddress" placeholder="Địa chỉ in trên hóa đơn VAT..." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div id="mNbError" class="hidden text-xs text-rose-600 bg-rose-50 p-2.5 rounded-xl border border-rose-200"></div>
+
+                <div class="pt-3 flex justify-end gap-2 border-t border-slate-100">
+                    <button type="button" onclick="closeMobileModal('modalMNewBooking')" class="px-4 py-2.5 border border-slate-300 rounded-xl font-bold text-slate-700">Hủy</button>
+                    <button type="submit" id="mBtnSubmitBooking" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md transition">
+                        Lưu & Giữ Sảnh
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL: TRA CỨU MASTER DATA (ITEMS/MENUS)  -->
+    <!-- ========================================== -->
+    <div id="modalMMaster" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md max-h-[85vh] overflow-y-auto smooth-scroll p-5 space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5 sticky top-0 bg-white z-10">
+                <h3 id="mMasterModalTitle" class="font-bold text-sm text-slate-900">Tra Cứu Danh Mục</h3>
+                <button onclick="closeMobileModal('modalMMaster')" class="text-slate-400 hover:text-slate-600 p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div id="mMasterModalContent" class="space-y-2 text-xs">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT CORE ENGINE (FULL EMS BANQUET LOGIC) -->
+    <script>
+        // State
+        let mCurrentUser = null;
+        let mSelectedDate = new Date().toISOString().split('T')[0];
+        let mCurrentShiftFilter = '';
+        let mCurrentStatusFilter = '';
+        let mSchedulerData = [];
+        let mBookingsData = [];
+        let mCrmCustomers = [];
+        let mMasterRooms = [];
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', async () => {
+            document.getElementById('mSchedulerDate').value = mSelectedDate;
+            await checkMobileAuth();
+            await loadMasterData();
+            await loadMobileScheduler();
+            lucide.createIcons();
+        });
+
+        // ==================== AUTHENTICATION ====================
+        async function checkMobileAuth() {
+            const saved = localStorage.getItem('ems_user') || sessionStorage.getItem('ems_user');
+            if (saved) {
+                try {
+                    mCurrentUser = JSON.parse(saved);
+                } catch (e) {
+                    mCurrentUser = null;
+                }
+            }
+
+            if (!mCurrentUser || !sessionStorage.getItem('ems_logged_in')) {
+                openMobileModal('modalMLogin');
+                await populateMobileLoginUsers();
+                return;
+            }
+
+            updateMobileUserHeader();
+        }
+
+        async function populateMobileLoginUsers() {
+            try {
+                const res = await fetch('/api/auth/users');
+                const users = await res.json();
+                const sel = document.getElementById('mTxtLoginUser');
+                sel.innerHTML = '<option value="">-- Chọn tài khoản nhân viên --</option>' + 
+                    users.map(u => `<option value="${u.username}">${u.full_name} (${u.username})</option>`).join('');
+            } catch (e) {
+                console.error("Error loading users for login", e);
+            }
+        }
+
+        async function submitMobileLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('mTxtLoginUser').value;
+            const password = document.getElementById('mTxtLoginPass').value;
+            const errBox = document.getElementById('mTxtLoginError');
+            errBox.classList.add('hidden');
+
+            if (!username) {
+                errBox.textContent = 'Vui lòng chọn tài khoản!';
+                errBox.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.detail || 'Đăng nhập không thành công!');
+                }
+
+                mCurrentUser = data.user;
+                localStorage.setItem('ems_user', JSON.stringify(mCurrentUser));
+                sessionStorage.setItem('ems_user', JSON.stringify(mCurrentUser));
+                sessionStorage.setItem('ems_logged_in', '1');
+
+                closeMobileModal('modalMLogin');
+                updateMobileUserHeader();
+                await loadMobileScheduler();
+            } catch (err) {
+                errBox.textContent = err.message;
+                errBox.classList.remove('hidden');
+            }
+        }
+
+        function handleMobileLogout() {
+            if (!confirm('Bạn có muốn đăng xuất khỏi hệ thống EMS?')) return;
+            localStorage.removeItem('ems_user');
+            sessionStorage.removeItem('ems_user');
+            sessionStorage.removeItem('ems_logged_in');
+            window.location.reload();
+        }
+
+        function updateMobileUserHeader() {
+            if (!mCurrentUser) return;
+            document.getElementById('mUserName').textContent = mCurrentUser.username;
+            document.getElementById('mUserGroup').textContent = mCurrentUser.group_code || 'G01';
+            document.getElementById('mUserFullNameBig').textContent = mCurrentUser.full_name || mCurrentUser.username;
+            document.getElementById('mUserDeptRoleBig').textContent = (mCurrentUser.group_name || 'DORS (Sales)') + ' / ' + (mCurrentUser.dept || 'Banquet');
+            document.getElementById('mAvatarBig').textContent = mCurrentUser.username.substring(0, 2).toUpperCase();
+
+            // Admin features
+            const isSuper = mCurrentUser.is_admin || ['ADMINEMS', 'NTTL', 'ADMIN'].includes(mCurrentUser.username.toUpperCase());
+            const admSec = document.getElementById('mAdminSection');
+            if (isSuper && admSec) {
+                admSec.classList.remove('hidden');
+                loadMobileAdminUsers();
+            }
+            lucide.createIcons();
+        }
+
+        function toggleMobilePass(id) {
+            const el = document.getElementById(id);
+            if (el) el.type = el.type === 'password' ? 'text' : 'password';
+        }
+
+        // ==================== TAB NAVIGATION ====================
+        function switchMobileTab(tab) {
+            ['scheduler', 'bookings', 'beo', 'crm', 'more'].forEach(t => {
+                const view = document.getElementById(`mView${capitalize(t)}`);
+                const nav = document.getElementById(`mNavTab${capitalize(t)}`);
+                if (view) view.classList.add('hidden');
+                if (nav) {
+                    nav.classList.remove('text-blue-600');
+                    nav.classList.add('text-slate-400');
+                }
+            });
+
+            const activeView = document.getElementById(`mView${capitalize(tab)}`);
+            const activeNav = document.getElementById(`mNavTab${capitalize(tab)}`);
+            if (activeView) activeView.classList.remove('hidden');
+            if (activeNav) {
+                activeNav.classList.remove('text-slate-400');
+                activeNav.classList.add('text-blue-600');
+            }
+
+            if (tab === 'bookings') loadMobileBookings();
+            if (tab === 'beo') loadMobileBeoList();
+            if (tab === 'crm') loadMobileCRM();
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            lucide.createIcons();
+        }
+
+        function capitalize(s) {
+            if (s === 'beo') return 'BEO';
+            if (s === 'crm') return 'CRM';
+            return s.charAt(0).toUpperCase() + s.slice(1);
+        }
+
+        function openMobileModal(id) {
+            const m = document.getElementById(id);
+            if (m) m.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeMobileModal(id) {
+            const m = document.getElementById(id);
+            if (m) m.classList.add('hidden');
+        }
+
+        // ==================== MASTER DATA ====================
+        async function loadMasterData() {
+            try {
+                const res = await fetch('/api/master/rooms');
+                mMasterRooms = await res.json();
+                const sel = document.getElementById('mNbRoom');
+                if (sel) {
+                    sel.innerHTML = mMasterRooms.map(r => `<option value="${r.code}">${r.name} (${r.capacity} khách)</option>`).join('');
+                }
+            } catch (e) {
+                console.error("Error loading master rooms", e);
+            }
+        }
+
+        // ==================== SCHEDULER MOBILE ====================
+        function navigateMobileDate(deltaDays) {
+            const current = new Date(mSelectedDate);
+            current.setDate(current.getDate() + deltaDays);
+            mSelectedDate = current.toISOString().split('T')[0];
+            document.getElementById('mSchedulerDate').value = mSelectedDate;
+            onMobileDateChanged();
+        }
+
+        function onMobileDateChanged() {
+            mSelectedDate = document.getElementById('mSchedulerDate').value;
+            const today = new Date().toISOString().split('T')[0];
+            const lbl = document.getElementById('mSchedulerDateLabel');
+            if (mSelectedDate === today) {
+                lbl.textContent = 'Hôm nay';
+            } else {
+                const d = new Date(mSelectedDate);
+                const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+                lbl.textContent = `${days[d.getDay()]}, ${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+            }
+            loadMobileScheduler();
+        }
+
+        function setMobileShiftFilter(shift) {
+            mCurrentShiftFilter = shift;
+            ['All', 'L', 'D'].forEach(s => {
+                const b = document.getElementById(`mBtnShift${s}`);
+                if (b) {
+                    if (s === (shift || 'All')) {
+                        b.classList.remove('bg-slate-100', 'text-slate-600');
+                        b.classList.add('bg-blue-600', 'text-white');
+                    } else {
+                        b.classList.remove('bg-blue-600', 'text-white');
+                        b.classList.add('bg-slate-100', 'text-slate-600');
+                    }
+                }
+            });
+            renderMobileSchedulerCards();
+        }
+
+        async function loadMobileScheduler() {
+            const list = document.getElementById('mSchedulerList');
+            list.innerHTML = '<div class="p-8 text-center text-slate-400 text-xs bg-white rounded-2xl border border-slate-200"><i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-blue-500 mb-2"></i>Đang nạp lịch sảnh...</div>';
+            lucide.createIcons();
+
+            try {
+                const d = new Date(mSelectedDate);
+                const year = d.getFullYear();
+                const month = d.getMonth() + 1;
+                const res = await fetch(`/api/scheduler?year=${year}&month=${month}`);
+                const data = await res.json();
+                
+                // Filter bookings on mSelectedDate
+                const allBookings = data.bookings || [];
+                mSchedulerData = allBookings.filter(b => b.date === mSelectedDate);
+                renderMobileSchedulerCards();
+            } catch (err) {
+                list.innerHTML = `<div class="p-6 text-center text-rose-500 text-xs bg-white rounded-2xl border border-rose-200">Lỗi nạp lịch: ${err.message}</div>`;
+            }
+        }
+
+        function renderMobileSchedulerCards() {
+            const list = document.getElementById('mSchedulerList');
+            let filtered = mSchedulerData;
+            if (mCurrentShiftFilter) {
+                filtered = filtered.filter(b => (b.shift || '').toUpperCase() === mCurrentShiftFilter);
+            }
+
+            if (!filtered || filtered.length === 0) {
+                list.innerHTML = `
+                    <div class="p-8 text-center bg-white rounded-2xl border border-slate-200 space-y-2">
+                        <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                            <i data-lucide="calendar-x" class="w-5 h-5"></i>
+                        </div>
+                        <p class="text-xs font-bold text-slate-700">Không có tiệc nào trong ngày này</p>
+                        <p class="text-[11px] text-slate-400">Các sảnh hiện đang trống ca. Bạn có thể bấm nút [+] để nhận đặt tiệc mới.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            list.innerHTML = filtered.map(b => {
+                const isDefinite = b.status === 'D';
+                const statusBadge = isDefinite
+                    ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">ĐÃ CHỐT (D)</span>'
+                    : '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">GIỮ CHỖ (T)</span>';
+
+                const timeStr = `${b.time_in || '17:00'} - ${b.time_out || '21:30'}`;
+                const shiftBadge = (b.shift === 'L') ? 'Ca Sáng' : 'Ca Tối';
+
+                return `
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-3 transition active:scale-[0.99]">
+                        <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-2.5">
+                            <div>
+                                <span class="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-md text-[10px] font-bold border border-blue-200">
+                                    ${b.room_name || b.room_code || 'Sảnh Tiệc'}
+                                </span>
+                                <h4 class="font-bold text-sm text-slate-900 mt-1 leading-snug">${b.title || b.customer_name || 'Tiệc Sự Kiện'}</h4>
+                                <div class="text-[11px] text-slate-500 font-mono mt-0.5">Mã: <strong>${b.book_id}</strong></div>
+                            </div>
+                            ${statusBadge}
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="flex items-center gap-1.5 text-slate-600">
+                                <i data-lucide="clock" class="w-3.5 h-3.5 text-blue-500"></i>
+                                <span>${timeStr} (${shiftBadge})</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-slate-600">
+                                <i data-lucide="users" class="w-3.5 h-3.5 text-indigo-500"></i>
+                                <span><strong>${b.pax || 0}</strong> Khách (Pax)</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-slate-600">
+                                <i data-lucide="user-check" class="w-3.5 h-3.5 text-slate-400"></i>
+                                <span>Sales: <strong>${b.sales_user || b.user_name || 'ADMIN'}</strong></span>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-slate-600">
+                                <i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-emerald-500"></i>
+                                <span>Cọc: <strong>${(b.deposit || 0).toLocaleString()}đ</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
+                            <button onclick="viewMobileBEO('${b.book_id}')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1 border border-slate-200">
+                                <i data-lucide="file-text" class="w-3.5 h-3.5 text-blue-600"></i>
+                                <span>Xem BEO</span>
+                            </button>
+                            <button onclick="viewMobileBookingDetail('${b.book_id}')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1">
+                                <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                                <span>Chi Tiết</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        // ==================== BOOKINGS LIST MOBILE ====================
+        async function loadMobileBookings() {
+            const list = document.getElementById('mBookingsList');
+            list.innerHTML = '<div class="p-8 text-center text-slate-400 text-xs bg-white rounded-2xl border border-slate-200"><i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-blue-500 mb-2"></i>Đang nạp danh sách đơn tiệc...</div>';
+            lucide.createIcons();
+
+            try {
+                const res = await fetch('/api/beo/bookings-list');
+                mBookingsData = await res.json();
+                filterMobileBookings();
+            } catch (err) {
+                list.innerHTML = `<div class="p-6 text-center text-rose-500 text-xs bg-white rounded-2xl border border-rose-200">Lỗi nạp đơn tiệc: ${err.message}</div>`;
+            }
+        }
+
+        function setMobileStatusFilter(st) {
+            mCurrentStatusFilter = st;
+            ['All', 'D', 'T', 'C'].forEach(s => {
+                const b = document.getElementById(`mTabStat${s}`);
+                if (b) {
+                    if (s === (st || 'All')) {
+                        b.classList.remove('bg-slate-100', 'text-slate-600');
+                        b.classList.add('bg-blue-600', 'text-white');
+                    } else {
+                        b.classList.remove('bg-blue-600', 'text-white');
+                        b.classList.add('bg-slate-100', 'text-slate-600');
+                    }
+                }
+            });
+            filterMobileBookings();
+        }
+
+        function filterMobileBookings() {
+            const q = (document.getElementById('mTxtBookingSearch').value || '').toLowerCase().trim();
+            const list = document.getElementById('mBookingsList');
+
+            let filtered = mBookingsData;
+            if (mCurrentStatusFilter) {
+                filtered = filtered.filter(b => (b.status || '').toUpperCase() === mCurrentStatusFilter);
+            }
+            if (q) {
+                filtered = filtered.filter(b => 
+                    (b.book_id || '').toLowerCase().includes(q) ||
+                    (b.title || '').toLowerCase().includes(q) ||
+                    (b.customer_name || '').toLowerCase().includes(q) ||
+                    (b.phone || '').toLowerCase().includes(q)
+                );
+            }
+
+            if (!filtered || filtered.length === 0) {
+                list.innerHTML = '<div class="p-8 text-center text-slate-400 text-xs bg-white rounded-2xl border border-slate-200">Không tìm thấy đơn tiệc phù hợp.</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.slice(0, 50).map(b => {
+                const isDefinite = b.status === 'D';
+                const statusBadge = isDefinite
+                    ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">ĐÃ CHỐT</span>'
+                    : '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">GIỮ CHỖ</span>';
+
+                return `
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-2.5">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <span class="font-mono font-bold text-blue-700 text-xs">${b.book_id}</span>
+                                <h4 class="font-bold text-sm text-slate-900 leading-snug mt-0.5">${b.title || b.customer_name}</h4>
+                            </div>
+                            ${statusBadge}
+                        </div>
+
+                        <div class="text-xs text-slate-600 space-y-1">
+                            <div class="flex items-center gap-1.5">
+                                <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
+                                <span>Ngày: <strong>${b.event_date || '--'}</strong> - Sảnh: <strong>${b.room_name || '--'}</strong></span>
+                            </div>
+                            ${b.phone ? `
+                            <div class="flex items-center gap-1.5">
+                                <i data-lucide="phone" class="w-3.5 h-3.5 text-emerald-500"></i>
+                                <a href="tel:${b.phone}" class="text-emerald-700 font-bold underline">${b.phone}</a>
+                            </div>` : ''}
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
+                            <button onclick="viewMobileBEO('${b.book_id}')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1">
+                                <i data-lucide="file-text" class="w-3.5 h-3.5 text-blue-600"></i>
+                                <span>Lệnh BEO</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        // ==================== BEO MOBILE ====================
+        async function loadMobileBeoList() {
+            const sel = document.getElementById('mSelBeoBooking');
+            try {
+                const res = await fetch('/api/beo/bookings-list');
+                const list = await res.json();
+                sel.innerHTML = '<option value="">-- Chọn đơn tiệc để nạp BEO --</option>' +
+                    list.map(b => `<option value="${b.book_id}">[${b.book_id}] ${b.title || b.customer_name} (${b.event_date})</option>`).join('');
+            } catch (e) {
+                console.error("Error loading BEO booking list", e);
+            }
+        }
+
+        async function onMobileBeoSelectChanged() {
+            const bookId = document.getElementById('mSelBeoBooking').value;
+            if (!bookId) return;
+            await loadMobileBeoData(bookId);
+        }
+
+        function viewMobileBEO(bookId) {
+            switchMobileTab('beo');
+            document.getElementById('mSelBeoBooking').value = bookId;
+            loadMobileBeoData(bookId);
+        }
+
+        async function loadMobileBeoData(bookId) {
+            const box = document.getElementById('mBeoContentBox');
+            box.innerHTML = '<div class="p-8 text-center text-slate-400 text-xs bg-white rounded-2xl border border-slate-200"><i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-blue-500 mb-2"></i>Đang nạp chi tiết BEO...</div>';
+            lucide.createIcons();
+
+            try {
+                const res = await fetch(`/api/beo/${encodeURIComponent(bookId)}`);
+                const data = await res.json();
+                renderMobileBeoDetails(data);
+            } catch (err) {
+                box.innerHTML = `<div class="p-6 text-center text-rose-500 text-xs bg-white rounded-2xl border border-rose-200">Lỗi nạp BEO: ${err.message}</div>`;
+            }
+        }
+
+        function renderMobileBeoDetails(beo) {
+            const box = document.getElementById('mBeoContentBox');
+            box.innerHTML = `
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-3">
+                    <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-2.5">
+                        <div>
+                            <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-bold text-[10px]">LỆNH BEO CHÍNH THỨC</span>
+                            <h3 class="font-bold text-sm text-slate-900 mt-1">${beo.company_name || beo.guest_name || 'Khách Hàng'}</h3>
+                            <div class="text-[11px] text-slate-500 mt-0.5 font-mono">Master EO: <strong>${beo.master_eo || 'Chưa phát hành'}</strong></div>
+                        </div>
+                        <a href="/index.html#viewBEO" target="_blank" class="px-3 py-1.5 bg-slate-900 hover:bg-black text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-sm">
+                            <i data-lucide="printer" class="w-3.5 h-3.5 text-amber-300"></i>
+                            <span>In A4</span>
+                        </a>
+                    </div>
+
+                    <!-- Event Specs -->
+                    <div class="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+                        <div>Ngày sự kiện: <strong class="text-blue-700">${beo.event_date || '--'}</strong></div>
+                        <div>Loại hình: <strong>${beo.event_type || 'Tiệc Cưới'}</strong></div>
+                        <div>Sảnh tiệc: <strong class="text-slate-800">${beo.room_name || '--'}</strong></div>
+                        <div>Khách xác nhận: <strong class="text-emerald-700">${beo.gua_pax || beo.exp_pax || 0} Pax</strong></div>
+                    </div>
+
+                    <!-- Accordion 1: Menu Detail -->
+                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div class="bg-slate-100/80 px-3 py-2 font-bold text-xs text-slate-800 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5"><i data-lucide="utensils" class="w-3.5 h-3.5 text-emerald-600"></i>Thực Đơn Món Ăn</span>
+                        </div>
+                        <div class="p-3 text-xs text-slate-700 whitespace-pre-line bg-white leading-relaxed">
+                            ${beo.menu_detail || 'Chưa nhập chi tiết thực đơn.'}
+                        </div>
+                    </div>
+
+                    <!-- Accordion 2: Beverage & Charges -->
+                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div class="bg-slate-100/80 px-3 py-2 font-bold text-xs text-slate-800 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5"><i data-lucide="glass-water" class="w-3.5 h-3.5 text-blue-600"></i>Đồ Uống & Dịch Vụ</span>
+                        </div>
+                        <div class="p-3 text-xs text-slate-700 whitespace-pre-line bg-white leading-relaxed">
+                            ${beo.drinks_detail || 'Theo tiêu chuẩn hợp đồng.'}
+                        </div>
+                    </div>
+
+                    <!-- Accordion 3: Department Notes -->
+                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div class="bg-slate-100/80 px-3 py-2 font-bold text-xs text-slate-800 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5"><i data-lucide="clipboard-check" class="w-3.5 h-3.5 text-amber-600"></i>Ghi Chú Các Bộ Phận</span>
+                        </div>
+                        <div class="p-3 text-xs text-slate-700 whitespace-pre-line bg-white leading-relaxed">
+                            ${beo.department_notes || 'Thực hiện theo quy chuẩn dịch vụ tiệc hợp đồng.'}
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // ==================== CRM CUSTOMERS MOBILE ====================
+        let mCrmActiveGroup = 'ALL';
+
+        async function loadMobileCRM() {
+            const list = document.getElementById('mCrmList');
+            list.innerHTML = '<div class="p-8 text-center text-slate-400 text-xs bg-white rounded-2xl border border-slate-200"><i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-blue-500 mb-2"></i>Đang nạp danh bạ khách hàng CRM...</div>';
+            if (window.lucide) lucide.createIcons();
+
+            try {
+                // Nạp summary trước hoặc song song
+                fetch('/api/master/customers/summary').then(r => r.json()).then(sum => {
+                    if (sum) {
+                        const elAll = document.getElementById('mCount_ALL'); if (elAll) elAll.textContent = sum.total || 0;
+                        const elTA = document.getElementById('mCount_TA'); if (elTA) elTA.textContent = sum.ta_count || 0;
+                        const elCORP = document.getElementById('mCount_CORP'); if (elCORP) elCORP.textContent = sum.corp_count || 0;
+                        const elPARTY = document.getElementById('mCount_PARTY'); if (elPARTY) elPARTY.textContent = sum.party_count || 0;
+                        const elWEDDING = document.getElementById('mCount_WEDDING'); if (elWEDDING) elWEDDING.textContent = sum.wedding_count || 0;
+                        const totalEl = document.getElementById('mCrmTotalCount'); if (totalEl) totalEl.textContent = sum.total || 0;
+                    }
+                }).catch(e => console.warn('CRM summary fetch:', e));
+
+                const res = await fetch('/api/master/customers?limit=1000');
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+                mCrmCustomers = Array.isArray(data) ? data : (data.customers || []);
+
+                filterMobileCRM();
+            } catch (err) {
+                console.error('Error loadMobileCRM:', err);
+                list.innerHTML = `<div class="p-6 text-center text-rose-500 text-xs bg-white rounded-2xl border border-rose-200">Lỗi nạp CRM: ${err.message}</div>`;
+            }
+        }
+
+        function setMobileCrmGroup(group) {
+            mCrmActiveGroup = group;
+            ['ALL', 'TA', 'CORP', 'PARTY', 'WEDDING'].forEach(g => {
+                const btn = document.getElementById('mCrmChip_' + g);
+                if (!btn) return;
+                if (g === group) {
+                    btn.className = 'px-2.5 py-1 rounded-lg bg-slate-900 text-white shrink-0 shadow-2xs font-bold';
+                } else {
+                    const colors = {
+                        TA: 'bg-emerald-50 text-emerald-800 border border-emerald-200',
+                        CORP: 'bg-blue-50 text-blue-800 border border-blue-200',
+                        PARTY: 'bg-amber-50 text-amber-800 border border-amber-200',
+                        WEDDING: 'bg-rose-50 text-rose-800 border border-rose-200'
+                    };
+                    btn.className = `px-2.5 py-1 rounded-lg shrink-0 font-medium ${colors[g] || 'bg-slate-100 text-slate-700 border border-slate-200'}`;
+                }
+            });
+            filterMobileCRM();
+        }
+
+        function filterMobileCRM() {
+            const q = (document.getElementById('mTxtCrmSearch')?.value || '').toLowerCase().trim();
+            const list = document.getElementById('mCrmList');
+            if (!list) return;
+
+            let filtered = mCrmCustomers || [];
+            
+            // Lọc theo nhóm
+            if (mCrmActiveGroup && mCrmActiveGroup !== 'ALL') {
+                filtered = filtered.filter(c => (c.nhom || c.group) === mCrmActiveGroup);
+            }
+
+            // Lọc theo từ khóa tìm kiếm
+            if (q) {
+                filtered = filtered.filter(c => 
+                    (c.name || '').toLowerCase().includes(q) ||
+                    (c.tax_code || '').toLowerCase().includes(q) ||
+                    (c.phone || '').toLowerCase().includes(q) ||
+                    (c.address || '').toLowerCase().includes(q)
+                );
+            }
+
+            if (!filtered || filtered.length === 0) {
+                list.innerHTML = '<div class="p-8 text-center text-slate-400 text-xs bg-white rounded-2xl border border-slate-200">Không tìm thấy khách hàng phù hợp.</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.slice(0, 50).map(c => {
+                const safeCustJson = encodeURIComponent(JSON.stringify(c));
+                const nhom = c.nhom || c.group || '';
+                let badgeGroup = '';
+                if (nhom === 'TA') badgeGroup = '<span class="px-1.5 py-0.5 bg-emerald-100 text-emerald-800 rounded text-[10px] font-bold">TA (Lữ Hành)</span>';
+                else if (nhom === 'CORP') badgeGroup = '<span class="px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded text-[10px] font-bold">CORP (Doanh Nghiệp)</span>';
+                else if (nhom === 'PARTY') badgeGroup = '<span class="px-1.5 py-0.5 bg-amber-100 text-amber-800 rounded text-[10px] font-bold">PARTY (Tiệc Riêng)</span>';
+                else if (nhom === 'WEDDING') badgeGroup = '<span class="px-1.5 py-0.5 bg-rose-100 text-rose-800 rounded text-[10px] font-bold">WEDDING (Tiệc Cưới)</span>';
+
+                return `
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-2.5">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-900 leading-snug">${c.name}</h4>
+                                <div class="flex flex-wrap items-center gap-1.5 mt-1">
+                                    ${badgeGroup}
+                                    ${c.tax_code ? `<span class="inline-block px-1.5 py-0.2 bg-amber-50 text-amber-800 border border-amber-200 rounded text-[10px] font-mono font-bold">MST: ${c.tax_code}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+
+                        ${c.address ? `
+                        <div class="text-[11px] text-slate-600 flex items-start gap-1.5">
+                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5"></i>
+                            <span>${c.address}</span>
+                        </div>` : ''}
+
+                        <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                            ${c.phone ? `
+                            <a href="tel:${c.phone}" class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl text-xs font-bold flex items-center gap-1 border border-emerald-200">
+                                <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
+                                <span>Gọi (${c.phone})</span>
+                            </a>` : '<span class="text-[11px] text-slate-400">Chưa có SĐT</span>'}
+
+                            <button onclick="mobileBookForCustomer('${safeCustJson}')" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-sm">
+                                <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>
+                                <span>Đặt Tiệc</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function mobileBookForCustomer(encodedJson) {
+            try {
+                const cust = JSON.parse(decodeURIComponent(encodedJson));
+                openMobileNewBookingModal();
+                const nameEl = document.getElementById('mNbGuestName');
+                const phoneEl = document.getElementById('mNbGuestPhone');
+                const addrEl = document.getElementById('mNbGuestAddress');
+                const compEl = document.getElementById('mNbBillCompany');
+                const taxEl = document.getElementById('mNbBillTaxCode');
+                const billAddrEl = document.getElementById('mNbBillAddress');
+
+                if (nameEl) nameEl.value = cust.name || '';
+                if (phoneEl) phoneEl.value = cust.phone || '';
+                if (addrEl) addrEl.value = cust.address || '';
+                if (compEl) compEl.value = cust.company || cust.name || '';
+                if (taxEl) taxEl.value = cust.tax_code || '';
+                if (billAddrEl) billAddrEl.value = cust.address || '';
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        // ==================== NEW BOOKING MODAL ====================
+        function openMobileNewBookingModal() {
+            document.getElementById('mNbTitle').value = '';
+            document.getElementById('mNbDate').value = mSelectedDate;
+            document.getElementById('mNbTimeIn').value = '17:00';
+            document.getElementById('mNbTimeOut').value = '21:30';
+            document.getElementById('mNbPax').value = '100';
+            document.getElementById('mNbDeposit').value = '0';
+            document.getElementById('mNbGuestName').value = '';
+            document.getElementById('mNbGuestPhone').value = '';
+            document.getElementById('mNbGuestAddress').value = '';
+            document.getElementById('mNbBillCompany').value = '';
+            document.getElementById('mNbBillTaxCode').value = '';
+            document.getElementById('mNbBillAddress').value = '';
+            document.getElementById('mNbError').classList.add('hidden');
+            openMobileModal('modalMNewBooking');
+        }
+
+        async function submitMobileNewBooking(e) {
+            e.preventDefault();
+            const errBox = document.getElementById('mNbError');
+            errBox.classList.add('hidden');
+
+            const payload = {
+                title: document.getElementById('mNbTitle').value.trim() || 'Tiệc Mới',
+                room: document.getElementById('mNbRoom').value,
+                event_date: document.getElementById('mNbDate').value,
+                time_in: document.getElementById('mNbTimeIn').value,
+                time_out: document.getElementById('mNbTimeOut').value,
+                pax: parseInt(document.getElementById('mNbPax').value) || 100,
+                deposit: parseFloat(document.getElementById('mNbDeposit').value) || 0,
+                status: 'T',
+                guest_name: document.getElementById('mNbGuestName').value.trim() || 'Khách Đặt Tiệc',
+                guest_phone: document.getElementById('mNbGuestPhone').value.trim(),
+                guest_address: document.getElementById('mNbGuestAddress') ? document.getElementById('mNbGuestAddress').value.trim() : '',
+                tax_code: document.getElementById('mNbBillTaxCode') ? document.getElementById('mNbBillTaxCode').value.trim() : '',
+                bill_to: document.getElementById('mNbBillCompany') ? document.getElementById('mNbBillCompany').value.trim() : '',
+                bill_address: document.getElementById('mNbBillAddress') ? document.getElementById('mNbBillAddress').value.trim() : '',
+                sales_user: mCurrentUser ? mCurrentUser.username : 'ADMIN'
+            };
+
+            const btn = document.getElementById('mBtnSubmitBooking');
+            btn.disabled = true;
+            btn.textContent = 'Đang lưu...';
+
+            try {
+                const res = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.detail || 'Không thể tạo đơn tiệc!');
+                }
+
+                alert(`ĐẶT TIỆC THÀNH CÔNG!
+
+Mã đơn: ${data.book_id || 'Thành công'}
+Đã giữ chỗ sảnh cho khách ${payload.guest_name}.`);
+                closeMobileModal('modalMNewBooking');
+                await loadMobileScheduler();
+            } catch (err) {
+                errBox.textContent = err.message;
+                errBox.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Lưu & Giữ Sảnh';
+            }
+        }
+
+        // ==================== CHANGE PASSWORD MODAL ====================
+        function openMobileChangePasswordModal() {
+            document.getElementById('mCpOldPwd').value = '';
+            document.getElementById('mCpNewPwd').value = '';
+            document.getElementById('mCpConfirmPwd').value = '';
+            document.getElementById('mCpError').classList.add('hidden');
+            openMobileModal('modalMChangePwd');
+        }
+
+        async function submitMobileChangePassword(e) {
+            e.preventDefault();
+            const errBox = document.getElementById('mCpError');
+            errBox.classList.add('hidden');
+
+            const oldPwd = document.getElementById('mCpOldPwd').value;
+            const newPwd = document.getElementById('mCpNewPwd').value;
+            const confirmPwd = document.getElementById('mCpConfirmPwd').value;
+
+            if (newPwd !== confirmPwd) {
+                errBox.textContent = 'Mật khẩu mới không khớp!';
+                errBox.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/auth/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: mCurrentUser.username,
+                        old_password: oldPwd,
+                        new_password: newPwd
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || 'Lỗi đổi mật khẩu!');
+
+                alert(`ĐỔI MẬT KHẨU THÀNH CÔNG!
+
+Mật khẩu mới đã được cập nhật trực tiếp vào SQL Server.`);
+                closeMobileModal('modalMChangePwd');
+            } catch (err) {
+                errBox.textContent = err.message;
+                errBox.classList.remove('hidden');
+            }
+        }
+
+        // ==================== MASTER DATA MODAL ====================
+        async function openMobileMasterModal(type) {
+            const title = document.getElementById('mMasterModalTitle');
+            const content = document.getElementById('mMasterModalContent');
+            content.innerHTML = '<div class="p-6 text-center text-slate-400">Đang tải...</div>';
+            openMobileModal('modalMMaster');
+
+            if (type === 'rooms') {
+                title.textContent = 'Danh Sách 12 Sảnh Tiệc & Sức Chứa';
+                try {
+                    const res = await fetch('/api/master/rooms');
+                    const rooms = await res.json();
+                    content.innerHTML = rooms.map(r => `
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center">
+                            <div>
+                                <strong class="text-slate-900">${r.name}</strong>
+                                <div class="text-[11px] text-slate-500 font-mono">Mã: ${r.code}</div>
+                            </div>
+                            <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-lg font-bold text-xs">${r.capacity || '--'} Pax</span>
+                        </div>
+                    `).join('');
+                } catch (e) { content.textContent = 'Lỗi nạp sảnh'; }
+            } else if (type === 'menus') {
+                title.textContent = 'Danh Mục 79 Set Menu Tiệc';
+                try {
+                    const res = await fetch('/api/master/menus');
+                    const menus = await res.json();
+                    content.innerHTML = menus.map(m => `
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center">
+                            <div>
+                                <strong class="text-slate-900">${m.name}</strong>
+                                <div class="text-[11px] text-slate-500">${m.code}</div>
+                            </div>
+                            <span class="font-bold text-emerald-700">${(m.price || 0).toLocaleString()}đ/bàn</span>
+                        </div>
+                    `).join('');
+                } catch (e) { content.textContent = 'Lỗi nạp menu'; }
+            } else if (type === 'charges') {
+                title.textContent = 'Biểu Phí & Dịch Vụ Phụ Thu';
+                try {
+                    const res = await fetch('/api/master/charges');
+                    const charges = await res.json();
+                    content.innerHTML = charges.slice(0, 30).map(c => `
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center">
+                            <strong class="text-slate-900">${c.name}</strong>
+                            <span class="font-bold text-blue-700">${(c.price || 0).toLocaleString()}đ</span>
+                        </div>
+                    `).join('');
+                } catch (e) { content.textContent = 'Lỗi nạp dịch vụ'; }
+            }
+        }
+
+        // ==================== ADMIN USERS MOBILE ====================
+        async function loadMobileAdminUsers() {
+            const container = document.getElementById('mAdminUsersContainer');
+            try {
+                const res = await fetch('/api/admin/users');
+                const users = await res.json();
+                container.innerHTML = users.slice(0, 15).map(u => {
+                    const isActive = u.is_active !== false;
+                    const isSuper = ['ADMINEMS', 'NTTL', 'ADMIN'].includes(u.username.toUpperCase());
+                    return `
+                        <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs">
+                            <div>
+                                <strong class="text-slate-900">${u.full_name}</strong>
+                                <div class="text-[10px] text-slate-500 font-mono">${u.username} (${u.booking_count || 0} tiệc)</div>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                ${!isSuper ? `
+                                    <button onclick="mobileAdminToggleLock('${u.username}', ${isActive})" class="px-2 py-1 rounded-lg text-[10px] font-bold ${isActive ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
+                                        ${isActive ? 'Khóa' : 'Mở'}
+                                    </button>
+                                ` : '<span class="text-[9px] text-purple-700 font-bold">Admin</span>'}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error("Error loading admin users", e);
+            }
+        }
+
+        async function mobileAdminToggleLock(username, currentIsActive) {
+            const action = currentIsActive ? 'lock' : 'unlock';
+            if (!confirm(`Bạn có chắc muốn ${action === 'lock' ? 'KHÓA' : 'MỞ KHÓA'} tài khoản ${username}?`)) return;
+
+            try {
+                const res = await fetch(`/api/admin/users/${encodeURIComponent(username)}/action`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: action,
+                        caller_user: mCurrentUser.username
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || 'Lỗi thao tác');
+                alert(data.message || 'Thành công!');
+                loadMobileAdminUsers();
+            } catch (e) {
+                alert('Lỗi: ' + e.message);
+            }
+        }
+
+        function viewMobileBookingDetail(bookId) {
+            viewMobileBEO(bookId);
+        }
+    </script>
+</body>
+</html>

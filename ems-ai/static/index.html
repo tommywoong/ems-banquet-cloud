@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EMS Banquet AI Coding Agent - Cổng 8092</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --panel: #111827;
+      --panel-border: #1f2937;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Top Navbar */
+    .navbar {
+      height: 52px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.25rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .brand-badge {
+      background: rgba(59, 130, 246, 0.2);
+      color: var(--accent);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+    }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { background: #059669; }
+    .btn-secondary { background: #374151; color: var(--text); }
+    .btn-secondary:hover { background: #4b5563; }
+    .btn-danger { background: var(--danger); color: white; }
+
+    /* Layout */
+    .workspace {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 52px);
+    }
+    .sidebar {
+      width: 280px;
+      background: var(--panel);
+      border-right: 1px solid var(--panel-border);
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-header {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--panel-border);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .file-tree {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.5rem 0;
+    }
+    .file-item {
+      padding: 0.4rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #d1d5db;
+      font-family: 'Fira Code', monospace;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .file-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+    }
+    .file-item.active {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--accent);
+      border-left: 3px solid var(--accent);
+    }
+
+    /* Main Editor Area */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+    .tab-bar {
+      height: 40px;
+      background: #0d131f;
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      gap: 1rem;
+      font-size: 0.85rem;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+    }
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .editor-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 1rem;
+      position: relative;
+    }
+    .code-editor {
+      flex: 1;
+      width: 100%;
+      background: #0b0f19;
+      color: #e5e7eb;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      padding: 1rem;
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      resize: none;
+      outline: none;
+    }
+    .code-editor:focus {
+      border-color: var(--accent);
+    }
+
+    /* Diff View */
+    .diff-view {
+      display: none;
+      flex: 1;
+      background: #0b0f19;
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      overflow-y: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      padding: 1rem;
+      white-space: pre-wrap;
+    }
+    .diff-add { color: #34d399; background: rgba(16, 185, 129, 0.1); }
+    .diff-del { color: #f87171; background: rgba(239, 68, 68, 0.1); }
+
+    /* Snapshots tab */
+    .snapshots-list {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+    .snapshot-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .snapshot-card h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .snapshot-card p { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* Auth Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      width: 400px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);
+    }
+    .modal h2 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+    .modal p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+    .modal input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: #0b0f19;
+      border: 1px solid var(--panel-border);
+      border-radius: 6px;
+      color: white;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      outline: none;
+    }
+    .modal input:focus { border-color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal">
+      <h2>🔐 Xác thực Master Admin</h2>
+      <p>Nhập mật khẩu Master Pass để mở khóa phân hệ AI Coding Agent (Cổng 8092).</p>
+      <input type="password" id="masterPassInput" placeholder="Nhập Master Password..." autofocus onkeydown="if(event.key==='Enter') verifyMaster()">
+      <button class="btn btn-primary" style="width: 100%; padding: 0.75rem;" onclick="verifyMaster()">Xác Thực & Truy Cập</button>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="brand">
+      <span>⚡ EMS AI Coding Agent</span>
+      <span class="brand-badge">Port 8092</span>
+    </div>
+    <div class="nav-actions">
+      <span id="currentFileLabel" style="font-size: 0.85rem; color: var(--text-muted); font-family: monospace;">Chưa chọn file</span>
+      <button class="btn btn-secondary" onclick="checkDiff()">🔍 Xem Diff</button>
+      <button class="btn btn-success" onclick="applyChanges()">💾 Áp dụng an toàn</button>
+    </div>
+  </header>
+
+  <!-- Workspace -->
+  <div class="workspace">
+    <!-- Sidebar File Explorer -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span>Files Dự Án</span>
+        <button style="background: none; border: none; color: var(--text-muted); cursor: pointer;" onclick="loadFiles()">🔄</button>
+      </div>
+      <div class="file-tree" id="fileTree">Đang tải danh sách file...</div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="tab-bar">
+        <button class="tab-btn active" id="tabEditor" onclick="switchTab('editor')">Code Editor</button>
+        <button class="tab-btn" id="tabDiff" onclick="switchTab('diff')">Diff Preview</button>
+        <button class="tab-btn" id="tabSnapshots" onclick="switchTab('snapshots')">Lịch Sử Rollback</button>
+      </div>
+
+      <div class="editor-container">
+        <!-- Editor -->
+        <textarea class="code-editor" id="codeEditor" spellcheck="false" placeholder="Chọn một file ở cột bên trái để bắt đầu xem và chỉnh sửa..."></textarea>
+        
+        <!-- Diff -->
+        <div class="diff-view" id="diffView">Chưa có thay đổi nào được tạo.</div>
+
+        <!-- Snapshots -->
+        <div class="snapshots-list" id="snapshotsList">Đang tải snapshots...</div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    let authToken = localStorage.getItem('ems_ai_token') || '';
+    let currentPath = '';
+    let originalContent = '';
+
+    if (authToken) {
+      document.getElementById('authModal').style.display = 'none';
+      loadFiles();
+    }
+
+    async function verifyMaster() {
+      const pwd = document.getElementById('masterPassInput').value;
+      try {
+        const res = await fetch('/api/auth', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({password: pwd})
+        });
+        const data = await res.json();
+        if (data.success) {
+          authToken = pwd;
+          localStorage.setItem('ems_ai_token', authToken);
+          document.getElementById('authModal').style.display = 'none';
+          loadFiles();
+        }
+      } catch (err) {
+        alert("Sai mật khẩu Master!");
+      }
+    }
+
+    async function loadFiles() {
+      try {
+        const res = await fetch('/api/files', {
+          headers: {'X-Master-Pass': authToken}
+        });
+        const data = await res.json();
+        if (data.success) {
+          const tree = document.getElementById('fileTree');
+          tree.innerHTML = '';
+          data.files.forEach(f => {
+            const div = document.createElement('div');
+            div.className = 'file-item';
+            div.innerText = f.path;
+            div.onclick = () => openFile(f.path, div);
+            tree.appendChild(div);
+          });
+        }
+      } catch (err) {
+        console.error("Lỗi nạp files:", err);
+      }
+    }
+
+    async function openFile(path, el) {
+      document.querySelectorAll('.file-item').forEach(i => i.classList.remove('active'));
+      if (el) el.classList.add('active');
+      currentPath = path;
+      document.getElementById('currentFileLabel').innerText = path;
+
+      try {
+        const res = await fetch(`/api/file?path=${encodeURIComponent(path)}`, {
+          headers: {'X-Master-Pass': authToken}
+        });
+        const data = await res.json();
+        if (data.success) {
+          originalContent = data.content;
+          document.getElementById('codeEditor').value = data.content;
+          switchTab('editor');
+        }
+      } catch (err) {
+        alert("Lỗi đọc file: " + err.message);
+      }
+    }
+
+    async function checkDiff() {
+      if (!currentPath) return alert("Vui lòng chọn file trước!");
+      const content = document.getElementById('codeEditor').value;
+      try {
+        const res = await fetch('/api/diff', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Master-Pass': authToken
+          },
+          body: JSON.stringify({path: currentPath, content: content})
+        });
+        const data = await res.json();
+        if (data.success) {
+          renderDiff(data.diff);
+          switchTab('diff');
+        }
+      } catch (err) {
+        alert("Lỗi xem diff: " + err.message);
+      }
+    }
+
+    function renderDiff(diffText) {
+      const view = document.getElementById('diffView');
+      if (!diffText.trim()) {
+        view.innerHTML = '<span style="color: #9ca3af;">Không có thay đổi nào so với file gốc trên đĩa.</span>';
+        return;
+      }
+      const lines = diffText.split('\n');
+      view.innerHTML = lines.map(line => {
+        if (line.startsWith('+') && !line.startsWith('+++')) {
+          return `<div class="diff-add">${escapeHtml(line)}</div>`;
+        } else if (line.startsWith('-') && !line.startsWith('---')) {
+          return `<div class="diff-del">${escapeHtml(line)}</div>`;
+        }
+        return `<div>${escapeHtml(line)}</div>`;
+      }).join('');
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    async function applyChanges() {
+      if (!currentPath) return alert("Vui lòng chọn file trước!");
+      const content = document.getElementById('codeEditor').value;
+      if (!confirm(`Bạn có chắc chắn muốn lưu các thay đổi cho file ${currentPath}?\nHệ thống sẽ tự động sao lưu Snapshot trước khi lưu.`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/apply', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Master-Pass': authToken
+          },
+          body: JSON.stringify({
+            path: currentPath,
+            content: content,
+            note: "Lưu qua AI Coding Agent Port 8092"
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(`✓ ${data.message}\nBản sao lưu: ${data.snapshot}`);
+          originalContent = content;
+        } else {
+          alert(`❌ Lỗi lưu: ${data.detail || data.message}`);
+        }
+      } catch (err) {
+        alert("Lỗi: " + err.message);
+      }
+    }
+
+    async function loadSnapshots() {
+      try {
+        const res = await fetch('/api/snapshots', {
+          headers: {'X-Master-Pass': authToken}
+        });
+        const data = await res.json();
+        if (data.success) {
+          const list = document.getElementById('snapshotsList');
+          list.innerHTML = '';
+          if (data.snapshots.length === 0) {
+            list.innerHTML = '<div style="color: #9ca3af;">Chưa có bản snapshot nào.</div>';
+            return;
+          }
+          data.snapshots.forEach(s => {
+            const card = document.createElement('div');
+            card.className = 'snapshot-card';
+            card.innerHTML = `
+              <div>
+                <h4>${s.original_path}</h4>
+                <p>Thời gian: ${s.timestamp} | ${s.note}</p>
+              </div>
+              <button class="btn btn-danger" onclick="rollbackSnapshot('${s.id}')">Khôi phục</button>
+            `;
+            list.appendChild(card);
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function rollbackSnapshot(id) {
+      if (!confirm(`Khôi phục file từ bản snapshot ${id}?`)) return;
+      try {
+        const res = await fetch('/api/rollback', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Master-Pass': authToken
+          },
+          body: JSON.stringify({snapshot_id: id})
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(data.message);
+          if (currentPath === data.restored_path) {
+            openFile(currentPath);
+          }
+        }
+      } catch (err) {
+        alert("Lỗi khôi phục: " + err.message);
+      }
+    }
+
+    function switchTab(tab) {
+      document.getElementById('tabEditor').classList.toggle('active', tab === 'editor');
+      document.getElementById('tabDiff').classList.toggle('active', tab === 'diff');
+      document.getElementById('tabSnapshots').classList.toggle('active', tab === 'snapshots');
+
+      document.getElementById('codeEditor').style.display = (tab === 'editor') ? 'block' : 'none';
+      document.getElementById('diffView').style.display = (tab === 'diff') ? 'block' : 'none';
+      document.getElementById('snapshotsList').style.display = (tab === 'snapshots') ? 'block' : 'none';
+
+      if (tab === 'snapshots') loadSnapshots();
+    }
+  </script>
+</body>
+</html>

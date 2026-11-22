@@ -1,0 +1,2524 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMS Analytics - Báo Cáo Thống Kê Đặt Tiệc</title>
+    <!-- Anti-Cache Meta Tags (Strict Cross-Browser Compatibility: Chrome, Edge, CocCoc, Firefox, Safari) -->
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Surrogate-Control" content="no-store">
+
+    <!-- Vendor Libraries (Loaded from Local Server for 10x VPN Speed, with Automatic CDN Fallback) -->
+    <script src="/vendor/tailwind.cdn.js"></script>
+    <script>if (!window.tailwind) { document.write('<script src="https://cdn.tailwindcss.com"><\/script>'); }</script>
+    <script src="/vendor/chart.umd.min.js"></script>
+    <script>if (!window.Chart) { document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"><\/script>'); }</script>
+    <script src="/vendor/lucide.min.js"></script>
+    <script>if (!window.lucide) { document.write('<script src="https://unpkg.com/lucide@latest"><\/script>'); }</script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-header {
+            background: rgba(15, 23, 42, 0.96);
+            backdrop-filter: blur(12px);
+        }
+        .stat-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+        }
+        .tab-btn.active {
+            color: #2563eb;
+            border-bottom: 2px solid #2563eb;
+            font-weight: 700;
+        }
+        .btn-quick-date.active {
+            background-color: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+            font-weight: 600;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                font-size: 11pt !important;
+            }
+            .no-print, header, .filter-section, .tab-nav, .btn-print-action, footer {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            .tab-panel {
+                display: block !important;
+            }
+            .stat-card {
+                border: 1px solid #cbd5e1 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+            }
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                table-layout: auto !important;
+            }
+            th, td {
+                border: 1px solid #cbd5e1 !important;
+                padding: 4px 6px !important;
+                font-size: 8pt !important;
+            }
+            th {
+                background-color: #f1f5f9 !important;
+                color: #0f172a !important;
+                font-size: 7.5pt !important;
+            }
+            /* Co nhỏ và ngắt dòng tự động cho Sảnh Tiệc & Phân Khúc khi in */
+            td:nth-child(5), th:nth-child(5) {
+                max-width: 85px !important;
+                white-space: normal !important;
+                word-break: break-word !important;
+            }
+            td:nth-child(6), th:nth-child(6) {
+                max-width: 110px !important;
+                white-space: normal !important;
+                word-break: break-word !important;
+                font-size: 7.5pt !important;
+                line-height: 1.15 !important;
+            }
+            td:nth-child(4), th:nth-child(4) {
+                max-width: 140px !important;
+                white-space: normal !important;
+                word-break: break-word !important;
+            }
+            .chart-container {
+                max-height: 280px !important;
+                page-break-inside: avoid;
+            }
+            .chart-container canvas {
+                display: none !important;
+            }
+            .chart-print-img {
+                display: block !important;
+                max-width: 100% !important;
+                max-height: 260px !important;
+                margin: 0 auto !important;
+                object-fit: contain !important;
+            }
+            @page {
+                size: A4 landscape;
+                margin: 8mm 6mm;
+            }
+        }
+        .print-only {
+            display: none;
+        }
+    </style>
+
+<style>
+/* CUSTOM HIGH VISIBILITY STICKY SCROLLBAR */
+.custom-scrollbar::-webkit-scrollbar {
+    height: 10px;
+    width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #38bdf8;
+    border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #0284c7;
+}
+</style>
+
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+    <!-- PRINT HEADER (Only visible when printing) -->
+    <div class="print-only mb-6 border-b-2 border-slate-800 pb-4">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-xl font-bold uppercase tracking-wide text-slate-900" id="printHotelTitle">BÁO CÁO TỔNG HỢP TIỆC CƯỚI & SỰ KIỆN</h1>
+                <p class="text-xs text-slate-600">Hệ Thống Quản Lý Sự Kiện & Tiệc Cưới EMS &bull; Báo Cáo Tổng Hợp</p>
+            </div>
+            <div class="text-right text-xs text-slate-600">
+                <p>Ngày in: <strong id="printTimestamp"></strong></p>
+                <p>Tiêu chuẩn: Ban Giám Đốc & Phòng Kinh Doanh Banquet</p>
+            </div>
+        </div>
+        <div class="mt-3 text-xs bg-slate-100 p-2.5 rounded border border-slate-300">
+            <span class="font-bold">Bộ lọc áp dụng:</span>
+            <span id="printFilterSummary">Tất cả thời gian, Tất cả sảnh</span>
+        </div>
+    </div>
+
+    <!-- TOP HEADER -->
+    <header class="glass-header text-white sticky top-0 z-50 border-b border-slate-700/60 shadow-lg px-4 lg:px-8 py-3.5 no-print">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3.5">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center shadow-md shadow-indigo-500/20">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                        EMS Banquet Analytics
+                        <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-medium border border-emerald-500/30 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> SQL Server 2016
+                        </span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Hệ Thống Phân Tích Dữ Liệu & Báo Cáo Doanh Thu Sự Kiện</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+                <a href="#" onclick="window.open('http://' + window.location.hostname + ':8090', '_blank'); return false;" class="px-3.5 py-2 bg-slate-700/80 hover:bg-slate-600 text-slate-200 hover:text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition border border-slate-600/60 shadow-sm">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Về EMS Banquet Web (8090)
+                </a>
+                <!-- PRINT REPORT BUTTON -->
+                <button onclick="triggerPrintReport()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold flex items-center gap-2 shadow-sm transition">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                    <span>In Báo Cáo (Print / PDF)</span>
+                </button>
+                <!-- EXCEL EXPORT BUTTON -->
+                <button id="btnExportExcel" onclick="exportData()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold flex items-center gap-2 shadow-sm transition">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                    <span>Xuất Excel (.xlsx)</span>
+                </button>
+                <!-- REFRESH -->
+                <button onclick="loadAllData()" title="Tải lại dữ liệu" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 rounded-lg text-xs transition">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-[1700px] w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
+
+        <!-- SMART FILTER SECTION (REDESIGNED: 3 CLEAR CARDS) -->
+        <section class="filter-section space-y-3 no-print">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-slate-800 font-bold text-sm">
+                    <i data-lucide="sliders-horizontal" class="w-4 h-4 text-blue-600"></i>
+                    <span>Bộ Lọc Dữ Liệu Theo Nhu Cầu</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="resetFilters()" class="text-xs text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1.5 transition">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                        <span>Đặt lại mặc định</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3 FILTER CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                <!-- CARD 1: THỜI GIAN (CHI TIẾT THEO NGÀY THÁNG) -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                        <div class="flex items-center gap-2 text-xs font-bold text-slate-700 uppercase tracking-wide">
+                            <i data-lucide="calendar" class="w-4 h-4 text-blue-600"></i>
+                            <span>1. Thời Gian Tổ Chức</span>
+                        </div>
+                        <select id="selDateType" onchange="loadAllData()" class="text-[11px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-md px-2 py-0.5 focus:outline-none">
+                            <option value="event">Theo Ngày Tiệc (Event)</option>
+                            <option value="booking">Theo Ngày Tạo (Booking)</option>
+                        </select>
+                    </div>
+
+                    <!-- Date Pickers (Từ ngày -> Đến ngày) -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[11px] font-medium text-slate-500 mb-1">Từ ngày</label>
+                            <input type="date" id="txtDateFrom" onchange="onCustomDateChange()" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-slate-500 mb-1">Đến ngày</label>
+                            <input type="date" id="txtDateTo" onchange="onCustomDateChange()" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Quick Preset Chips -->
+                    <div class="pt-1">
+                        <div class="text-[11px] font-medium text-slate-400 mb-1.5">Chọn nhanh:</div>
+                        <div class="flex flex-wrap gap-1.5">
+                            <button type="button" onclick="setQuickDate('all', this)" class="btn-quick-date active px-2 py-1 text-[11px] rounded-md border border-slate-200 bg-slate-50 hover:bg-slate-100 transition">Tất cả</button>
+                            <button type="button" onclick="setQuickDate('year_2026', this)" class="btn-quick-date px-2 py-1 text-[11px] rounded-md border border-slate-200 bg-slate-50 hover:bg-slate-100 transition">Năm 2026</button>
+                            <button type="button" onclick="setQuickDate('year_2025', this)" class="btn-quick-date px-2 py-1 text-[11px] rounded-md border border-slate-200 bg-slate-50 hover:bg-slate-100 transition">Năm 2025</button>
+                            <button type="button" onclick="setQuickDate('this_month', this)" class="btn-quick-date px-2 py-1 text-[11px] rounded-md border border-slate-200 bg-slate-50 hover:bg-slate-100 transition">Tháng này (T11)</button>
+                            <button type="button" onclick="setQuickDate('next_month', this)" class="btn-quick-date px-2 py-1 text-[11px] rounded-md border border-slate-200 bg-slate-50 hover:bg-slate-100 transition">Tháng 12/2026</button>
+                            <button type="button" onclick="setQuickDate('q4', this)" class="btn-quick-date px-2 py-1 text-[11px] rounded-md border border-slate-200 bg-slate-50 hover:bg-slate-100 transition">Quý 4/2026</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 2: SẢNH TIỆC & TRẠNG THÁI (ĐƯỢC PHÂN TẦNG RÕ RÀNG) -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                    <div class="flex items-center gap-2 pb-2 border-b border-slate-100 text-xs font-bold text-slate-700 uppercase tracking-wide">
+                        <i data-lucide="door-open" class="w-4 h-4 text-emerald-600"></i>
+                        <span>2. Sảnh Tiệc & Trạng Thái</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-500 mb-1">Sảnh Tiệc (Phân theo tầng)</label>
+                        <select id="selHall" onchange="loadAllData()" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <option value="ALL">🏢 Tất cả sảnh (12 sảnh)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-500 mb-1">Trạng Thái Đơn Tiệc</label>
+                        <select id="selStatus" onchange="onAnalyticsStatusSelectChange()" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <option value="ALL">Tất cả trạng thái</option>
+                            <option value="D,T">⚡ Đang hoạt động (Chốt + Giữ chỗ)</option>
+                            <option value="D">✅ Đã chốt hợp đồng (Definite)</option>
+                            <option value="T">⏳ Đang giữ chỗ tạm (Tentative)</option>
+                            <option value="C">❌ Đã hủy (Cancelled)</option>
+                            <option value="A">📝 Thỏa thuận / Hợp đồng (Agreement)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- CARD 3: PHÂN KHÚC THỊ TRƯỜNG & KÊNH TIẾP THỊ (ĐÃ NHÓM GỌN GÀNG) -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                    <div class="flex items-center gap-2 pb-2 border-b border-slate-100 text-xs font-bold text-slate-700 uppercase tracking-wide">
+                        <i data-lucide="target" class="w-4 h-4 text-purple-600"></i>
+                        <span>3. Phân Khúc & Nguồn Khách</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-500 mb-1">Phân Khúc Khách Hàng (Segment)</label>
+                        <select id="selSegment" onchange="loadAllData()" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <option value="ALL">🎯 Tất cả phân khúc</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-500 mb-1">Nguồn Tiếp Thị (Marketing Channel)</label>
+                        <select id="selChannel" onchange="loadAllData()" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <option value="ALL">🌐 Tất cả nguồn tiếp thị</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ACTIVE FILTERS BADGE BAR -->
+            <div id="activeFilterTags" class="text-xs flex flex-wrap items-center gap-2 text-slate-600 py-1">
+                <span class="font-semibold text-slate-500">Đang lọc theo:</span>
+                <span id="tagTime" class="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium border border-blue-200">Tất cả thời gian</span>
+                <span id="tagHall" class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-medium border border-emerald-200">Tất cả sảnh</span>
+                <span id="tagSegment" class="px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 font-medium border border-purple-200">Tất cả phân khúc</span>
+                <span id="tagStatus" class="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 font-medium border border-amber-200">Tất cả trạng thái</span>
+            </div>
+        </section>
+
+        <!-- KPI SUMMARY CARDS -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Doanh Thu -->
+            <div class="stat-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Tổng Doanh Thu</span>
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <i data-lucide="banknote" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div id="kpiRevenue" class="text-2xl font-bold text-slate-900">0 ₫</div>
+                <p class="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                    TB/tiệc: <span id="kpiAvgRev" class="font-semibold text-slate-700">0 ₫</span>
+                </p>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500"></div>
+            </div>
+
+            <!-- Tổng Tiệc & Tỷ Lệ Chốt -->
+            <div class="stat-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Số Lượng Booking</span>
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <i data-lucide="calendar-check" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-2">
+                    <span id="kpiTotalBookings" class="text-2xl font-bold text-slate-900">0</span>
+                    <span class="text-xs text-slate-500">(Chốt: <strong id="kpiConfirmed" class="text-blue-600">0</strong>)</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-1">
+                    Tỷ lệ chốt thành công: <span id="kpiWinRate" class="font-bold text-emerald-600">0%</span>
+                </p>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"></div>
+            </div>
+
+            <!-- Tổng Khách Phục Vụ -->
+            <div class="stat-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Lượng Khách Phục Vụ</span>
+                    <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div id="kpiTotalGuests" class="text-2xl font-bold text-slate-900">0</div>
+                <p class="text-xs text-slate-500 mt-1">
+                    Quy mô TB: <span id="kpiAvgGuests" class="font-semibold text-slate-700">0 khách/tiệc</span>
+                </p>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-indigo-500"></div>
+            </div>
+
+            <!-- Tiền Cọc & Tỷ Lệ Hủy -->
+            <div class="stat-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Đặt Cọc & Hủy Đơn</span>
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div id="kpiTotalDeposit" class="text-xl font-bold text-slate-900">0 ₫</div>
+                <p class="text-xs text-slate-500 mt-1 flex items-center justify-between">
+                    <span>Đã hủy: <strong id="kpiCancelled" class="text-rose-600">0</strong></span>
+                    <span>Tỷ lệ hủy: <strong id="kpiCancelRate" class="text-rose-600">0%</strong></span>
+                </p>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-amber-500"></div>
+            </div>
+        </section>
+
+        <!-- NAVIGATION TABS -->
+        <div class="tab-nav border-b border-slate-200 bg-white rounded-xl px-4 shadow-sm flex items-center overflow-x-auto space-x-6 text-sm font-medium text-slate-600 no-print">
+            <button onclick="switchTab('tabHalls')" id="btnTabHalls" class="tab-btn active py-3.5 flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="door-open" class="w-4 h-4"></i> 1. Thống Kê Theo Sảnh
+            </button>
+            <button onclick="switchTab('tabSegments')" id="btnTabSegments" class="tab-btn py-3.5 flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="pie-chart" class="w-4 h-4"></i> 2. Phân Khúc Thị Trường
+            </button>
+            <button onclick="switchTab('tabChannels')" id="btnTabChannels" class="tab-btn py-3.5 flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="share-2" class="w-4 h-4"></i> 3. Nguồn Tiếp Thị
+            </button>
+            <button onclick="switchTab('tabSales')" id="btnTabSales" class="tab-btn py-3.5 flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="award" class="w-4 h-4"></i> 4. Đội Ngũ Sales
+            </button>
+            <button onclick="switchTab('tabTimeline')" id="btnTabTimeline" class="tab-btn py-3.5 flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="trending-up" class="w-4 h-4"></i> 5. Xu Hướng & Mùa Vụ
+            </button>
+            <button onclick="switchTab('tabServices')" id="btnTabServices" class="tab-btn py-3.5 flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="utensils" class="w-4 h-4"></i> 6. Cơ Cấu Dịch Vụ
+            </button>
+            <button onclick="switchTab('tabBookings')" id="btnTabBookings" class="tab-btn py-3.5 flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="table" class="w-4 h-4"></i> 7. Tra Cứu Đơn Tiệc
+            </button>
+        </div>
+
+        <!-- TAB CONTENT 1: SẢNH TIỆC -->
+        <section id="tabHalls" class="tab-panel space-y-5">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 no-print">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4 text-blue-600"></i>
+                        Doanh Thu Theo Từng Sảnh Tiệc (VNĐ)
+                    </h3>
+                    <div class="h-72 chart-container">
+                        <canvas id="chartHallRevenue"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="layers" class="w-4 h-4 text-indigo-600"></i>
+                        Số Lượng Tiệc Chốt Thành Công vs Đã Hủy
+                    </h3>
+                    <div class="h-72 chart-container">
+                        <canvas id="chartHallBookings"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bảng dữ liệu Sảnh -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800">Bảng Tổng Hợp Chi Tiết Từng Sảnh Tiệc</h3>
+                        <p class="text-xs text-slate-500">Phân theo vị trí tầng và năng lực phục vụ</p>
+                    </div>
+                    <button onclick="triggerPrintReport()" class="no-print text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1">
+                        <i data-lucide="printer" class="w-3.5 h-3.5"></i> In bảng này
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-50 text-slate-700 uppercase font-semibold text-[11px] border-b border-slate-200">
+                            <tr>
+                                <th class="p-3.5">Tên Sảnh</th>
+                                <th class="p-3.5">Vị Trí / Tầng</th>
+                                <th class="p-3.5">Diện Tích</th>
+                                <th class="p-3.5 text-right">Tổng Booking</th>
+                                <th class="p-3.5 text-right">Lượng Khách</th>
+                                <th class="p-3.5 text-right">Chốt Thành Công</th>
+                                <th class="p-3.5 text-right">Tỷ Lệ Chốt</th>
+                                <th class="p-3.5 text-right">Đã Hủy</th>
+                                <th class="p-3.5 text-right">Tổng Doanh Thu</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblHallsBody" class="divide-y divide-slate-100 pb-16"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB CONTENT 2: PHÂN KHÚC THỊ TRƯỜNG (SEGMENTS) -->
+        <section id="tabSegments" class="tab-panel hidden space-y-5">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 no-print">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-600"></i>
+                        Tỷ Trọng Số Lượng Booking Theo Phân Khúc
+                    </h3>
+                    <div class="h-72 chart-container flex items-center justify-center">
+                        <canvas id="chartSegmentDonut"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="banknote" class="w-4 h-4 text-blue-600"></i>
+                        Top Phân Khúc Mang Về Doanh Thu Cao Nhất
+                    </h3>
+                    <div class="h-72 chart-container">
+                        <canvas id="chartSegmentRevenue"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-slate-800">Danh Sách Chi Tiết Từng Phân Khúc (Segment)</h3>
+                    <button onclick="triggerPrintReport()" class="no-print text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1">
+                        <i data-lucide="printer" class="w-3.5 h-3.5"></i> In bảng này
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-50 text-slate-700 uppercase font-semibold text-[11px] border-b border-slate-200">
+                            <tr>
+                                <th class="p-3.5">Mã</th>
+                                <th class="p-3.5">Tên Phân Khúc</th>
+                                <th class="p-3.5">Mô Tả / Ý Nghĩa</th>
+                                <th class="p-3.5 text-right">Tổng Booking</th>
+                                <th class="p-3.5 text-center text-emerald-700">OK / Chốt (D)</th>
+                                <th class="p-3.5 text-center text-rose-700">Đã Hủy (C)</th>
+                                <th class="p-3.5 text-right">Lượng Khách</th>
+                                <th class="p-3.5 text-right">Tổng Doanh Thu</th>
+                                <th class="p-3.5 text-right">Doanh Thu TB / Tiệc</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblSegmentsBody" class="divide-y divide-slate-100 pb-16"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB CONTENT 3: NGUỒN TIẾP THỊ (CHANNELS) -->
+        <section id="tabChannels" class="tab-panel hidden space-y-5">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 no-print">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="target" class="w-4 h-4 text-purple-600"></i>
+                        Hiệu Quả Các Kênh Tiếp Thị (Số Booking)
+                    </h3>
+                    <div class="h-72 chart-container">
+                        <canvas id="chartChannelsBar"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="percent" class="w-4 h-4 text-indigo-600"></i>
+                        Tỷ Lệ Chuyển Đổi Thành Công (%) Của Từng Kênh
+                    </h3>
+                    <div class="h-72 chart-container">
+                        <canvas id="chartChannelsConv"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-slate-800">Hiệu Quả Chi Tiết Từng Kênh Tiếp Thị</h3>
+                    <button onclick="triggerPrintReport()" class="no-print text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1">
+                        <i data-lucide="printer" class="w-3.5 h-3.5"></i> In bảng này
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-50 text-slate-700 uppercase font-semibold text-[11px] border-b border-slate-200">
+                            <tr>
+                                <th class="p-3.5">Kênh</th>
+                                <th class="p-3.5">Nhóm Kênh</th>
+                                <th class="p-3.5">Chi Tiết</th>
+                                <th class="p-3.5 text-right">Tổng Booking</th>
+                                <th class="p-3.5 text-center text-emerald-700">OK / Chốt (D)</th>
+                                <th class="p-3.5 text-center text-rose-700">Đã Hủy (C)</th>
+                                <th class="p-3.5 text-right">Lượng Khách</th>
+                                <th class="p-3.5 text-right">Tỷ Lệ Chuyển Đổi</th>
+                                <th class="p-3.5 text-right">Tổng Doanh Thu</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblChannelsBody" class="divide-y divide-slate-100 pb-16"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB CONTENT 4: SALES TEAM -->
+        <section id="tabSales" class="tab-panel hidden space-y-5">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm no-print">
+                <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i data-lucide="trophy" class="w-4 h-4 text-amber-500"></i>
+                    Bảng Xếp Hạng Doanh Thu Theo Nhân Viên Sales (Top Doanh Số)
+                </h3>
+                <div class="h-80 chart-container">
+                    <canvas id="chartSalesTeam"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-slate-800">Thống Kê Chi Tiết Hiệu Suất Từng Nhân Viên</h3>
+                    <button onclick="triggerPrintReport()" class="no-print text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1">
+                        <i data-lucide="printer" class="w-3.5 h-3.5"></i> In bảng này
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-50 text-slate-700 uppercase font-semibold text-[11px] border-b border-slate-200">
+                            <tr>
+                                <th class="p-3.5">Mã NV</th>
+                                <th class="p-3.5">Họ & Tên</th>
+                                <th class="p-3.5">Chức Vụ</th>
+                                <th class="p-3.5 text-right">Số Booking</th>
+                                <th class="p-3.5 text-center text-emerald-700">OK / Chốt (D)</th>
+                                <th class="p-3.5 text-center text-rose-700">Đã Hủy (C)</th>
+                                <th class="p-3.5 text-right">Khách Phục Vụ</th>
+                                <th class="p-3.5 text-right">Tỷ Lệ Chốt</th>
+                                <th class="p-3.5 text-right">Tổng Doanh Số Đem Về</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblSalesBody" class="divide-y divide-slate-100 pb-16"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB CONTENT 5: TIMELINE & SEASONALITY -->
+        <section id="tabTimeline" class="tab-panel hidden space-y-5">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i data-lucide="line-chart" class="w-4 h-4 text-blue-600"></i>
+                    Biến Động Doanh Thu & Số Tiệc Qua Các Tháng
+                </h3>
+                <div class="h-80 chart-container relative">
+                    <canvas id="chartMonthlyTrend"></canvas>
+                    <img id="imgMonthlyTrend" class="chart-print-img hidden w-full h-auto object-contain mx-auto" alt="Biểu đồ biến động doanh thu theo tháng" />
+                </div>
+                <!-- Bảng số liệu đối soát doanh thu theo tháng -->
+                <div id="tblMonthlyTrendWrapper" class="mt-4 overflow-x-auto"></div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i data-lucide="calendar" class="w-4 h-4 text-indigo-600"></i>
+                    Phân Bổ Lượng Tiệc Theo Các Ngày Trong Tuần (Thứ 2 → Chủ Nhật)
+                </h3>
+                <div class="h-72 chart-container relative">
+                    <canvas id="chartDayOfWeek"></canvas>
+                    <img id="imgDayOfWeek" class="chart-print-img hidden w-full h-auto object-contain mx-auto" alt="Biểu đồ phân bổ lượng tiệc theo thứ trong tuần" />
+                </div>
+                <!-- Bảng số liệu phân bổ ngày trong tuần -->
+                <div id="tblDayOfWeekWrapper" class="mt-4 overflow-x-auto"></div>
+            </div>
+        </section>
+
+        <!-- TAB CONTENT 6: SERVICES & REVENUE BREAKDOWN -->
+        <section id="tabServices" class="tab-panel hidden space-y-5">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 no-print">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-600"></i>
+                        Cơ Cấu Doanh Thu Theo Nhóm Dịch Vụ
+                    </h3>
+                    <div class="h-72 chart-container flex items-center justify-center">
+                        <canvas id="chartServiceCategories"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="flame" class="w-4 h-4 text-rose-500"></i>
+                        Top Dịch Vụ Phụ Thu Có Doanh Số Lớn Nhất
+                    </h3>
+                    <div class="h-72 chart-container">
+                        <canvas id="chartTopServices"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB CONTENT 7: BOOKINGS DRILL-DOWN -->
+        <section id="tabBookings" class="tab-panel hidden space-y-4">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex flex-wrap items-center justify-between gap-3 no-print">
+                <div class="relative flex-1 min-w-[260px]">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+                    <input type="text" id="txtSearch" oninput="debounceSearch()" placeholder="Tìm kiếm theo mã booking, tên khách, số điện thoại, tên sự kiện..." class="w-full text-xs pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600">
+                    <span class="font-bold text-slate-700 mr-1">Tổng cộng: <strong id="lblTotalBookingsCount" class="text-slate-900 font-bold">0</strong> đơn</span>
+                    <!-- MULTI-SELECT CHIPS TRẠNG THÁI (CLICK ĐỂ BẬT / TẮT LỌC TRẠNG THÁI) -->
+                    <button type="button" onclick="toggleAnalyticsStatus('D')" id="chipTab7D" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200 transition cursor-pointer" title="Click để lọc đơn Đã chốt">
+                        <input type="checkbox" id="chkTab7D" checked class="pointer-events-none w-3.5 h-3.5 text-emerald-600 rounded" />
+                        <span><span id="lblConfirmedCount">0</span> Chốt (D)</span>
+                    </button>
+                    <button type="button" onclick="toggleAnalyticsStatus('T')" id="chipTab7T" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300 hover:bg-amber-200 transition cursor-pointer" title="Click để lọc đơn Giữ chỗ">
+                        <input type="checkbox" id="chkTab7T" checked class="pointer-events-none w-3.5 h-3.5 text-amber-600 rounded" />
+                        <span><span id="lblTentativeCount">0</span> Giữ chỗ (T)</span>
+                    </button>
+                    <button type="button" onclick="toggleAnalyticsStatus('C')" id="chipTab7C" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-500 border border-slate-200 hover:bg-rose-50 hover:text-rose-700 transition cursor-pointer" title="Click để lọc đơn Đã hủy">
+                        <input type="checkbox" id="chkTab7C" class="pointer-events-none w-3.5 h-3.5 text-rose-600 rounded" />
+                        <span><span id="lblCancelledCount">0</span> Hủy (C)</span>
+                    </button>
+
+                    <button onclick="exportData()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg flex items-center gap-1.5 transition ml-2 shadow-xs cursor-pointer">
+                        <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
+                        <span id="lblExportAnalyticsBtnText">Xuất Excel</span>
+                    </button>
+                    <button onclick="triggerPrintReport()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg flex items-center gap-1.5 transition ml-1 cursor-pointer">
+                        <i data-lucide="printer" class="w-3.5 h-3.5"></i> In danh sách
+                    </button>
+                </div>
+            </div>
+
+            <!-- THANH TÁC VỤ KHI CHECK CHỌN ĐƠN TIỆC TRÊN BẢNG DRILL-DOWN -->
+            <div id="barAnalyticsSelected" class="hidden p-2.5 bg-blue-50 border border-blue-200 rounded-2xl flex flex-wrap items-center justify-between gap-3 text-xs animate-fadeIn">
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-blue-600 text-white rounded-full font-bold text-xs" id="lblAnalyticsSelectedCount">0</span>
+                    <span class="font-bold text-blue-900">đơn tiệc được chọn để xem / xuất báo cáo chi tiết</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="exportData(true)" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+                        <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
+                        <span>Xuất Excel các đơn đã chọn (<span id="btnExportAnalyticsSelectedCount">0</span>)</span>
+                    </button>
+                    <button type="button" onclick="clearAnalyticsSelection()" class="px-2.5 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg font-semibold transition cursor-pointer">
+                        Bỏ chọn
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden relative">
+                <div class="overflow-x-auto custom-scrollbar" id="bookingsTableWrapper">
+                    <table id="tblBookings" class="w-full text-left text-xs text-slate-600 min-w-[1290px]">
+                        <thead class="bg-slate-50 text-slate-700 uppercase font-bold text-[11px] border-b border-slate-200 sticky top-0 z-10 shadow-xs">
+                            <tr>
+                                <th class="px-2.5 py-2 text-center w-9 whitespace-nowrap">
+                                    <input type="checkbox" id="chkSelectAllAnalytics" onchange="toggleSelectAllAnalytics(this)" title="Chọn tất cả các đơn tiệc hiển thị" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer" />
+                                </th>
+                                <th class="px-2.5 py-2 w-[115px] whitespace-nowrap">Mã Booking</th>
+                                <th class="px-2.5 py-2 w-[95px] whitespace-nowrap">Ngày Tiệc</th>
+                                <th class="px-2.5 py-2 w-[85px] whitespace-nowrap">Ngày Đặt</th>
+                                <th class="px-2.5 py-2 min-w-[170px] max-w-[210px]">Khách Hàng / Đơn Vị</th>
+                                <th class="px-2.5 py-2 w-[105px] max-w-[115px]">Sảnh Tiệc</th>
+                                <th class="px-2.5 py-2 w-[125px] max-w-[135px]">Phân Khúc</th>
+                                <th class="px-2.5 py-2 w-[110px] max-w-[120px]">Người Làm BEO</th>
+                                <th class="px-2.5 py-2 text-center w-[90px] whitespace-nowrap">Trạng Thái</th>
+                                <th class="px-2.5 py-2 text-right w-[50px] whitespace-nowrap">Khách</th>
+                                <th class="px-2.5 py-2 text-right w-[85px] whitespace-nowrap">Cọc (VNĐ)</th>
+                                <th class="px-2.5 py-2 text-right text-emerald-700 font-bold w-[105px] whitespace-nowrap">DT Tiệc</th>
+                                <th class="px-2.5 py-2 text-right text-slate-900 font-bold w-[105px] whitespace-nowrap pr-3">Tổng DT</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblBookingsBody" class="divide-y divide-slate-100 pb-16"></tbody>
+                    </table>
+                </div>
+
+                <!-- STICKY BOTTOM HORIZONTAL SCROLLBAR CONTROLLER -->
+                <div id="stickyBookingsScrollController" class="fixed bottom-0 left-0 right-0 z-20 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white py-2 px-4 border-t border-slate-700 flex items-center justify-between gap-3 shadow-2xl no-print">
+                    <div class="flex items-center gap-2 text-xs font-semibold">
+                        <button type="button" onclick="scrollBookingsTable('left')" class="px-2.5 py-1 bg-white/10 hover:bg-white/20 rounded-lg text-slate-200 flex items-center gap-1 transition">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            <span>Đầu bảng</span>
+                        </button>
+                        <span class="text-[11px] text-slate-300 font-medium hidden sm:inline flex items-center gap-1">
+                            <svg class="w-3 h-3 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                            Kéo thanh cuộn màu xanh để xem đầy đủ cột:
+                        </span>
+                    </div>
+
+                    <!-- Realtime Synced Scrollbar Track -->
+                    <div id="syncedScrollTrack" class="flex-1 overflow-x-auto py-1 custom-scrollbar">
+                        <div id="syncedScrollDummy" class="h-1" style="min-width: 1450px;"></div>
+                    </div>
+
+                    <div class="flex items-center gap-2 text-xs font-semibold">
+                        <button type="button" onclick="scrollBookingsTable('right')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-white font-bold flex items-center gap-1.5 shadow-md shadow-emerald-600/30 transition">
+                            <span>Xem Doanh Thu</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRINT FOOTER & SIGNATURES (Only visible when printing) -->
+        <div class="print-only mt-12 pt-8 border-t border-slate-300">
+            <div class="grid grid-cols-3 text-center text-xs">
+                <div>
+                    <p class="font-bold uppercase">Người Lập Báo Cáo</p>
+                    <p class="text-[10px] text-slate-500 italic mt-0.5">(Ký và ghi rõ họ tên)</p>
+                    <div class="h-20"></div>
+                </div>
+                <div>
+                    <p class="font-bold uppercase">Trưởng Bộ Phận Banquet / Sales</p>
+                    <p class="text-[10px] text-slate-500 italic mt-0.5">(Ký và ghi rõ họ tên)</p>
+                    <div class="h-20"></div>
+                </div>
+                <div>
+                    <p class="font-bold uppercase">Ban Giám Đốc</p>
+                    <p class="text-[10px] text-slate-500 italic mt-0.5">(Ký và đóng dấu)</p>
+                    <div class="h-20"></div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-200 bg-white py-6 mt-12 text-center text-xs text-slate-500 no-print">
+        <p>Hệ thống Thống kê & Phân tích Đặt Tiệc (EMS Analytics) &bull; Dữ liệu đồng bộ trực tiếp từ SQL Server 2016</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let charts = {};
+        let searchTimeout = null;
+
+        function formatVND(num) {
+            if (!num && num !== 0) return '0 ₫';
+            return Math.round(num).toLocaleString('vi-VN') + ' ₫';
+        }
+        function formatNumber(num) {
+            if (!num && num !== 0) return '0';
+            return Math.round(num).toLocaleString('vi-VN');
+        }
+
+        // Print handler & chart rasterization for high-fidelity print
+        function prepareChartsForPrintSync() {
+            const tabTimeline = document.getElementById('tabTimeline');
+            if (!tabTimeline) return;
+            const wasHidden = tabTimeline.classList.contains('hidden');
+            
+            if (wasHidden) {
+                tabTimeline.classList.remove('hidden');
+            }
+            
+            if (charts['chartMonthlyTrend']) {
+                try {
+                    charts['chartMonthlyTrend'].resize();
+                    charts['chartMonthlyTrend'].update('none');
+                    const img1 = document.getElementById('imgMonthlyTrend');
+                    if (img1) {
+                        const d1 = charts['chartMonthlyTrend'].toBase64Image('image/png', 1.0);
+                        if (d1 && d1.length > 100) {
+                            img1.src = d1;
+                            img1.classList.remove('hidden');
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            if (charts['chartDayOfWeek']) {
+                try {
+                    charts['chartDayOfWeek'].resize();
+                    charts['chartDayOfWeek'].update('none');
+                    const img2 = document.getElementById('imgDayOfWeek');
+                    if (img2) {
+                        const d2 = charts['chartDayOfWeek'].toBase64Image('image/png', 1.0);
+                        if (d2 && d2.length > 100) {
+                            img2.src = d2;
+                            img2.classList.remove('hidden');
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            if (wasHidden) {
+                tabTimeline.classList.add('hidden');
+            }
+        }
+
+        async function prepareChartsForPrint() {
+            const tabTimeline = document.getElementById('tabTimeline');
+            if (!tabTimeline) return;
+            const wasHidden = tabTimeline.classList.contains('hidden');
+            
+            // Temporarily unhide so Chart.js has proper layout container dimensions
+            if (wasHidden) {
+                tabTimeline.classList.remove('hidden');
+            }
+            
+            if (charts['chartMonthlyTrend']) {
+                charts['chartMonthlyTrend'].resize();
+                charts['chartMonthlyTrend'].update('none');
+            }
+            if (charts['chartDayOfWeek']) {
+                charts['chartDayOfWeek'].resize();
+                charts['chartDayOfWeek'].update('none');
+            }
+            
+            // Allow Chart.js animation / DOM refresh cycle
+            await new Promise(r => setTimeout(r, 120));
+
+            try {
+                const img1 = document.getElementById('imgMonthlyTrend');
+                if (img1 && charts['chartMonthlyTrend']) {
+                    const d1 = charts['chartMonthlyTrend'].toBase64Image('image/png', 1.0);
+                    if (d1 && d1.length > 100) {
+                        img1.src = d1;
+                        img1.classList.remove('hidden');
+                    }
+                }
+            } catch(e) { console.warn('imgMonthlyTrend prep err:', e); }
+
+            try {
+                const img2 = document.getElementById('imgDayOfWeek');
+                if (img2 && charts['chartDayOfWeek']) {
+                    const d2 = charts['chartDayOfWeek'].toBase64Image('image/png', 1.0);
+                    if (d2 && d2.length > 100) {
+                        img2.src = d2;
+                        img2.classList.remove('hidden');
+                    }
+                }
+            } catch(e) { console.warn('imgDayOfWeek prep err:', e); }
+
+            // Restore hidden class if previously hidden
+            if (wasHidden) {
+                tabTimeline.classList.add('hidden');
+            }
+        }
+
+        window.addEventListener('beforeprint', prepareChartsForPrintSync);
+
+        // Print handler
+        async function triggerPrintReport() {
+            // Update print header
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('vi-VN') + ' ' + now.toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('printTimestamp').textContent = dateStr;
+
+            // Summary text
+            const fSummary = [];
+            const dFrom = document.getElementById('txtDateFrom').value;
+            const dTo = document.getElementById('txtDateTo').value;
+            const dType = document.getElementById('selDateType').value === 'event' ? 'Ngày Tiệc' : 'Ngày Đặt';
+            
+            if (dFrom && dTo) {
+                fSummary.push(`${dType}: từ ${dFrom} đến ${dTo}`);
+            } else if (dFrom) {
+                fSummary.push(`${dType}: từ ${dFrom}`);
+            } else if (dTo) {
+                fSummary.push(`${dType}: đến ${dTo}`);
+            } else {
+                fSummary.push(`${dType}: Toàn bộ thời gian`);
+            }
+
+            const selHall = document.getElementById('selHall');
+            if (selHall && selHall.value !== 'ALL') fSummary.push(`Sảnh: ${selHall.options[selHall.selectedIndex].text}`);
+
+            const selSegment = document.getElementById('selSegment');
+            if (selSegment && selSegment.value !== 'ALL') fSummary.push(`Phân khúc: ${selSegment.options[selSegment.selectedIndex].text}`);
+
+            const selStatus = document.getElementById('selStatus');
+            if (selStatus && selStatus.value !== 'ALL') fSummary.push(`Trạng thái: ${selStatus.options[selStatus.selectedIndex].text}`);
+
+            document.getElementById('printFilterSummary').textContent = fSummary.join(' | ');
+
+            // Ensure charts are rendered to high-res images before opening print dialog
+            await prepareChartsForPrint();
+
+            window.print();
+        }
+
+        // Tab switcher
+        function switchTab(tabId) {
+            const bottomCtrl = document.getElementById('stickyBookingsScrollController');
+            if (bottomCtrl) {
+                if (tabId === 'tabBookings') {
+                    bottomCtrl.classList.remove('hidden');
+                    setTimeout(initStickyTableScroll, 100);
+                } else {
+                    bottomCtrl.classList.add('hidden');
+                }
+            }
+            document.querySelectorAll('.tab-panel').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.remove('hidden');
+            const btn = document.getElementById('btn' + tabId.charAt(0).toUpperCase() + tabId.slice(1));
+            if (btn) btn.classList.add('active');
+
+            if (tabId === 'tabTimeline') {
+                setTimeout(() => {
+                    if (charts['chartMonthlyTrend']) charts['chartMonthlyTrend'].resize();
+                    if (charts['chartDayOfWeek']) charts['chartDayOfWeek'].resize();
+                }, 50);
+            }
+            
+            lucide.createIcons();
+        }
+
+        // Quick Date presets
+        function setQuickDate(type, btnElement) {
+            document.querySelectorAll('.btn-quick-date').forEach(el => el.classList.remove('active'));
+            if (btnElement) btnElement.classList.add('active');
+
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = now.getMonth() + 1;
+
+            const pad = n => n < 10 ? '0' + n : n;
+
+            if (type === 'all') {
+                document.getElementById('txtDateFrom').value = '';
+                document.getElementById('txtDateTo').value = '';
+            } else if (type === 'year_2026') {
+                document.getElementById('txtDateFrom').value = '2026-01-01';
+                document.getElementById('txtDateTo').value = '2026-12-31';
+            } else if (type === 'year_2025') {
+                document.getElementById('txtDateFrom').value = '2025-01-01';
+                document.getElementById('txtDateTo').value = '2025-12-31';
+            } else if (type === 'this_month') {
+                // November 2026
+                document.getElementById('txtDateFrom').value = '2026-11-01';
+                document.getElementById('txtDateTo').value = '2026-11-30';
+            } else if (type === 'next_month') {
+                // December 2026
+                document.getElementById('txtDateFrom').value = '2026-12-01';
+                document.getElementById('txtDateTo').value = '2026-12-31';
+            } else if (type === 'q4') {
+                document.getElementById('txtDateFrom').value = '2026-10-01';
+                document.getElementById('txtDateTo').value = '2026-12-31';
+            }
+
+            updateFilterBadges();
+            loadAllData();
+        }
+
+        function onCustomDateChange() {
+            document.querySelectorAll('.btn-quick-date').forEach(el => el.classList.remove('active'));
+            updateFilterBadges();
+            loadAllData();
+        }
+
+        function updateFilterBadges() {
+            const dFrom = document.getElementById('txtDateFrom').value;
+            const dTo = document.getElementById('txtDateTo').value;
+            const dType = document.getElementById('selDateType').value === 'event' ? 'Tiệc' : 'Đặt';
+
+            if (dFrom && dTo) {
+                document.getElementById('tagTime').textContent = `${dType}: ${dFrom} -> ${dTo}`;
+            } else if (dFrom) {
+                document.getElementById('tagTime').textContent = `${dType}: từ ${dFrom}`;
+            } else if (dTo) {
+                document.getElementById('tagTime').textContent = `${dType}: đến ${dTo}`;
+            } else {
+                document.getElementById('tagTime').textContent = 'Tất cả thời gian';
+            }
+
+            const selHall = document.getElementById('selHall');
+            document.getElementById('tagHall').textContent = selHall.value === 'ALL' ? 'Tất cả sảnh' : selHall.options[selHall.selectedIndex].text.split('(')[0].trim();
+
+            const selSegment = document.getElementById('selSegment');
+            document.getElementById('tagSegment').textContent = selSegment.value === 'ALL' ? 'Tất cả phân khúc' : selSegment.options[selSegment.selectedIndex].text.split('(')[0].trim();
+
+            const selStatus = document.getElementById('selStatus');
+            document.getElementById('tagStatus').textContent = selStatus.options[selStatus.selectedIndex].text;
+        }
+
+        // Multi-select status chips logic for Analytics
+        function onAnalyticsStatusSelectChange() {
+            const val = document.getElementById('selStatus').value;
+            const chkD = document.getElementById('chkTab7D');
+            const chkT = document.getElementById('chkTab7T');
+            const chkC = document.getElementById('chkTab7C');
+
+            if (val === 'ALL') {
+                if (chkD) chkD.checked = true;
+                if (chkT) chkT.checked = true;
+                if (chkC) chkC.checked = true;
+            } else if (val === 'D,T') {
+                if (chkD) chkD.checked = true;
+                if (chkT) chkT.checked = true;
+                if (chkC) chkC.checked = false;
+            } else if (val === 'D') {
+                if (chkD) chkD.checked = true;
+                if (chkT) chkT.checked = false;
+                if (chkC) chkC.checked = false;
+            } else if (val === 'T') {
+                if (chkD) chkD.checked = false;
+                if (chkT) chkT.checked = true;
+                if (chkC) chkC.checked = false;
+            } else if (val === 'C') {
+                if (chkD) chkD.checked = false;
+                if (chkT) chkT.checked = false;
+                if (chkC) chkC.checked = true;
+            }
+            toggleAnalyticsStatus('SYNC_ONLY');
+        }
+
+        function toggleAnalyticsStatus(code) {
+            let chk = null;
+            if (code === 'D') chk = document.getElementById('chkTab7D');
+            else if (code === 'T') chk = document.getElementById('chkTab7T');
+            else if (code === 'C') chk = document.getElementById('chkTab7C');
+
+            if (chk) chk.checked = !chk.checked;
+
+            const isD = document.getElementById('chkTab7D') ? document.getElementById('chkTab7D').checked : true;
+            const isT = document.getElementById('chkTab7T') ? document.getElementById('chkTab7T').checked : true;
+            const isC = document.getElementById('chkTab7C') ? document.getElementById('chkTab7C').checked : false;
+
+            const chipD = document.getElementById('chipTab7D');
+            const chipT = document.getElementById('chipTab7T');
+            const chipC = document.getElementById('chipTab7C');
+
+            if (chipD) {
+                chipD.className = isD 
+                    ? 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200 transition cursor-pointer shadow-xs'
+                    : 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-400 border border-slate-200 hover:bg-emerald-50 hover:text-emerald-700 transition cursor-pointer opacity-70';
+            }
+            if (chipT) {
+                chipT.className = isT
+                    ? 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300 hover:bg-amber-200 transition cursor-pointer shadow-xs'
+                    : 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-400 border border-slate-200 hover:bg-amber-50 hover:text-amber-700 transition cursor-pointer opacity-70';
+            }
+            if (chipC) {
+                chipC.className = isC
+                    ? 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-300 hover:bg-rose-200 transition cursor-pointer shadow-xs'
+                    : 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-400 border border-slate-200 hover:bg-rose-50 hover:text-rose-700 transition cursor-pointer opacity-70';
+            }
+
+            const selStatus = document.getElementById('selStatus');
+            if (selStatus) {
+                if (isD && isT && isC) selStatus.value = 'ALL';
+                else if (isD && isT && !isC) selStatus.value = 'D,T';
+                else if (isD && !isT && !isC) selStatus.value = 'D';
+                else if (!isD && isT && !isC) selStatus.value = 'T';
+                else if (!isD && !isT && isC) selStatus.value = 'C';
+                else selStatus.value = 'ALL';
+            }
+
+            updateFilterBadges();
+            loadAllData();
+        }
+
+        function getAnalyticsEffectiveStatus() {
+            const chkD = document.getElementById('chkTab7D');
+            const chkT = document.getElementById('chkTab7T');
+            const chkC = document.getElementById('chkTab7C');
+
+            if (chkD || chkT || chkC) {
+                const isD = chkD ? chkD.checked : true;
+                const isT = chkT ? chkT.checked : true;
+                const isC = chkC ? chkC.checked : false;
+
+                const sel = [];
+                if (isD) sel.push('D');
+                if (isT) sel.push('T');
+                if (isC) sel.push('C');
+                if (sel.length === 0 || sel.length === 3) return 'ALL';
+                return sel.join(',');
+            }
+            return document.getElementById('selStatus').value;
+        }
+
+        function toggleSelectAllAnalytics(masterCb) {
+            const cbs = document.querySelectorAll('.chk-analytics-row');
+            cbs.forEach(cb => cb.checked = masterCb.checked);
+            updateAnalyticsSelectedUI();
+        }
+
+        function updateAnalyticsSelectedUI() {
+            const checkedBoxes = Array.from(document.querySelectorAll('.chk-analytics-row:checked'));
+            const count = checkedBoxes.length;
+
+            const bar = document.getElementById('barAnalyticsSelected');
+            const lblCount = document.getElementById('lblAnalyticsSelectedCount');
+            const btnCount = document.getElementById('btnExportAnalyticsSelectedCount');
+            const btnText = document.getElementById('lblExportAnalyticsBtnText');
+            const masterCb = document.getElementById('chkSelectAllAnalytics');
+
+            if (lblCount) lblCount.textContent = count;
+            if (btnCount) btnCount.textContent = count;
+
+            if (count > 0) {
+                if (bar) bar.classList.remove('hidden');
+                if (btnText) btnText.textContent = `Xuất Excel (${count} đơn chọn)`;
+            } else {
+                if (bar) bar.classList.add('hidden');
+                if (btnText) btnText.textContent = 'Xuất Excel';
+            }
+
+            const totalRows = document.querySelectorAll('.chk-analytics-row').length;
+            if (masterCb) {
+                masterCb.checked = (totalRows > 0 && count === totalRows);
+                masterCb.indeterminate = (count > 0 && count < totalRows);
+            }
+        }
+
+        function clearAnalyticsSelection() {
+            const cbs = document.querySelectorAll('.chk-analytics-row');
+            cbs.forEach(cb => cb.checked = false);
+            const masterCb = document.getElementById('chkSelectAllAnalytics');
+            if (masterCb) masterCb.checked = false;
+            updateAnalyticsSelectedUI();
+        }
+
+        // Filter params builder
+        function getFilterParams() {
+            const p = new URLSearchParams();
+            const dateType = document.getElementById('selDateType').value;
+            const dFrom = document.getElementById('txtDateFrom').value;
+            const dTo = document.getElementById('txtDateTo').value;
+            const h = document.getElementById('selHall').value;
+            const s = document.getElementById('selSegment').value;
+            const c = document.getElementById('selChannel').value;
+            const st = getAnalyticsEffectiveStatus();
+            const q = document.getElementById('txtSearch') ? document.getElementById('txtSearch').value : '';
+
+            p.append('date_type', dateType);
+            if (dFrom) p.append('date_from', dFrom);
+            if (dTo) p.append('date_to', dTo);
+            if (h && h !== 'ALL') p.append('hall', h);
+            if (s && s !== 'ALL') p.append('segment', s);
+            if (c && c !== 'ALL') p.append('channel', c);
+            if (st && st !== 'ALL') p.append('status', st);
+            if (q) p.append('search', q);
+
+            return p.toString();
+        }
+
+        function resetFilters() {
+            document.getElementById('selDateType').value = 'event';
+            document.getElementById('txtDateFrom').value = '';
+            document.getElementById('txtDateTo').value = '';
+            document.getElementById('selHall').value = 'ALL';
+            document.getElementById('selSegment').value = 'ALL';
+            document.getElementById('selChannel').value = 'ALL';
+            document.getElementById('selStatus').value = 'ALL';
+            if (document.getElementById('txtSearch')) document.getElementById('txtSearch').value = '';
+
+            const chkD = document.getElementById('chkTab7D');
+            const chkT = document.getElementById('chkTab7T');
+            const chkC = document.getElementById('chkTab7C');
+            if (chkD) chkD.checked = true;
+            if (chkT) chkT.checked = true;
+            if (chkC) chkC.checked = false;
+            toggleAnalyticsStatus('RESET_ONLY');
+
+            document.querySelectorAll('.btn-quick-date').forEach(el => el.classList.remove('active'));
+            document.querySelector('.btn-quick-date').classList.add('active');
+
+            clearAnalyticsSelection();
+            updateFilterBadges();
+            loadAllData();
+        }
+
+        function debounceSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                loadBookingsTable();
+            }, 300);
+        }
+
+        // Hỗ trợ xuất Excel theo toàn bộ bộ lọc hoặc chỉ các dòng được check chọn
+        function exportData(forceOnlySelected = false) {
+            const checkedBoxes = Array.from(document.querySelectorAll('.chk-analytics-row:checked'));
+            const hasSelected = checkedBoxes.length > 0;
+
+            if (forceOnlySelected || hasSelected) {
+                const bookIds = checkedBoxes.map(cb => cb.value.trim()).filter(id => id);
+                if (bookIds.length === 0) {
+                    alert('Vui lòng tick chọn ít nhất một đơn tiệc trong bảng để xuất!');
+                    return;
+                }
+                window.open('/api/export?book_ids=' + encodeURIComponent(bookIds.join(',')), '_blank');
+            } else {
+                const qs = getFilterParams();
+                window.open('/api/export?' + qs, '_blank');
+            }
+        }
+
+        // Initialize Filter Dropdowns with clean Optgroups & Counts
+        async function initFilters() {
+            try {
+                const res = await fetch('/api/filters');
+                const data = await res.json();
+
+                // 1. Halls (Grouped by Floor)
+                const selHall = document.getElementById('selHall');
+                const hallGroups = {};
+                data.halls.forEach(h => {
+                    if (!hallGroups[h.group]) hallGroups[h.group] = [];
+                    hallGroups[h.group].push(h);
+                });
+
+                for (const grpName in hallGroups) {
+                    const optGroup = document.createElement('optgroup');
+                    optGroup.label = grpName;
+                    hallGroups[grpName].forEach(h => {
+                        const opt = document.createElement('option');
+                        opt.value = h.code;
+                        opt.textContent = `${h.name} (${h.count} tiệc - ${h.size ? h.size + 'm²' : h.area})`;
+                        optGroup.appendChild(opt);
+                    });
+                    selHall.appendChild(optGroup);
+                }
+
+                // 2. Segments (Grouped by Category with counts)
+                const selSegment = document.getElementById('selSegment');
+                const segGroups = {};
+                data.segments.forEach(s => {
+                    if (!segGroups[s.group]) segGroups[s.group] = [];
+                    segGroups[s.group].push(s);
+                });
+
+                // Defined order of groups
+                const preferredOrder = [
+                    "⭐ Tiệc Cưới & Sự Kiện Trọng Điểm",
+                    "✈️ Khách Đoàn Du Lịch (Inbound & Tour)",
+                    "🏢 Khối Doanh Nghiệp & Thương Mại",
+                    "🏛️ Cơ Quan, Giáo Dục & Y Tế",
+                    "📁 Các Ngành Khác"
+                ];
+
+                preferredOrder.forEach(grpName => {
+                    if (segGroups[grpName] && segGroups[grpName].length > 0) {
+                        const optGroup = document.createElement('optgroup');
+                        optGroup.label = grpName;
+                        segGroups[grpName].forEach(s => {
+                            const opt = document.createElement('option');
+                            opt.value = s.code;
+                            const countText = s.count > 0 ? ` (${s.count} tiệc)` : '';
+                            opt.textContent = s.name + countText;
+                            optGroup.appendChild(opt);
+                        });
+                        selSegment.appendChild(optGroup);
+                    }
+                });
+
+                // 3. Channels (Grouped by Direct, Digital, Partner)
+                const selChannel = document.getElementById('selChannel');
+                const chanGroups = {};
+                data.channels.forEach(c => {
+                    if (!chanGroups[c.group]) chanGroups[c.group] = [];
+                    chanGroups[c.group].push(c);
+                });
+
+                for (const grpName in chanGroups) {
+                    const optGroup = document.createElement('optgroup');
+                    optGroup.label = grpName;
+                    chanGroups[grpName].forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.code;
+                        const countText = c.count > 0 ? ` (${c.count} tiệc)` : '';
+                        opt.textContent = `${c.name} - ${c.note || 'Kênh'}${countText}`;
+                        optGroup.appendChild(opt);
+                    });
+                    selChannel.appendChild(optGroup);
+                }
+
+            } catch (err) {
+                console.error('Lỗi khởi tạo bộ lọc:', err);
+            }
+        }
+
+        // Load all data
+        async function loadAllData() {
+            updateFilterBadges();
+            await Promise.all([
+                loadSummary(),
+                loadHallStats(),
+                loadSegmentStats(),
+                loadChannelStats(),
+                loadSalesStats(),
+                loadTimelineStats(),
+                loadServiceStats(),
+                loadBookingsTable()
+            ]);
+            lucide.createIcons();
+        }
+
+        // 1. KPI Summary
+        async function loadSummary() {
+            try {
+                const res = await fetch('/api/summary?' + getFilterParams());
+                const d = await res.json();
+                document.getElementById('kpiRevenue').textContent = formatVND(d.total_revenue);
+                document.getElementById('kpiAvgRev').textContent = formatVND(d.avg_revenue_per_booking);
+                document.getElementById('kpiTotalBookings').textContent = formatNumber(d.total_bookings);
+                document.getElementById('kpiConfirmed').textContent = formatNumber(d.confirmed_bookings);
+                document.getElementById('kpiWinRate').textContent = d.win_rate + '%';
+                document.getElementById('kpiTotalGuests').textContent = formatNumber(d.total_guests);
+                document.getElementById('kpiAvgGuests').textContent = Math.round(d.avg_guests_per_booking) + ' khách/tiệc';
+                document.getElementById('kpiTotalDeposit').textContent = formatVND(d.total_deposit);
+                document.getElementById('kpiCancelled').textContent = formatNumber(d.cancelled_bookings);
+                document.getElementById('kpiCancelRate').textContent = d.cancel_rate + '%';
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // 2. Hall stats
+        async function loadHallStats() {
+            try {
+                const res = await fetch('/api/stats/halls?' + getFilterParams());
+                const data = await res.json();
+
+                const tbody = document.getElementById('tblHallsBody');
+                tbody.innerHTML = '';
+                data.forEach(h => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
+                    tr.innerHTML = `
+                        <td class="p-3.5 font-bold text-slate-800">${h.name}</td>
+                        <td class="p-3.5">${h.floor || '-'}</td>
+                        <td class="p-3.5">${h.area_m2 ? h.area_m2 + ' m²' : '-'}</td>
+                        <td class="p-3.5 text-right font-semibold">${formatNumber(h.total_bookings)}</td>
+                        <td class="p-3.5 text-right">${formatNumber(h.total_guests)}</td>
+                        <td class="p-3.5 text-right text-emerald-600 font-semibold">${formatNumber(h.confirmed_count)}</td>
+                        <td class="p-3.5 text-right font-medium text-emerald-600">${h.win_rate}%</td>
+                        <td class="p-3.5 text-right text-rose-600 font-semibold">${formatNumber(h.cancelled_count)}</td>
+                        <td class="p-3.5 text-right font-bold text-slate-900">${formatVND(h.total_revenue)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                renderChart('chartHallRevenue', 'bar', {
+                    labels: data.map(d => d.name),
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: data.map(d => d.total_revenue),
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 6
+                    }]
+                }, {
+                    scales: {
+                        y: { ticks: { callback: v => (v / 1e9).toFixed(1) + ' tỷ' } }
+                    }
+                });
+
+                renderChart('chartHallBookings', 'bar', {
+                    labels: data.map(d => d.name),
+                    datasets: [
+                        {
+                            label: 'Chốt thành công (Definite)',
+                            data: data.map(d => d.confirmed_count),
+                            backgroundColor: '#10b981',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Đã hủy (Cancelled)',
+                            data: data.map(d => d.cancelled_count),
+                            backgroundColor: '#f43f5e',
+                            borderRadius: 6
+                        }
+                    ]
+                }, {
+                    scales: { x: { stacked: true }, y: { stacked: true } }
+                });
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // 3. Segment stats
+        async function loadSegmentStats() {
+            try {
+                const res = await fetch('/api/stats/segments?' + getFilterParams());
+                const data = await res.json();
+
+                const tbody = document.getElementById('tblSegmentsBody');
+                tbody.innerHTML = '';
+                data.forEach(s => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
+                    tr.innerHTML = `
+                        <td class="p-3.5 font-mono text-xs text-blue-600">${s.code}</td>
+                        <td class="p-3.5 font-bold text-slate-800">${s.name}</td>
+                        <td class="p-3.5 text-slate-500">${s.desc || '-'}</td>
+                        <td class="p-3.5 text-right font-semibold">${formatNumber(s.total_bookings)}</td>
+                        <td class="p-3.5 text-center"><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-700">${formatNumber(s.confirmed_count || 0)}</span></td>
+                        <td class="p-3.5 text-center">${(s.cancelled_count || 0) > 0 ? `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-700">${formatNumber(s.cancelled_count)}</span>` : '<span class="text-slate-300 font-mono">0</span>'}</td>
+                        <td class="p-3.5 text-right">${formatNumber(s.total_guests)}</td>
+                        <td class="p-3.5 text-right font-bold text-slate-900">${formatVND(s.total_revenue)}</td>
+                        <td class="p-3.5 text-right font-medium text-slate-700">${formatVND(s.avg_revenue)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                const top7 = data.slice(0, 7);
+                renderChart('chartSegmentDonut', 'doughnut', {
+                    labels: top7.map(d => d.name),
+                    datasets: [{
+                        data: top7.map(d => d.total_bookings),
+                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#64748b']
+                    }]
+                }, {
+                    plugins: { legend: { position: 'right' } }
+                });
+
+                renderChart('chartSegmentRevenue', 'bar', {
+                    labels: top7.map(d => d.name),
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: top7.map(d => d.total_revenue),
+                        backgroundColor: '#10b981',
+                        borderRadius: 6
+                    }]
+                }, {
+                    scales: {
+                        y: { ticks: { callback: v => (v / 1e9).toFixed(1) + ' tỷ' } }
+                    }
+                });
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // 4. Channel stats
+        async function loadChannelStats() {
+            try {
+                const res = await fetch('/api/stats/channels?' + getFilterParams());
+                const data = await res.json();
+
+                const tbody = document.getElementById('tblChannelsBody');
+                tbody.innerHTML = '';
+                data.forEach(c => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
+                    tr.innerHTML = `
+                        <td class="p-3.5 font-bold text-slate-800">${c.name}</td>
+                        <td class="p-3.5 text-slate-500">${c.group || '-'}</td>
+                        <td class="p-3.5">${c.desc || '-'}</td>
+                        <td class="p-3.5 text-right font-semibold">${formatNumber(c.total_bookings)}</td>
+                        <td class="p-3.5 text-center"><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-700">${formatNumber(c.confirmed_count || 0)}</span></td>
+                        <td class="p-3.5 text-center">${(c.cancelled_count || 0) > 0 ? `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-700">${formatNumber(c.cancelled_count)}</span>` : '<span class="text-slate-300 font-mono">0</span>'}</td>
+                        <td class="p-3.5 text-right">${formatNumber(c.total_guests)}</td>
+                        <td class="p-3.5 text-right font-bold text-emerald-600">${c.conv_rate}%</td>
+                        <td class="p-3.5 text-right font-bold text-slate-900">${formatVND(c.total_revenue)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                renderChart('chartChannelsBar', 'bar', {
+                    labels: data.map(d => d.name),
+                    datasets: [{
+                        label: 'Số booking tiếp cận',
+                        data: data.map(d => d.total_bookings),
+                        backgroundColor: '#8b5cf6',
+                        borderRadius: 6
+                    }]
+                });
+
+                renderChart('chartChannelsConv', 'bar', {
+                    labels: data.map(d => d.name),
+                    datasets: [{
+                        label: 'Tỷ lệ chốt thành công (%)',
+                        data: data.map(d => d.conv_rate),
+                        backgroundColor: '#06b6d4',
+                        borderRadius: 6
+                    }]
+                }, {
+                    scales: { y: { max: 100, ticks: { callback: v => v + '%' } } }
+                });
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // 5. Sales stats
+        async function loadSalesStats() {
+            try {
+                const res = await fetch('/api/stats/sales?' + getFilterParams());
+                const data = await res.json();
+
+                const tbody = document.getElementById('tblSalesBody');
+                tbody.innerHTML = '';
+                data.forEach(s => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
+                    tr.innerHTML = `
+                        <td class="p-3.5 font-mono text-xs text-slate-600 font-semibold">${s.code}</td>
+                        <td class="p-3.5 font-bold text-slate-800">${s.name}</td>
+                        <td class="p-3.5 text-slate-500">${s.position || 'Sales Consultant'}</td>
+                        <td class="p-3.5 text-right font-semibold">${formatNumber(s.total_bookings)}</td>
+                        <td class="p-3.5 text-center"><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-700">${formatNumber(s.confirmed_count || 0)}</span></td>
+                        <td class="p-3.5 text-center">${(s.cancelled_count || 0) > 0 ? `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-700">${formatNumber(s.cancelled_count)}</span>` : '<span class="text-slate-300 font-mono">0</span>'}</td>
+                        <td class="p-3.5 text-right">${formatNumber(s.total_guests)}</td>
+                        <td class="p-3.5 text-right font-bold text-emerald-600">${s.win_rate}%</td>
+                        <td class="p-3.5 text-right font-bold text-slate-900">${formatVND(s.total_revenue)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                renderChart('chartSalesTeam', 'bar', {
+                    labels: data.slice(0, 10).map(d => d.name),
+                    datasets: [{
+                        label: 'Doanh thu đem về (VNĐ)',
+                        data: data.slice(0, 10).map(d => d.total_revenue),
+                        backgroundColor: '#f59e0b',
+                        borderRadius: 6
+                    }]
+                }, {
+                    indexAxis: 'y',
+                    scales: { x: { ticks: { callback: v => (v / 1e9).toFixed(1) + ' tỷ' } } }
+                });
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // 6. Timeline stats
+        async function loadTimelineStats() {
+            try {
+                const res = await fetch('/api/stats/timeline?' + getFilterParams());
+                const data = await res.json();
+
+                renderChart('chartMonthlyTrend', 'line', {
+                    labels: data.monthly.map(m => m.label),
+                    datasets: [
+                        {
+                            label: 'Doanh thu (VNĐ)',
+                            data: data.monthly.map(m => m.revenue),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Số lượng Booking',
+                            data: data.monthly.map(m => m.bookings),
+                            borderColor: '#10b981',
+                            backgroundColor: 'transparent',
+                            borderDash: [5, 5],
+                            tension: 0.3,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                }, {
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            ticks: { callback: v => (v / 1e9).toFixed(1) + ' tỷ' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            position: 'right',
+                            grid: { drawOnChartArea: false }
+                        }
+                    }
+                });
+
+                renderChart('chartDayOfWeek', 'bar', {
+                    labels: data.day_of_week.map(d => d.day_name),
+                    datasets: [{
+                        label: 'Số booking được tổ chức',
+                        data: data.day_of_week.map(d => d.bookings),
+                        backgroundColor: ['#f43f5e', '#64748b', '#64748b', '#64748b', '#64748b', '#3b82f6', '#10b981'],
+                        borderRadius: 6
+                    }]
+                });
+
+                // Render bảng số liệu đối soát doanh thu theo tháng
+                const tblMonthWrap = document.getElementById('tblMonthlyTrendWrapper');
+                if (tblMonthWrap) {
+                    if (!data.monthly || data.monthly.length === 0) {
+                        tblMonthWrap.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-2">Không có dữ liệu trong khoảng thời gian này</p>';
+                    } else {
+                        const totBks = data.monthly.reduce((s, m) => s + (m.bookings || 0), 0);
+                        const totGuests = data.monthly.reduce((s, m) => s + (m.guests || 0), 0);
+                        const totRev = data.monthly.reduce((s, m) => s + (m.revenue || 0), 0);
+
+                        let html = `
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+                            <table class="w-full text-xs text-left">
+                                <thead class="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+                                    <tr>
+                                        <th class="py-2.5 px-3">THỜI GIAN (THÁNG)</th>
+                                        <th class="py-2.5 px-3 text-right">SỐ LƯỢNG BOOKING</th>
+                                        <th class="py-2.5 px-3 text-right">LƯỢNG KHÁCH (PAX)</th>
+                                        <th class="py-2.5 px-3 text-right">TỔNG DOANH THU (VNĐ)</th>
+                                        <th class="py-2.5 px-3 text-right">BÌNH QUÂN / TIỆC</th>
+                                        <th class="py-2.5 px-3 text-center">TỶ TRỌNG DT</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">`;
+
+                        data.monthly.forEach((m, idx) => {
+                            const isOdd = idx % 2 === 1;
+                            const avgRev = m.bookings > 0 ? (m.revenue / m.bookings) : 0;
+                            const pctRev = totRev > 0 ? ((m.revenue / totRev) * 100).toFixed(1) : '0.0';
+                            html += `
+                                    <tr class="${isOdd ? 'bg-slate-50/50' : 'bg-white'} hover:bg-slate-100/60 transition">
+                                        <td class="py-2 px-3 font-semibold text-slate-800">${m.label}</td>
+                                        <td class="py-2 px-3 text-right font-medium">${formatNumber(m.bookings)}</td>
+                                        <td class="py-2 px-3 text-right text-slate-600">${formatNumber(m.guests)}</td>
+                                        <td class="py-2 px-3 text-right font-semibold text-emerald-700">${formatVND(m.revenue)}</td>
+                                        <td class="py-2 px-3 text-right text-slate-600">${formatVND(avgRev)}</td>
+                                        <td class="py-2 px-3 text-center font-medium text-blue-600">${pctRev}%</td>
+                                    </tr>`;
+                        });
+
+                        html += `
+                                </tbody>
+                                <tfoot class="bg-slate-100 font-bold border-t-2 border-slate-300 text-slate-900">
+                                    <tr>
+                                        <td class="py-2.5 px-3">TỔNG CỘNG</td>
+                                        <td class="py-2.5 px-3 text-right text-blue-700">${formatNumber(totBks)}</td>
+                                        <td class="py-2.5 px-3 text-right text-slate-800">${formatNumber(totGuests)}</td>
+                                        <td class="py-2.5 px-3 text-right text-emerald-700">${formatVND(totRev)}</td>
+                                        <td class="py-2.5 px-3 text-right text-slate-800">${formatVND(totBks > 0 ? totRev / totBks : 0)}</td>
+                                        <td class="py-2.5 px-3 text-center text-blue-700">100.0%</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>`;
+                        tblMonthWrap.innerHTML = html;
+                    }
+                }
+
+                // Render bảng số liệu phân bổ ngày trong tuần
+                const tblDowWrap = document.getElementById('tblDayOfWeekWrapper');
+                if (tblDowWrap) {
+                    if (!data.day_of_week || data.day_of_week.length === 0) {
+                        tblDowWrap.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-2">Không có dữ liệu trong khoảng thời gian này</p>';
+                    } else {
+                        const totDowBks = data.day_of_week.reduce((s, d) => s + (d.bookings || 0), 0);
+                        const totDowGuests = data.day_of_week.reduce((s, d) => s + (d.guests || 0), 0);
+
+                        let html = `
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+                            <table class="w-full text-xs text-left">
+                                <thead class="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+                                    <tr>
+                                        <th class="py-2.5 px-3">THỨ TRONG TUẦN</th>
+                                        <th class="py-2.5 px-3 text-right">SỐ LƯỢNG BOOKING</th>
+                                        <th class="py-2.5 px-3 text-center">TỶ LỆ BOOKING (%)</th>
+                                        <th class="py-2.5 px-3 text-right">LƯỢNG KHÁCH (PAX)</th>
+                                        <th class="py-2.5 px-3 text-right">QUY MÔ TB / TIỆC</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">`;
+
+                        data.day_of_week.forEach((d, idx) => {
+                            const isOdd = idx % 2 === 1;
+                            const isWeekend = d.day_id === 1 || d.day_id === 7;
+                            const pctBks = totDowBks > 0 ? ((d.bookings / totDowBks) * 100).toFixed(1) : '0.0';
+                            const avgDowPax = d.bookings > 0 ? Math.round(d.guests / d.bookings) : 0;
+                            html += `
+                                    <tr class="${isOdd ? 'bg-slate-50/50' : 'bg-white'} hover:bg-slate-100/60 transition">
+                                        <td class="py-2 px-3 font-semibold ${isWeekend ? 'text-rose-600' : 'text-slate-800'}">
+                                            ${d.day_name} ${isWeekend ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 border border-rose-200 font-normal ml-1">Cuối tuần</span>' : ''}
+                                        </td>
+                                        <td class="py-2 px-3 text-right font-medium">${formatNumber(d.bookings)}</td>
+                                        <td class="py-2 px-3 text-center font-medium text-indigo-600">${pctBks}%</td>
+                                        <td class="py-2 px-3 text-right text-slate-600">${formatNumber(d.guests)}</td>
+                                        <td class="py-2 px-3 text-right text-slate-600">${formatNumber(avgDowPax)} khách</td>
+                                    </tr>`;
+                        });
+
+                        html += `
+                                </tbody>
+                                <tfoot class="bg-slate-100 font-bold border-t-2 border-slate-300 text-slate-900">
+                                    <tr>
+                                        <td class="py-2.5 px-3">TỔNG CỘNG</td>
+                                        <td class="py-2.5 px-3 text-right text-indigo-700">${formatNumber(totDowBks)}</td>
+                                        <td class="py-2.5 px-3 text-center text-indigo-700">100.0%</td>
+                                        <td class="py-2.5 px-3 text-right text-slate-800">${formatNumber(totDowGuests)}</td>
+                                        <td class="py-2.5 px-3 text-right text-slate-800">${totDowBks > 0 ? Math.round(totDowGuests / totDowBks) : 0} khách</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>`;
+                        tblDowWrap.innerHTML = html;
+                    }
+                }
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // 7. Services & Categories
+        async function loadServiceStats() {
+            try {
+                const res = await fetch('/api/stats/services?' + getFilterParams());
+                const data = await res.json();
+
+                renderChart('chartServiceCategories', 'pie', {
+                    labels: data.by_category.map(c => c.group),
+                    datasets: [{
+                        data: data.by_category.map(c => c.total_amount),
+                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899']
+                    }]
+                });
+
+                renderChart('chartTopServices', 'bar', {
+                    labels: data.top_services.slice(0, 8).map(s => s.name),
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: data.top_services.slice(0, 8).map(s => s.amount),
+                        backgroundColor: '#ec4899',
+                        borderRadius: 6
+                    }]
+                }, {
+                    indexAxis: 'y',
+                    scales: { x: { ticks: { callback: v => (v / 1e6).toFixed(0) + ' tr' } } }
+                });
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // 8. Bookings Drill-Down
+        async function loadBookingsTable() {
+            try {
+                const res = await fetch('/api/bookings?' + getFilterParams() + '&limit=100');
+                const data = await res.json();
+
+                document.getElementById('lblTotalBookingsCount').textContent = formatNumber(data.total || 0);
+                if (document.getElementById('lblConfirmedCount')) document.getElementById('lblConfirmedCount').textContent = formatNumber(data.confirmed_count || 0);
+                if (document.getElementById('lblCancelledCount')) document.getElementById('lblCancelledCount').textContent = formatNumber(data.cancelled_count || 0);
+                if (document.getElementById('lblTentativeCount')) document.getElementById('lblTentativeCount').textContent = formatNumber(data.tentative_count || 0);
+                const tbody = document.getElementById('tblBookingsBody');
+                tbody.innerHTML = '';
+
+                // Reset state chọn dòng
+                clearAnalyticsSelection();
+
+                if (!data.items || data.items.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="13" class="p-8 text-center text-slate-400">Không tìm thấy đơn tiệc nào phù hợp bộ lọc.</td></tr>';
+                    return;
+                }
+
+                data.items.forEach(b => {
+                    let statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">Khác</span>';
+                    if (b.status_code === 'D') {
+                        statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-700">Đã chốt (Definite)</span>';
+                    } else if (b.status_code === 'T') {
+                        statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-700">Giữ chỗ (Tentative)</span>';
+                    } else if (b.status_code === 'C') {
+                        statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-100 text-rose-700">Đã hủy (Cancelled)</span>';
+                    }
+
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
+                    tr.innerHTML = `
+                        <!-- 0. CHECKBOX CHỌN DÒNG -->
+                        <td class="px-2.5 py-2 text-center whitespace-nowrap">
+                            <input type="checkbox" class="chk-analytics-row w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer" value="${b.booking_id}" onchange="updateAnalyticsSelectedUI()" />
+                        </td>
+                        <!-- 1. MÃ BOOKING -->
+                        <td class="px-2.5 py-2 font-mono font-bold whitespace-nowrap">
+                            <button type="button" onclick="openBookingDetailModal('${b.booking_id}')" class="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1.5 font-bold group text-left cursor-pointer">
+                                <span>${b.booking_id}</span>
+                                <svg class="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            </button>
+                        </td>
+                        <!-- 2. NGÀY TIỆC -->
+                        <td class="px-2.5 py-2 font-bold text-slate-800 whitespace-nowrap">${b.event_date || '-'}</td>
+                        <!-- 3. NGÀY ĐẶT -->
+                        <td class="px-2.5 py-2 text-slate-500 whitespace-nowrap text-[11px]">${b.booking_date || '-'}</td>
+                        <!-- 4. KHÁCH HÀNG / ĐƠN VỊ -->
+                        <td class="px-2.5 py-2 min-w-[170px] max-w-[210px]">
+                            <div class="font-bold text-slate-800">${b.customer || 'Khách vãng lai'}</div>
+                            <div class="text-[11px] text-slate-400">${b.phone ? 'SĐT: ' + b.phone : ''} ${b.title ? ' - ' + b.title : ''}</div>
+                        </td>
+                        <!-- 5. SẢNH TIỆC -->
+                        <td class="px-2.5 py-2 font-bold text-slate-700 max-w-[110px] break-words whitespace-normal text-[11px] leading-tight">${b.hall_names}</td>
+                        <!-- 6. PHÂN KHÚC -->
+                        <td class="px-2.5 py-2 text-slate-600 max-w-[130px] break-words whitespace-normal text-[11px] leading-tight">${b.segment}</td>
+                        <!-- 7. NGƯỜI LÀM BEO -->
+                        <td class="px-2.5 py-2 max-w-[115px]">
+                            <div class="font-bold text-slate-800 text-[11px] truncate">${b.sales_name || b.sales_code}</div>
+                            ${(b.beo_user_code && b.lock_user_code && b.beo_user_code !== b.lock_user_code) 
+                                ? `<span class="inline-block text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded mt-0.5">Lập BEO (Lock: ${b.lock_user_code})</span>` 
+                                : ''}
+                        </td>
+                        <!-- 8. TRẠNG THÁI -->
+                        <td class="px-2.5 py-2 text-center whitespace-nowrap">${statusBadge}</td>
+                        <!-- 9. KHÁCH -->
+                        <td class="px-2.5 py-2 text-right font-semibold whitespace-nowrap text-[11px]">${formatNumber(b.guests)}</td>
+                        <!-- 10. CỌC (VNĐ) -->
+                        <td class="px-2.5 py-2 text-right text-slate-600 whitespace-nowrap text-[11px]">${formatVND(b.deposit)}</td>
+                        <!-- 11. DT TIỆC -->
+                        <td class="px-2.5 py-2 text-right font-mono font-bold text-emerald-700 whitespace-nowrap text-[11px]">${formatVND(b.banquet_rev !== undefined ? b.banquet_rev : b.total_amount)}</td>
+                        <!-- 12. TỔNG DT -->
+                        <td class="px-2.5 py-2 text-right font-mono font-black text-slate-900 whitespace-nowrap text-[11px] pr-3">${formatVND(b.total_rev !== undefined ? b.total_rev : b.total_amount)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function renderChart(canvasId, type, data, options = {}) {
+            if (charts[canvasId]) {
+                charts[canvasId].destroy();
+            }
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            charts[canvasId] = new Chart(ctx, {
+                type: type,
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', size: 11 } } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed.y !== null && context.parsed.y !== undefined) {
+                                        if (context.dataset.label && context.dataset.label.includes('Doanh thu')) {
+                                            label += formatVND(context.parsed.y);
+                                        } else {
+                                            label += formatNumber(context.parsed.y);
+                                        }
+                                    } else if (context.parsed !== null) {
+                                        label += formatNumber(context.parsed);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    ...options
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await initFilters();
+            await loadAllData();
+        });
+    
+// ==================== COMPREHENSIVE BOOKING DETAIL MODAL LOGIC ====================
+let currentBookingDetail = null;
+
+function switchDetailTab(tabId) {
+    ['tabDtl1', 'tabDtl2', 'tabDtl3', 'tabDtl4'].forEach(t => {
+        const el = document.getElementById(t);
+        if (el) el.classList.toggle('hidden', t !== tabId);
+    });
+    ['tabBtnDtl1', 'tabBtnDtl2', 'tabBtnDtl3', 'tabBtnDtl4'].forEach(b => {
+        const el = document.getElementById(b);
+        if (el) {
+            const isActive = b === ('tabBtn' + tabId.replace('tab', ''));
+            el.className = isActive 
+                ? 'px-4 py-2.5 rounded-t-lg border-b-2 border-blue-600 text-blue-600 bg-white font-bold flex items-center gap-2'
+                : 'px-4 py-2.5 rounded-t-lg border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 font-bold';
+        }
+    });
+}
+
+function resetBookingDetailState(bookingId) {
+    const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    setTxt('dtlBookingId', bookingId || '-');
+    setTxt('dtlTitle', 'Đang tải dữ liệu chi tiết từ SQL Server...');
+    const badge = document.getElementById('dtlStatusBadge');
+    if (badge) {
+        badge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-500/20 text-slate-300 border border-slate-500/30';
+        badge.textContent = 'ĐANG TẢI...';
+    }
+    const eoBadge = document.getElementById('dtlMasterEoBadge');
+    if (eoBadge) {
+        eoBadge.textContent = 'EO: Đang tải...';
+        eoBadge.classList.add('hidden');
+    }
+    setTxt('dtlBanquetRev', 'Đang tải...');
+    setTxt('dtlTotalRev', 'Đang tải...');
+    setTxt('dtlDepositBanner', '0 đ');
+    setTxt('dtlRemainingBalance', 'Đang tải...');
+    setTxt('dtlGuestCode', 'Mã KH: ...');
+    setTxt('dtlCustomerName', 'Đang tải...');
+    setTxt('dtlContactPerson', '-');
+    setTxt('dtlPhone', '-');
+    setTxt('dtlPhoneOffice', '-');
+    setTxt('dtlEmail', '-');
+    setTxt('dtlAddress', '-');
+    setTxt('dtlMst', '-');
+    setTxt('dtlSegmentChannel', '-');
+    setTxt('dtlEventDateBadge', 'Ngày tiệc: ...');
+    setTxt('dtlEventDate', '-');
+    setTxt('dtlBookingDate', '-');
+    setTxt('dtlPax', '-');
+    setTxt('dtlExpPax', '-');
+    setTxt('dtlDeposit', '0 đ');
+    setTxt('dtlDepositNote', '-');
+    setTxt('dtlLockUser', '-');
+    setTxt('dtlBeoUser', '-');
+    setTxt('dtlInternalNote', '-');
+    setTxt('dtlRoomCountBadge', '0');
+    setTxt('dtlChargeCountBadge', '0');
+    const rBody = document.getElementById('dtlRoomsTableBody');
+    if (rBody) rBody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">Đang tải lịch sử dụng sảnh tiệc...</td></tr>';
+    const cBody = document.getElementById('dtlChargesTableBody');
+    if (cBody) cBody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">Đang tải bảng kê chi phí chi tiết...</td></tr>';
+    const dNotes = document.getElementById('dtlDeptNotesContainer');
+    if (dNotes) dNotes.innerHTML = '<p class="col-span-2 text-slate-400 italic">Đang tải chỉ đạo các bộ phận...</p>';
+}
+
+async function openBookingDetailModal(bookingId) {
+    if (!bookingId) return;
+    const modal = document.getElementById('modalBookingDetail');
+    if (!modal) return;
+
+    modal.classList.remove('hidden');
+    switchDetailTab('tabDtl1');
+
+    // Reset clean state immediately to avoid showing stale data from previous booking
+    resetBookingDetailState(bookingId);
+
+    try {
+        const res = await fetch(`/api/booking-detail/${encodeURIComponent(bookingId)}`);
+        if (!res.ok) throw new Error('Không thể tải chi tiết booking');
+        const data = await res.json();
+        currentBookingDetail = data;
+
+        // Header
+        document.getElementById('dtlBookingId').textContent = data.booking_id;
+        document.getElementById('dtlTitle').textContent = data.title || (data.customer_name + ' - Tiệc ' + (data.event_date || ''));
+        
+        const badge = document.getElementById('dtlStatusBadge');
+        if (data.status_code === 'D') {
+            badge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+            badge.textContent = 'ĐÃ CHỐT (DEFINITE)';
+        } else if (data.status_code === 'T') {
+            badge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
+            badge.textContent = 'GIỮ CHỖ (TENTATIVE)';
+        } else if (data.status_code === 'C') {
+            badge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30';
+            badge.textContent = 'ĐÃ HỦY (CANCELLED)';
+        } else {
+            badge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-500/20 text-slate-300 border border-slate-500/30';
+            badge.textContent = data.status_name || 'KHÁC';
+        }
+
+        const eoBadge = document.getElementById('dtlMasterEoBadge');
+        if (data.master_eo) {
+            eoBadge.textContent = 'EO: ' + data.master_eo;
+            eoBadge.classList.remove('hidden');
+        } else {
+            eoBadge.classList.add('hidden');
+        }
+
+        // Tab 1: Customer CRM
+        document.getElementById('dtlGuestCode').textContent = data.guest_code ? 'Mã KH: ' + data.guest_code : '';
+        document.getElementById('dtlCustomerName').textContent = data.customer_name || '-';
+        document.getElementById('dtlContactPerson').textContent = data.contact_person || '-';
+        document.getElementById('dtlPhone').textContent = data.phone || '-';
+        document.getElementById('dtlPhoneOffice').textContent = data.phone_office || '-';
+        document.getElementById('dtlEmail').textContent = data.email || '-';
+        document.getElementById('dtlAddress').textContent = data.address || '-';
+        document.getElementById('dtlMst').textContent = data.mst || '-';
+        document.getElementById('dtlSegmentChannel').textContent = `${data.segment || '-'} • Nguồn: ${data.channel || '-'}`;
+
+        // Tab 1: Booking & Contract
+        document.getElementById('dtlEventDateBadge').textContent = 'Ngày tiệc: ' + (data.event_date || '-');
+        document.getElementById('dtlEventDate').textContent = data.event_date || '-';
+        document.getElementById('dtlBookingDate').textContent = data.booking_date || '-';
+        document.getElementById('dtlPax').textContent = (data.pax || 0).toLocaleString('vi-VN') + ' khách';
+        document.getElementById('dtlExpPax').textContent = (data.exp_pax || 0).toLocaleString('vi-VN') + ' khách';
+        document.getElementById('dtlDeposit').textContent = formatVND(data.deposit);
+        document.getElementById('dtlDepositNote').textContent = data.deposit_note || 'Không có';
+        document.getElementById('dtlLockUser').textContent = data.lock_user_name ? `${data.lock_user_name} (${data.lock_user_code})` : (data.lock_user_code || '-');
+        document.getElementById('dtlBeoUser').textContent = data.beo_user_name ? `${data.beo_user_name} (${data.beo_user_code})` : (data.beo_user_code || '-');
+        document.getElementById('dtlInternalNote').textContent = data.internal_note || 'Không có ghi chú nội bộ.';
+
+        // Financial snapshot cards
+        document.getElementById('dtlBanquetRev').textContent = formatVND(data.banquet_revenue);
+        document.getElementById('dtlTotalRev').textContent = formatVND(data.total_revenue);
+        document.getElementById('dtlDepositBanner').textContent = formatVND(data.deposit);
+        document.getElementById('dtlRemainingBalance').textContent = formatVND(data.remaining_balance);
+
+        // Tab 2: Rooms schedule
+        const roomTbody = document.getElementById('dtlRoomsTableBody');
+        roomTbody.innerHTML = '';
+        document.getElementById('dtlRoomCountBadge').textContent = (data.rooms || []).length;
+        if (!data.rooms || data.rooms.length === 0) {
+            roomTbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">Không có lịch sử dụng sảnh tiệc.</td></tr>';
+        } else {
+            data.rooms.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-800">${r.room_name} <span class="text-[10px] text-slate-400 font-mono">(${r.room_code})</span></td>
+                    <td class="p-3 font-semibold text-slate-700">${r.date}</td>
+                    <td class="p-3 font-mono text-blue-600 font-semibold">${r.time_in || '-'}</td>
+                    <td class="p-3 font-mono text-slate-600 font-semibold">${r.time_out || '-'}</td>
+                    <td class="p-3 text-center font-bold text-slate-800">${(r.pax || 0).toLocaleString('vi-VN')}</td>
+                    <td class="p-3 text-slate-600"><span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[11px] font-medium">${r.function_type || 'Tiệc'}</span></td>
+                `;
+                roomTbody.appendChild(tr);
+            });
+        }
+
+        // Tab 3: Itemized charges breakdown
+        const chargeTbody = document.getElementById('dtlChargesTableBody');
+        chargeTbody.innerHTML = '';
+        document.getElementById('dtlChargeCountBadge').textContent = (data.charges || []).length;
+        if (!data.charges || data.charges.length === 0) {
+            chargeTbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">Không có bảng kê chi phí chi tiết.</td></tr>';
+        } else {
+            data.charges.forEach(ch => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
+                tr.innerHTML = `
+                    <td class="p-3 font-mono font-bold text-slate-500">${ch.charge_code}</td>
+                    <td class="p-3 font-bold text-slate-800">${ch.service_name}</td>
+                    <td class="p-3 text-right font-mono text-slate-600">${formatVND(ch.price)}</td>
+                    <td class="p-3 text-center font-semibold text-slate-700">${(ch.quantity || 0).toLocaleString('vi-VN')}</td>
+                    <td class="p-3 text-right font-mono font-bold text-emerald-600">${formatVND(ch.amount)}</td>
+                    <td class="p-3 text-slate-500 italic text-[11px]">${ch.note || '-'}</td>
+                `;
+                chargeTbody.appendChild(tr);
+            });
+        }
+        document.getElementById('dtlChargesTotalFoot').textContent = formatVND(data.total_revenue);
+
+        // Tab 4: BEO & Dept notes
+        document.getElementById('dtlBeoPreparedBy').textContent = data.prepared_by ? `Prepared: ${data.prepared_by}` : (data.beo_user_name ? `Lập BEO: ${data.beo_user_name}` : 'Chưa lập BEO');
+        document.getElementById('dtlPttt').textContent = data.payment_method || '-';
+        document.getElementById('dtlBillTo').textContent = data.bill_to || data.customer_name || '-';
+        document.getElementById('dtlMenuDetail').textContent = data.menu_detail || 'Chưa cập nhật chi tiết thực đơn.';
+        document.getElementById('dtlBeverage').textContent = data.beverage || 'Chưa cập nhật chi tiết thức uống.';
+        document.getElementById('dtlRoomSetup').textContent = data.room_setup || 'Chưa cập nhật layout xếp sảnh.';
+
+        const deptContainer = document.getElementById('dtlDeptNotesContainer');
+        deptContainer.innerHTML = '';
+        if (!data.department_notes || data.department_notes.length === 0) {
+            deptContainer.innerHTML = '<p class="col-span-2 text-slate-400 italic">Không có chỉ đạo bộ phận riêng biệt.</p>';
+        } else {
+            data.department_notes.forEach(dn => {
+                const card = document.createElement('div');
+                card.className = 'p-3 rounded-lg border border-slate-200 bg-slate-50 space-y-1';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between font-bold text-slate-800">
+                        <span class="text-blue-700">${dn.dept_name}</span>
+                        <span class="text-[10px] text-slate-400 font-mono">${dn.dept_code}</span>
+                    </div>
+                    <p class="text-slate-600 whitespace-pre-line text-[11px]">${dn.note || 'Không có chỉ đạo'}</p>
+                `;
+                deptContainer.appendChild(card);
+            });
+        }
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById('dtlTitle').textContent = 'Lỗi: ' + err.message;
+    }
+}
+
+function closeBookingDetailModal() {
+    const modal = document.getElementById('modalBookingDetail');
+    if (modal) modal.classList.add('hidden');
+}
+
+function printModalBookingDetail() {
+    if (!currentBookingDetail) return;
+    window.print();
+}
+
+
+// ==================== STICKY HORIZONTAL SCROLL SYNC ====================
+function initStickyTableScroll() {
+    const tableWrapper = document.getElementById('bookingsTableWrapper');
+    const scrollTrack = document.getElementById('syncedScrollTrack');
+    const scrollDummy = document.getElementById('syncedScrollDummy');
+    const controller = document.getElementById('stickyBookingsScrollController');
+    const table = document.getElementById('tblBookings');
+
+    if (!tableWrapper || !scrollTrack || !scrollDummy || !table) return;
+
+    function syncDimensions() {
+        const scrollW = tableWrapper.scrollWidth;
+        const clientW = tableWrapper.clientWidth;
+        scrollDummy.style.width = scrollW + 'px';
+        if (scrollW <= clientW + 10) {
+            if (controller) controller.classList.add('hidden');
+        } else {
+            if (controller) controller.classList.remove('hidden');
+        }
+    }
+
+    let isSyncingLeft = false;
+    let isSyncingRight = false;
+
+    tableWrapper.addEventListener('scroll', () => {
+        if (!isSyncingLeft) {
+            isSyncingRight = true;
+            scrollTrack.scrollLeft = tableWrapper.scrollLeft;
+            setTimeout(() => { isSyncingRight = false; }, 50);
+        }
+    });
+
+    scrollTrack.addEventListener('scroll', () => {
+        if (!isSyncingRight) {
+            isSyncingLeft = true;
+            tableWrapper.scrollLeft = scrollTrack.scrollLeft;
+            setTimeout(() => { isSyncingLeft = false; }, 50);
+        }
+    });
+
+    window.addEventListener('resize', syncDimensions);
+    setTimeout(syncDimensions, 300);
+}
+
+function scrollBookingsTable(dir) {
+    const tableWrapper = document.getElementById('bookingsTableWrapper');
+    if (!tableWrapper) return;
+    if (dir === 'left') {
+        tableWrapper.scrollTo({ left: 0, behavior: 'smooth' });
+    } else if (dir === 'right') {
+        tableWrapper.scrollTo({ left: tableWrapper.scrollWidth, behavior: 'smooth' });
+    }
+}
+
+</script>
+
+<!-- MODAL CHI TIẾT TOÀN DIỆN ĐƠN TIỆC (FULL BOOKING DETAIL MODAL) -->
+<div id="modalBookingDetail" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-5xl max-h-[92vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
+        <!-- MODAL HEADER -->
+        <div class="px-6 py-4 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-between border-b border-slate-700">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-600/30 border border-blue-400/30 flex items-center justify-center text-blue-400 font-bold">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span id="dtlBookingId" class="font-mono font-bold text-base text-yellow-400">BOOKING_ID</span>
+                        <span id="dtlStatusBadge" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold">STATUS</span>
+                        <span id="dtlMasterEoBadge" class="px-2 py-0.5 rounded bg-slate-700 text-slate-200 font-mono text-[10px]">EO: -</span>
+                    </div>
+                    <h2 id="dtlTitle" class="text-sm font-semibold text-slate-200 mt-0.5">Tên sự kiện / Tiệc</h2>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="printModalBookingDetail()" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    <span>In phiếu</span>
+                </button>
+                <button type="button" onclick="closeBookingDetailModal()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white flex items-center justify-center transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- MODAL TABS -->
+        <div class="flex border-b border-slate-200 bg-slate-50 px-6 gap-2 pt-2 text-xs font-bold">
+            <button id="tabBtnDtl1" onclick="switchDetailTab('tabDtl1')" class="px-4 py-2.5 rounded-t-lg border-b-2 border-blue-600 text-blue-600 bg-white font-bold flex items-center gap-2">
+                <span>1. Tổng quan & Khách hàng</span>
+            </button>
+            <button id="tabBtnDtl2" onclick="switchDetailTab('tabDtl2')" class="px-4 py-2.5 rounded-t-lg border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
+                <span>2. Lịch sử dụng sảnh tiệc</span>
+                <span id="dtlRoomCountBadge" class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-200 text-slate-700">0</span>
+            </button>
+            <button id="tabBtnDtl3" onclick="switchDetailTab('tabDtl3')" class="px-4 py-2.5 rounded-t-lg border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
+                <span>3. Bảng kê chi phí & Doanh thu</span>
+                <span id="dtlChargeCountBadge" class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-200 text-slate-700">0</span>
+            </button>
+            <button id="tabBtnDtl4" onclick="switchDetailTab('tabDtl4')" class="px-4 py-2.5 rounded-t-lg border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
+                <span>4. Chi tiết BEO & Bộ phận</span>
+            </button>
+        </div>
+
+        <!-- MODAL BODY CONTENT (SCROLLABLE) -->
+        <div class="flex-1 overflow-y-auto p-6 bg-slate-50/50 space-y-6" id="bookingDetailContent">
+            <!-- TAB 1: TỔNG QUAN & KHÁCH HÀNG -->
+            <div id="tabDtl1" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Khách hàng CRM -->
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                            <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                                Thông tin Khách hàng (CRM)
+                            </h3>
+                            <span id="dtlGuestCode" class="text-[11px] font-mono text-slate-400">Mã: -</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-y-2 text-xs">
+                            <div class="col-span-2">
+                                <p class="text-slate-400 text-[11px]">Tên công ty / Đơn vị:</p>
+                                <p id="dtlCustomerName" class="font-bold text-slate-800 text-sm">-</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-400 text-[11px]">Người liên hệ:</p>
+                                <p id="dtlContactPerson" class="font-semibold text-slate-700">-</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-400 text-[11px]">Số điện thoại:</p>
+                                <p id="dtlPhone" class="font-mono font-semibold text-blue-600">-</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-400 text-[11px]">Điện thoại cơ quan:</p>
+                                <p id="dtlPhoneOffice" class="font-mono text-slate-700">-</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-400 text-[11px]">Email:</p>
+                                <p id="dtlEmail" class="text-slate-700">-</p>
+                            </div>
+                            <div class="col-span-2">
+                                <p class="text-slate-400 text-[11px]">Địa chỉ:</p>
+                                <p id="dtlAddress" class="text-slate-700">-</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-400 text-[11px]">Mã số thuế:</p>
+                                <p id="dtlMst" class="font-mono text-slate-700">-</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-400 text-[11px]">Phân khúc / Nguồn:</p>
+                                <p id="dtlSegmentChannel" class="font-semibold text-indigo-700">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thông tin Đặt tiệc & Hợp đồng -->
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                            <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                                Thông tin Đặt Tiệc & Trạng Thái
+                            </h3>
+                            <span id="dtlEventDateBadge" class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[11px]">-</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-y-2 text-xs">
+                            <div>
+                                <p class="text-slate-400 text-[11px]">Ngày tổ chức (Event Date):</p>
+                                <p id="dtlEventDate" class="font-bold text-slate-800">-</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-400 text-[11px]">Ngày tạo đơn (Book Date):</p>
+                                <p id="dtlBookingDate" class="font-semibold text-slate-700">-</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-400 text-[11px]">Số khách dự kiến (Pax):</p>
+                                <p id="dtlPax" class="font-bold text-slate-900 text-sm">-</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-400 text-[11px]">Số khách bảo đảm (EXP):</p>
+                                <p id="dtlExpPax" class="font-semibold text-slate-700">-</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-400 text-[11px]">Tiền đặt cọc:</p>
+                                <p id="dtlDeposit" class="font-mono font-bold text-emerald-600">-</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-400 text-[11px]">Ghi chú đặt cọc:</p>
+                                <p id="dtlDepositNote" class="text-slate-700 italic">-</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-400 text-[11px]">Người khóa sảnh ban đầu:</p>
+                                <p id="dtlLockUser" class="font-semibold text-slate-800">-</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-400 text-[11px]">Người lập BEO (Doanh thu):</p>
+                                <p id="dtlBeoUser" class="font-bold text-blue-700">-</p>
+                            </div>
+                            <div class="col-span-2">
+                                <p class="text-slate-400 text-[11px]">Ghi chú nội bộ:</p>
+                                <p id="dtlInternalNote" class="text-slate-700 bg-slate-50 p-2 rounded border border-slate-100 text-[11px]">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Snapshot Banner -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 p-3 rounded-xl">
+                        <p class="text-[11px] font-semibold text-blue-600 uppercase">Doanh Thu Tiệc (Banquet)</p>
+                        <p id="dtlBanquetRev" class="text-base font-bold font-mono text-blue-900 mt-0.5">0 ₫</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 p-3 rounded-xl">
+                        <p class="text-[11px] font-semibold text-emerald-600 uppercase">Tổng Doanh Thu (Total)</p>
+                        <p id="dtlTotalRev" class="text-base font-bold font-mono text-emerald-900 mt-0.5">0 ₫</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 p-3 rounded-xl">
+                        <p class="text-[11px] font-semibold text-amber-600 uppercase">Đã Đặt Cọc (Deposit)</p>
+                        <p id="dtlDepositBanner" class="text-base font-bold font-mono text-amber-900 mt-0.5">0 ₫</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-rose-50 to-red-50 border border-rose-200 p-3 rounded-xl">
+                        <p class="text-[11px] font-semibold text-rose-600 uppercase">Còn Lại Phải Thu</p>
+                        <p id="dtlRemainingBalance" class="text-base font-bold font-mono text-rose-900 mt-0.5">0 ₫</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: LỊCH SỬ DỤNG SẢNH TIỆC -->
+            <div id="tabDtl2" class="hidden space-y-3">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Danh Sách Sảnh Tiệc & Khung Giờ (stBookFunctionRoom)</h3>
+                        <span class="text-[11px] text-slate-400">Tự động đối chiếu tránh trùng lịch</span>
+                    </div>
+                    <div class="overflow-x-auto rounded-lg border border-slate-100">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead class="bg-slate-50 text-[11px] text-slate-600 uppercase font-bold border-b border-slate-200">
+                                <tr>
+                                    <th class="p-3">Sảnh / Phòng</th>
+                                    <th class="p-3">Ngày</th>
+                                    <th class="p-3">Giờ Vào (In)</th>
+                                    <th class="p-3">Giờ Ra (Out)</th>
+                                    <th class="p-3 text-center">Số Khách</th>
+                                    <th class="p-3">Loại Sự Kiện / Mục Đích</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dtlRoomsTableBody" class="divide-y divide-slate-100 font-medium">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: BẢNG KÊ CHI PHÍ & DOANH THU -->
+            <div id="tabDtl3" class="hidden space-y-3">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Bảng Kê Chi Tiết Dịch Vụ & Biểu Phí (stBooking_Charges)</h3>
+                        <span class="text-[11px] text-emerald-600 font-semibold">Đã gồm VAT & Phí phục vụ</span>
+                    </div>
+                    <div class="overflow-x-auto rounded-lg border border-slate-100">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead class="bg-slate-50 text-[11px] text-slate-600 uppercase font-bold border-b border-slate-200">
+                                <tr>
+                                    <th class="p-3">Mã Phí</th>
+                                    <th class="p-3">Hạng Mục Dịch Vụ</th>
+                                    <th class="p-3 text-right">Đơn Giá</th>
+                                    <th class="p-3 text-center">Số Lượng</th>
+                                    <th class="p-3 text-right">Thành Tiền (VNĐ)</th>
+                                    <th class="p-3">Ghi Chú</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dtlChargesTableBody" class="divide-y divide-slate-100 font-medium">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                            <tfoot class="bg-slate-50 border-t-2 border-slate-200 font-bold text-xs">
+                                <tr>
+                                    <td colspan="4" class="p-3 text-right uppercase text-slate-700">Tổng Cộng Doanh Thu:</td>
+                                    <td id="dtlChargesTotalFoot" class="p-3 text-right font-mono text-emerald-600 text-sm">0 ₫</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: CHI TIẾT BEO & ĐIỀU PHỐI BỘ PHẬN -->
+            <div id="tabDtl4" class="hidden space-y-4">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Lệnh Điều Phối BEO (Master EO)</h3>
+                        <span id="dtlBeoPreparedBy" class="text-[11px] font-semibold text-slate-600">Lập bởi: -</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div>
+                            <p class="text-slate-400 text-[11px]">Hình thức thanh toán (PTTT):</p>
+                            <p id="dtlPttt" class="font-semibold text-slate-800">-</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-400 text-[11px]">Xuất hoá đơn cho (Bill To):</p>
+                            <p id="dtlBillTo" class="font-semibold text-slate-800">-</p>
+                        </div>
+                        <div class="col-span-2">
+                            <p class="text-slate-400 text-[11px]">Chi tiết Thực Đơn (Menu Detail):</p>
+                            <div id="dtlMenuDetail" class="p-2.5 bg-slate-50 rounded-lg border border-slate-100 text-slate-700 whitespace-pre-line text-xs font-serif leading-relaxed">-</div>
+                        </div>
+                        <div>
+                            <p class="text-slate-400 text-[11px]">Thức uống & Phục vụ (Beverage):</p>
+                            <div id="dtlBeverage" class="p-2 bg-slate-50 rounded border border-slate-100 text-slate-700 whitespace-pre-line text-xs">-</div>
+                        </div>
+                        <div>
+                            <p class="text-slate-400 text-[11px]">Setup Phòng / Sảnh (Room Setup):</p>
+                            <div id="dtlRoomSetup" class="p-2 bg-slate-50 rounded border border-slate-100 text-slate-700 whitespace-pre-line text-xs">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Department Notes -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-2">Chỉ Đạo & Lưu Ý Các Bộ Phận (stSKLK_Notes)</h3>
+                    <div id="dtlDeptNotesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL FOOTER -->
+        <div class="px-6 py-3 bg-white border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Dữ liệu đồng bộ trực tiếp từ Cơ sở dữ liệu EMS Banquet</span>
+            </div>
+            <button type="button" onclick="closeBookingDetailModal()" class="px-5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-bold transition">Đóng</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ==================== AUTO-UPDATE / ANTI-STALE-CACHE ENGINE ====================
+const CURRENT_APP_VERSION = "2026.11.20.02";
+
+async function checkAppVersion() {
+    try {
+        const res = await fetch('/api/system/version?t=' + Date.now(), { cache: 'no-store' });
+        if (res.ok) {
+            const data = await res.json();
+            if (data && data.app_version && data.app_version !== CURRENT_APP_VERSION) {
+                console.log(`[AutoUpdate] New version detected: ${data.app_version} (Current: ${CURRENT_APP_VERSION}). Refreshing...`);
+                sessionStorage.clear();
+                window.location.reload(true);
+            }
+        }
+    } catch (e) {}
+}
+
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        checkAppVersion();
+    }
+});
+setInterval(checkAppVersion, 180000);
+</script>
+</body>
+</html>

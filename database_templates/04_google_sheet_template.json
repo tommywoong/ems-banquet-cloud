@@ -1,0 +1,4525 @@
+{
+  "version": "3.0",
+  "description": "Pure Google Sheets Provider Template cho EMS Banquet - Chuẩn Doanh Nghiệp MerPerle / Khải Vy Hotel",
+  "total_sheets": 38,
+  "sheets": {
+    "stUser": {
+      "title": "Tài khoản người dùng (stUser)",
+      "description": "Danh sách tài khoản nhân viên, quản trị, mật khẩu và quyền hạn",
+      "is_master_data": true,
+      "columns": [
+        "fcUserName",
+        "fcFullName",
+        "fcDept",
+        "fcAddress",
+        "fcPhone",
+        "fcPosition",
+        "fcEmail",
+        "fcMobile",
+        "fdUpdate",
+        "fcPassword"
+      ],
+      "column_types": {
+        "fcUserName": "nvarchar",
+        "fcFullName": "nvarchar",
+        "fcDept": "nvarchar",
+        "fcAddress": "nvarchar",
+        "fcPhone": "nvarchar",
+        "fcPosition": "nvarchar",
+        "fcEmail": "nvarchar",
+        "fcMobile": "nvarchar",
+        "fdUpdate": "smalldatetime",
+        "fcPassword": "varbinary"
+      },
+      "total_rows_extracted": 26,
+      "sample_data": [
+        {
+          "fcUserName": "ADMIN",
+          "fcFullName": "Administrator",
+          "fcDept": "",
+          "fcAddress": "",
+          "fcPhone": "",
+          "fcPosition": "",
+          "fcEmail": "",
+          "fcMobile": "",
+          "fdUpdate": "2017-04-03 00:00:00",
+          "fcPassword": "b'\\x02\\x00S]\\xb9]z\\x86\\x8bv\\x0f\\xd4]\\x94\\xfe\\xac+S\\xabt\\xb5y\\xd6\\xcd\\x15\\x1c\\r{e\\xb5\\x11:>\\x00&\\x8a<P,\\xd3\\xf7LH\\x19e7\\xdf\\xc4M\\xb5^\\x1byv;+\\x7f*\\xf7\\x99;n\\xcb\\x1d+5\\xa8&\\xd0\\xe4'"
+        },
+        {
+          "fcUserName": "BDD",
+          "fcFullName": "Bùi Đức Duy",
+          "fcDept": "",
+          "fcAddress": "",
+          "fcPhone": "",
+          "fcPosition": "",
+          "fcEmail": "",
+          "fcMobile": "",
+          "fdUpdate": "2024-02-23 11:26:00",
+          "fcPassword": "b'\\x02\\x00M\\x1a/z\\xfe\\x95[xz\\xe27\\xae#\\xc2$Q.G\\x8eV\\x01P\\xfa\\xb2P\\x99=\\xd5C[\\xcd)!;AZ\\x9a\\xcd\\xa2\\xa0`\\xc70\\xaaY\\xb5\\x06\\x0eq\\xffI\\xb0~UC\\xd8\\x12\\xacL\\x00\\xe2\\xe2V\\xa9\\xe1\\x87q\\x06'"
+        },
+        {
+          "fcUserName": "DAT",
+          "fcFullName": "Diệp Anh Tú",
+          "fcDept": "",
+          "fcAddress": "",
+          "fcPhone": "",
+          "fcPosition": "",
+          "fcEmail": "",
+          "fcMobile": "",
+          "fdUpdate": "2024-09-06 10:04:00",
+          "fcPassword": "b'\\x02\\x00\\x80V\\xa6f\\x7fj\\xb5\\x88\\xc4\\xa5\\xf9\\xb5M\\x8d\\xcb\\x92xS\\xb7X\\xb4\\xde>.@\"\\xfc\\xea\\x99\\x9ah0\\xc2\\xdb\\x14\\xfaR\\xf8\\x01k\\xfa\\xdb\\\\\\xa8\\xbc\\xd6*V(\\xe3\\x17\\xf0\\x03\\xcb\\xeb}\\x14\\x9e\\xf5\\xf3\\xfdN_\\x10\\\\\\x12\\xe3\\x9e'"
+        },
+        {
+          "fcUserName": "DMT",
+          "fcFullName": "Đỗ Minh Thùy",
+          "fcDept": "",
+          "fcAddress": "",
+          "fcPhone": "",
+          "fcPosition": "",
+          "fcEmail": "",
+          "fcMobile": "",
+          "fdUpdate": "2024-02-23 11:27:00",
+          "fcPassword": "b'\\x02\\x00Dj\\xe3&\\x8c+P\\xb9\\x04h1!\\x7fQ\\xeb\\x90\\xe8~\\x05\\x94\\xe2\\x98<\\xcf\\x08\\x8b9\\xd0\\xe8\\x10\\xfcX_\\x89@\\x85:!\\xda\\xf4\\xe4a\\x1d\\\\\\\\\\x9bV9dzS\\x03i~\\xb5\\xbd\\xed\\x84\\xde\\xfd#\\x1f\\xc1v\\xa34!5'"
+        },
+        {
+          "fcUserName": "DQS",
+          "fcFullName": "Đoàn Quốc Sơn",
+          "fcDept": "",
+          "fcAddress": "",
+          "fcPhone": "",
+          "fcPosition": "",
+          "fcEmail": "",
+          "fcMobile": "",
+          "fdUpdate": "2024-08-14 09:58:00",
+          "fcPassword": "b'\\x02\\x00~\\xf9H\\xb5\\x19\\x9d\\xe0L\\xea_8\\xdf\\xa7V\\xbdu`\\xabp\\x1f\\xa4|\\xa8\\x00\\x16\\xfbp\\xed\\x80\\xe5\\xd6\\xfbC%\\xb3\\x16\\xc9\\x89\\x94\\x11\\xd2d\\xc4[\\xa0\\x92\\xa9\\x1df!>\\xc2\\xf7\\xe2\\x18\\xbb\\x04\\xb2\\xeb\\xaa^>\\xaa\\xc1_d\\x8du'"
+        },
+        {
+          "fcUserName": "DTPT",
+          "fcFullName": "Đặng Thị Phương Trang",
+          "fcDept": "",
+          "fcAddress": "",
+          "fcPhone": "",
+          "fcPosition": "",
+          "fcEmail": "",
+          "fcMobile": "",
+          "fdUpdate": "2026-10-15 18:56:00",
+          "fcPassword": "b'\\x02\\x003X\\x9a\\xa6\\x87\\xc8\\x96\\x14J\\xdcI\\x00\\xbf\\xadB?\\xff\\xd8\\xa7[\\xcb\\xbb\\x84s\\xeeZ\\xa0OZ\\xaa\\x92\\x89\\xa8\\xb6e\\xb79)o\\x87\\xc2kt\\x8a\\xc5\\x15d\\xb4\\x02T\\x0c(\\x8bs\\xb1\\xae\\xd1\\x0c\\xc8\\xd4\\x14\\xae\\xefd!gO\\x05'"
+        },
+        {
+          "fcUserName": "DTTH",
+          "fcFullName": "Đặng Thị Thảo Huyên",
+          "fcDept": "",
+          "fcAddress": "",
+          "fcPhone": "",
+          "fcPosition": "",
+          "fcEmail": "",
+          "fcMobile": "",
+          "fdUpdate": "2024-09-19 15:09:00",
+          "fcPassword": "b'\\x02\\x00.yJ\\xcbi\\xf7\\xb5d\\x95w&2S\\xee\\xf23^\\xba\\x12\\x05\\x04c\\x10\\xea\\xee\\x93\\x10\\xfa\\x85\\x04\\xe1\\x0b\\xf3\\x87)\\xc8}\\x10\\xa5\\xf4\\xae\\x88\\x0b\\x12\\xb4\\x8a\"9\\x0c\\x1b\\xa8\\x89^\\xe5\\xcaRdZ\\xb5\\xd4\\xb9jX\\xe9\\xb3\\xa8\\xe2\\x0f'"
+        },
+        {
+          "fcUserName": "HNHT",
+          "fcFullName": "Huỳnh Nguyễn Hoài Thương",
+          "fcDept": "",
+          "fcAddress": "",
+          "fcPhone": "",
+          "fcPosition": "",
+          "fcEmail": "",
+          "fcMobile": "",
+          "fdUpdate": "2024-08-14 11:45:00",
+          "fcPassword": "b'\\x02\\x00\\x98I\\x89T\\\\g\\xf8\\x0e1S8\\rM\\xe9\\xfc\\xda\\x12Z\\xe8\\x17\\r\\xec\\x91\\x11\\x926 \\xb78v[x\\xb6\\x95O\\x85\\xae\\x08!\\x04\\x12bVI:\\x17\\x80k\\x81_a%\\xd7\\x83\\xad\\xf9\\xca\\x8c&\\x12\\xd6\\xfaU\\xf8\\x9a,\\x91#'"
+        },
+        {
+          "fcUserName": "LCAT",
+          "fcFullName": "LE CHAU ANH THU",
+          "fcDept": "",
+          "fcAddress": "",
+          "fcPhone": "",
+          "fcPosition": "",
+          "fcEmail": "",
+          "fcMobile": "",
+          "fdUpdate": "2023-11-28 09:08:00",
+          "fcPassword": "b\"\\x02\\x00I(J\\xb3(\\xef\\x0e\\x06S\\xaf/\\xf3'\\xa9\\x88\\xef\\xee\\x10\\xb6\\xbb!\\xd2\\xb1\\xb9\\xc0nTB\\xf3c\\xab\\x1a\\xe4\\xcco+J\\x82\\x96\\xdeLIkg\\x8e\\x9cC69\\xea\\xc2.\\x94\\xb5\\xb8\\xe1\\xb6\\xb3\\x1a%\\x16\\x9c\\xd7K\\xdfp\\x87\\xf9\""
+        },
+        {
+          "fcUserName": "LEVH",
+          "fcFullName": "Lê Văn Hải",
+          "fcDept": "",
+          "fcAddress": "",
+          "fcPhone": "",
+          "fcPosition": "",
+          "fcEmail": "",
+          "fcMobile": "",
+          "fdUpdate": "2025-08-28 00:00:00",
+          "fcPassword": "b\"\\x02\\x00p)\\x85B\\xc2\\x99}\\xf0Fr\\xe5\\xb9\\x98\\xfdb<yM']\\xf4m\\x0e\\xf4\\x84:ZnD<\\xa30z\\\\M\\x88b\\xe4T\\xa4sWg|*%q\\x8f\\xeeZ\\xb4\\xa7\\xe6\\x891\\xc3\\x87S\\xa6G\\x98\\xc0\\xa5\\nq\\xbc\\x9b\\x80\""
+        }
+      ]
+    },
+    "stGroup": {
+      "title": "Nhóm quyền hệ thống (stGroup)",
+      "description": "Danh mục 15 nhóm quyền: Ban Giám Đốc, Sales, Thu Ngân, Bếp, Điều Hành...",
+      "is_master_data": true,
+      "columns": [
+        "fcGroupCode",
+        "fcGroupName",
+        "fdUpdate"
+      ],
+      "column_types": {
+        "fcGroupCode": "nvarchar",
+        "fcGroupName": "nvarchar",
+        "fdUpdate": "smalldatetime"
+      },
+      "total_rows_extracted": 15,
+      "sample_data": [
+        {
+          "fcGroupCode": "G01",
+          "fcGroupName": "DORS",
+          "fdUpdate": "2024-01-24 00:00:00"
+        },
+        {
+          "fcGroupCode": "G010",
+          "fcGroupName": "Reactive",
+          "fdUpdate": "2011-03-03 00:00:00"
+        },
+        {
+          "fcGroupCode": "G011",
+          "fcGroupName": "Reactive",
+          "fdUpdate": "2011-03-03 00:00:00"
+        },
+        {
+          "fcGroupCode": "G012",
+          "fcGroupName": "REACTIVE",
+          "fdUpdate": "2011-09-15 00:00:00"
+        },
+        {
+          "fcGroupCode": "G013",
+          "fcGroupName": "REACTIVE",
+          "fdUpdate": "2011-09-15 00:00:00"
+        },
+        {
+          "fcGroupCode": "G014",
+          "fcGroupName": "Reactive",
+          "fdUpdate": "2012-09-28 00:00:00"
+        },
+        {
+          "fcGroupCode": "G015",
+          "fcGroupName": "FB",
+          "fdUpdate": "2017-10-11 00:00:00"
+        },
+        {
+          "fcGroupCode": "G016",
+          "fcGroupName": "FB",
+          "fdUpdate": "2017-10-11 00:00:00"
+        },
+        {
+          "fcGroupCode": "G017",
+          "fcGroupName": "ADMIN SUPPORT",
+          "fdUpdate": "2023-12-21 06:54:00"
+        },
+        {
+          "fcGroupCode": "G02",
+          "fcGroupName": "FB",
+          "fdUpdate": "2017-10-11 00:00:00"
+        }
+      ]
+    },
+    "stUserGroup": {
+      "title": "Phân quyền người dùng (stUserGroup)",
+      "description": "Bảng phân quyền gán người dùng vào nhóm quyền tương ứng",
+      "is_master_data": true,
+      "columns": [
+        "fcUserName",
+        "fcGroupCode",
+        "fdUpdate",
+        "fcOwner"
+      ],
+      "column_types": {
+        "fcUserName": "nvarchar",
+        "fcGroupCode": "nvarchar",
+        "fdUpdate": "smalldatetime",
+        "fcOwner": "nvarchar"
+      },
+      "total_rows_extracted": 27,
+      "sample_data": [
+        {
+          "fcUserName": "ADMIN",
+          "fcGroupCode": "G017",
+          "fdUpdate": "2023-12-21 06:57:00",
+          "fcOwner": "ADMIN"
+        },
+        {
+          "fcUserName": "BDD",
+          "fcGroupCode": "G01",
+          "fdUpdate": "2024-02-23 11:25:00",
+          "fcOwner": "ADMIN"
+        },
+        {
+          "fcUserName": "DAT",
+          "fcGroupCode": "G01",
+          "fdUpdate": "2024-09-06 10:04:00",
+          "fcOwner": "ADMIN"
+        },
+        {
+          "fcUserName": "DMT",
+          "fcGroupCode": "G01",
+          "fdUpdate": "2024-02-23 11:27:00",
+          "fcOwner": "ADMIN"
+        },
+        {
+          "fcUserName": "DQS",
+          "fcGroupCode": "G01",
+          "fdUpdate": "2024-08-14 09:58:00",
+          "fcOwner": "ADMIN"
+        },
+        {
+          "fcUserName": "DTPT",
+          "fcGroupCode": "G01",
+          "fdUpdate": "2026-10-15 18:56:00",
+          "fcOwner": "ADMIN"
+        },
+        {
+          "fcUserName": "DTTH",
+          "fcGroupCode": "G01",
+          "fdUpdate": "2024-09-19 15:09:00",
+          "fcOwner": "ADMIN"
+        },
+        {
+          "fcUserName": "HNHT",
+          "fcGroupCode": "G01",
+          "fdUpdate": "2024-08-14 11:45:00",
+          "fcOwner": "ADMIN"
+        },
+        {
+          "fcUserName": "LCAT",
+          "fcGroupCode": "G01",
+          "fdUpdate": "2024-01-24 00:00:00",
+          "fcOwner": "ADMIN"
+        },
+        {
+          "fcUserName": "LEVH",
+          "fcGroupCode": "G01",
+          "fdUpdate": "2025-08-27 17:00:00",
+          "fcOwner": "ADMIN"
+        }
+      ]
+    },
+    "stPhong": {
+      "title": "Danh mục sảnh & phòng (stPhong)",
+      "description": "12 sảnh tiệc & phòng họp của khách sạn: Diện tích, sức chứa, giá thuê",
+      "is_master_data": true,
+      "columns": [
+        "fnID",
+        "fcMa",
+        "fcTen",
+        "fcLoaiPhong",
+        "fcKhuVuc",
+        "fnDienTich",
+        "fcGhiChu",
+        "fnGia",
+        "fnOrder"
+      ],
+      "column_types": {
+        "fnID": "smallint",
+        "fcMa": "nvarchar",
+        "fcTen": "nvarchar",
+        "fcLoaiPhong": "nvarchar",
+        "fcKhuVuc": "nvarchar",
+        "fnDienTich": "nvarchar",
+        "fcGhiChu": "nvarchar",
+        "fnGia": "numeric",
+        "fnOrder": "numeric"
+      },
+      "total_rows_extracted": 12,
+      "sample_data": [
+        {
+          "fnID": 0,
+          "fcMa": "01",
+          "fcTen": "Romance",
+          "fcLoaiPhong": "20170413090214311",
+          "fcKhuVuc": "G Floor",
+          "fnDienTich": "613",
+          "fcGhiChu": "MEETING & EVENT",
+          "fnGia": "0.00",
+          "fnOrder": "1"
+        },
+        {
+          "fnID": 0,
+          "fcMa": "02",
+          "fcTen": "Classic",
+          "fcLoaiPhong": "20170413090214311",
+          "fcKhuVuc": "G Floor",
+          "fnDienTich": "613",
+          "fcGhiChu": "MEETING & EVENT",
+          "fnGia": "0.00",
+          "fnOrder": "2"
+        },
+        {
+          "fnID": 0,
+          "fcMa": "03",
+          "fcTen": "Gothic",
+          "fcLoaiPhong": "20170413090214311",
+          "fcKhuVuc": "G Floor",
+          "fnDienTich": "236",
+          "fcGhiChu": "MEETING & EVENT",
+          "fnGia": "0.00",
+          "fnOrder": "3"
+        },
+        {
+          "fnID": 0,
+          "fcMa": "04",
+          "fcTen": "Diamond",
+          "fcLoaiPhong": "20170413090214311",
+          "fcKhuVuc": "M Floor",
+          "fnDienTich": "103",
+          "fcGhiChu": "MEETING & EVENT",
+          "fnGia": "0.00",
+          "fnOrder": "4"
+        },
+        {
+          "fnID": 0,
+          "fcMa": "05",
+          "fcTen": "Sapphire",
+          "fcLoaiPhong": "20170413090214311",
+          "fcKhuVuc": "M Floor",
+          "fnDienTich": "285",
+          "fcGhiChu": "MEETING & EVENT",
+          "fnGia": "0.00",
+          "fnOrder": "5"
+        },
+        {
+          "fnID": 0,
+          "fcMa": "06",
+          "fcTen": "Sapphire 1",
+          "fcLoaiPhong": "20170413090214311",
+          "fcKhuVuc": "M Floor",
+          "fnDienTich": "45",
+          "fcGhiChu": "MEETING & EVENT",
+          "fnGia": "0.00",
+          "fnOrder": "6"
+        },
+        {
+          "fnID": 0,
+          "fcMa": "07",
+          "fcTen": "Sapphire 2",
+          "fcLoaiPhong": "20170413090214311",
+          "fcKhuVuc": "M Floor",
+          "fnDienTich": "95",
+          "fcGhiChu": "MEETING & EVENT",
+          "fnGia": "0.00",
+          "fnOrder": "7"
+        },
+        {
+          "fnID": 0,
+          "fcMa": "08",
+          "fcTen": "Sapphire 3",
+          "fcLoaiPhong": "20170413090214311",
+          "fcKhuVuc": "M Floor",
+          "fnDienTich": "95",
+          "fcGhiChu": "MEETING & EVENT",
+          "fnGia": "0.00",
+          "fnOrder": "8"
+        },
+        {
+          "fnID": 0,
+          "fcMa": "09",
+          "fcTen": "Sapphire 4",
+          "fcLoaiPhong": "20170413090214311",
+          "fcKhuVuc": "M Floor",
+          "fnDienTich": "45",
+          "fcGhiChu": "MEETING & EVENT",
+          "fnGia": "0.00",
+          "fnOrder": "9"
+        },
+        {
+          "fnID": 0,
+          "fcMa": "10",
+          "fcTen": "Rustic",
+          "fcLoaiPhong": "20170413090214311",
+          "fcKhuVuc": "M Floor",
+          "fnDienTich": "285",
+          "fcGhiChu": "RESTAURANT",
+          "fnGia": "0.00",
+          "fnOrder": "10"
+        }
+      ]
+    },
+    "stDoanhThu_Loai": {
+      "title": "20 Nhóm doanh thu A-T (stDoanhThu_Loai)",
+      "description": "82 phân loại doanh thu: Thức ăn, Nước uống, Sảnh, Âm thanh, MC, Hoa tươi...",
+      "is_master_data": true,
+      "columns": [
+        "fcCode",
+        "fcName",
+        "fcNote",
+        "fcGroup",
+        "fnOrderBy"
+      ],
+      "column_types": {
+        "fcCode": "nvarchar",
+        "fcName": "nvarchar",
+        "fcNote": "nvarchar",
+        "fcGroup": "nvarchar",
+        "fnOrderBy": "nvarchar"
+      },
+      "total_rows_extracted": 82,
+      "sample_data": [
+        {
+          "fcCode": "011",
+          "fcName": "WEDDING PLANNER BÊN NGOÀI",
+          "fcNote": "Phụ thu Wedding Planner bên ngoài vào",
+          "fcGroup": "03",
+          "fnOrderBy": "b"
+        },
+        {
+          "fcCode": "012",
+          "fcName": "HALF-DAY PKG",
+          "fcNote": "Gói họp 1/2 ngày + 1 teabreak",
+          "fcGroup": "06",
+          "fnOrderBy": "d"
+        },
+        {
+          "fcCode": "013",
+          "fcName": "HALF-DAY PKG W BQT",
+          "fcNote": "Gói họp 1/2 ngày + 1 teabreak + 1 bữa trưa (hoặc tối)",
+          "fcGroup": "06",
+          "fnOrderBy": "e"
+        },
+        {
+          "fcCode": "015",
+          "fcName": "FULL-DAY PKG W BQT",
+          "fcNote": "Gói họp nguyên ngày + 2 teabreak + 1 bữa trưa (hoặc tối)",
+          "fcGroup": "06",
+          "fnOrderBy": "g"
+        },
+        {
+          "fcCode": "017",
+          "fcName": "FULL-DAY PKG",
+          "fcNote": "Gói họp nguyên ngày + 2 teabreak",
+          "fcGroup": "06",
+          "fnOrderBy": "i"
+        },
+        {
+          "fcCode": "04",
+          "fcName": "HALF -DAY ROOM RENTAL",
+          "fcNote": "Cho thuê phòng họp 1/2 ngày",
+          "fcGroup": "06",
+          "fnOrderBy": "c"
+        },
+        {
+          "fcCode": "06",
+          "fcName": "CORKAGE CHARGE",
+          "fcNote": "Phụ phí mang bia rượu vào",
+          "fcGroup": "03",
+          "fnOrderBy": "j"
+        },
+        {
+          "fcCode": "07",
+          "fcName": "BACKDROP RENTAL",
+          "fcNote": "Cho thuê Backdrop chụp ảnh",
+          "fcGroup": "03",
+          "fnOrderBy": "k"
+        },
+        {
+          "fcCode": "11",
+          "fcName": "HALF-DAY LED CHARGE",
+          "fcNote": "Cho thuê màng hình Led 1/2 ngày",
+          "fcGroup": "03",
+          "fnOrderBy": "m"
+        },
+        {
+          "fcCode": "12",
+          "fcName": "DÉCOR HALL CHARGE",
+          "fcNote": "Décor phòng tiệc",
+          "fcGroup": "03",
+          "fnOrderBy": "n"
+        }
+      ]
+    },
+    "stMenu": {
+      "title": "Thực đơn món ăn & dịch vụ (stMenu)",
+      "description": "118 món ăn và dịch vụ tiệc chuẩn của MerPerle / Khải Vy",
+      "is_master_data": true,
+      "columns": [
+        "fcMenuCode",
+        "fcMenuName",
+        "fcForm",
+        "fcDescription",
+        "fcShortcut",
+        "fdNgay",
+        "fnShowMenu"
+      ],
+      "column_types": {
+        "fcMenuCode": "nvarchar",
+        "fcMenuName": "nvarchar",
+        "fcForm": "nvarchar",
+        "fcDescription": "nvarchar",
+        "fcShortcut": "nvarchar",
+        "fdNgay": "smalldatetime",
+        "fnShowMenu": "int"
+      },
+      "total_rows_extracted": 118,
+      "sample_data": [
+        {
+          "fcMenuCode": "05",
+          "fcMenuName": "mnuInput",
+          "fcForm": "",
+          "fcDescription": "ID_INPUT_DATA",
+          "fcShortcut": "&1.",
+          "fdNgay": "2006-10-30 09:16:00",
+          "fnShowMenu": 1
+        },
+        {
+          "fcMenuCode": "0500",
+          "fcMenuName": "frmInput_Leisure",
+          "fcForm": "",
+          "fcDescription": "ID_LEISURE",
+          "fcShortcut": "&A.",
+          "fdNgay": "2007-01-09 17:04:00",
+          "fnShowMenu": 0
+        },
+        {
+          "fcMenuCode": "0501",
+          "fcMenuName": "mnu-",
+          "fcForm": "",
+          "fcDescription": "",
+          "fcShortcut": "",
+          "fdNgay": "2007-01-09 17:04:00",
+          "fnShowMenu": 1
+        },
+        {
+          "fcMenuCode": "0504",
+          "fcMenuName": "frmBookingRoom_Date",
+          "fcForm": "frmBookingRoom_Date",
+          "fcDescription": "ID_FIND_BOOKING",
+          "fcShortcut": "&B.",
+          "fdNgay": "2009-01-19 14:48:00",
+          "fnShowMenu": 0
+        },
+        {
+          "fcMenuCode": "0505",
+          "fcMenuName": "frmFind_MICE_quickly",
+          "fcForm": "",
+          "fcDescription": "ID_FIND_MICE_QUICKLY",
+          "fcShortcut": "&C.",
+          "fdNgay": "2006-12-14 15:27:00",
+          "fnShowMenu": 0
+        },
+        {
+          "fcMenuCode": "0506",
+          "fcMenuName": "mnu-",
+          "fcForm": "",
+          "fcDescription": "",
+          "fcShortcut": "",
+          "fdNgay": "2006-12-22 09:17:00",
+          "fnShowMenu": 1
+        },
+        {
+          "fcMenuCode": "0510",
+          "fcMenuName": "frmCalendar",
+          "fcForm": "",
+          "fcDescription": "ID_SCHEDULER",
+          "fcShortcut": "&D.",
+          "fdNgay": "2006-11-21 17:07:00",
+          "fnShowMenu": 1
+        },
+        {
+          "fcMenuCode": "0511",
+          "fcMenuName": "mnu-",
+          "fcForm": "",
+          "fcDescription": "",
+          "fcShortcut": "",
+          "fdNgay": "2007-01-19 11:19:00",
+          "fnShowMenu": 1
+        },
+        {
+          "fcMenuCode": "0515",
+          "fcMenuName": "frmMaster_EO",
+          "fcForm": "",
+          "fcDescription": "ID_BEO_INFOR",
+          "fcShortcut": "&E.",
+          "fdNgay": "2007-01-19 11:19:00",
+          "fnShowMenu": 1
+        },
+        {
+          "fcMenuCode": "0520",
+          "fcMenuName": "mnu-",
+          "fcForm": "",
+          "fcDescription": "",
+          "fcShortcut": "",
+          "fdNgay": "2006-12-22 09:16:00",
+          "fnShowMenu": 1
+        }
+      ]
+    },
+    "stSetMenu": {
+      "title": "Thực đơn mẫu (stSetMenu)",
+      "description": "79 set menu tiệc cưới, hội nghị định sẵn",
+      "is_master_data": true,
+      "columns": [
+        "fcCode",
+        "fcMenuName",
+        "fcMenuDetail",
+        "fcMenuType"
+      ],
+      "column_types": {
+        "fcCode": "nvarchar",
+        "fcMenuName": "nvarchar",
+        "fcMenuDetail": "ntext",
+        "fcMenuType": "nvarchar"
+      },
+      "total_rows_extracted": 79,
+      "sample_data": [
+        {
+          "fcCode": "000001",
+          "fcMenuName": "Set 1 : 210,000 VND /khách",
+          "fcMenuDetail": "SET-01 \r\n\n\nXà lách trộn dầu giấm\r\n\n\nRau muống thịt bò\r\n\n\nĐậu khuôn kho thịt ba chỉ\n\r\n\n\nSườn ram chua cay\r\n\n\nTrứng chiên Thịt bằm\r\n\n\nCanh bó xôi nấu mộc\n\r\n\n\nCơm trắng\r\nTrái cây theo mùa\n\r\nTrà đá",
+          "fcMenuType": "20240405221256147"
+        },
+        {
+          "fcCode": "000002",
+          "fcMenuName": "MGala2     520000vnd",
+          "fcMenuDetail": "1. Bánh Pa te so\n\r\n2. Gỏi Sứa Gà Xé + Bánh Phồng Tôm\r\n\n3. Cá Chẽm Phi lê Chiên Sốt Chanh Dây/ Ngũ Liễu\r\n\n4. Gà Quay Hông Kông\r\n\n5. Bò Mỹ Hầm Rượu Vang Đỏ + Bánh Mì\n\r\n6. Mì Xào Phúc Kiến Xá Xíu\r\n\n7. Bánh Plan",
+          "fcMenuType": "20231213204418652"
+        },
+        {
+          "fcCode": "000003",
+          "fcMenuName": "MGala3     580000vnd",
+          "fcMenuDetail": "1. Bánh Pa te so\n\r\n2. Gỏi Bò Thái Lan + Bánh Phồng Tôm\r\n3. Tôm Rang Muối Hong Kong\r\n\n4. Cá Chẽm Chưng Tương \r\n\n5. Bò Hầm Tiêu Xanh + Bánh Mì\r\n\n6. Lẩu Cá Tầm Lá Giang + Bún Tươi\n\r\n7. Chè Hạt Sen Tuyết Nhĩ Táo Tàu",
+          "fcMenuType": "20231213204418652"
+        },
+        {
+          "fcCode": "000004",
+          "fcMenuName": "MGala4     580000vnd",
+          "fcMenuDetail": "1. Bánh Pa te so\r\n\n2. Súp Hải Sản Măng Tây Tươi và Nấm\r\n\n3. Tôm Sú Xóc Bơ Tỏ\r\ni\n4. Cá Tầm  Phi Lê Chiên Sốt Tiêu Kem\r\n\n5. Bò Hầm Tiêu Xanh + Bánh Mì \r\n\n6. Lẩu Cá Lăng Nấu Măng Chua Cay + Bún Tươi\n\r\n7. Nho Mỹ",
+          "fcMenuType": "20231213204418652"
+        },
+        {
+          "fcCode": "000005",
+          "fcMenuName": "MGala5     640000vnd",
+          "fcMenuDetail": "1. Bánh Pa te so\n\r\n2. Gỏi Tiến Vua Tôm Thịt - Bánh Nón\r\n\n3. Tôm Sú Xóc Bơ Tỏi     \r\n \n4. Cá Chẽm Hấp Triều Châu\n\r\n5. Giò Heo Hầm Gân Nai\r\n\n6. Lẩu Gà Tiềm Ớt Sim Xanh + Mì Rau\r\n\n7. Kem Panna Cotta",
+          "fcMenuType": "20231213204418652"
+        },
+        {
+          "fcCode": "000006",
+          "fcMenuName": "MGala6     640000vnd",
+          "fcMenuDetail": "1. Bánh Pa te so\n\r\n2. Chả giò hải sản\n\r\n3. Tôm Sú Hoàng Kim   \n\r\n4. Cá Tầm Phi lê Hấp Hông Kông\n\r\n5. Gà Quay Tứ Xuyên\r\n\n6. Lẩu Nấm Hải Sản + Mì\r\n\n7. Chè Hạt Sen Táo Đỏ",
+          "fcMenuType": "20231213204418652"
+        },
+        {
+          "fcCode": "000007",
+          "fcMenuName": "MGala7     680000vnd",
+          "fcMenuDetail": "1. Bánh Pa te so\r\n\n2. Súp Tóc Tiên Hải Sản\n\r\n3. Tôm Sú Xóc Bơ Tỏi    \n\r\n4. Cá Bống Mú Hấp Triều Châu \r\n\n5. Vịt Quay Bắc Kinh\n\r\n6.  Bắp Bò Mỹ Nấu Patê  + Bánh Mì\n\r\n7. Kem Panna Cotta",
+          "fcMenuType": "20231213204418652"
+        },
+        {
+          "fcCode": "000008",
+          "fcMenuName": "MGala8     680000vnd",
+          "fcMenuDetail": "1. Bánh Pa te so\r\n\n2. Chả Giò Cua Bể Hà Nội\n\r\n3. Tôm Sú Hoàng Kim             \r\n\n4. Cá Tầm  Phi Lê Chiên Sốt Tiêu Kem \r\n\n5. Bò Mỹ Hầm XO + Bánh Mì\r\n\n6. Lẩu Cá Tầm Lá Giang + Bún Tươi\n\r\n7. Chè Khúc Bạch",
+          "fcMenuType": "20231213204418652"
+        },
+        {
+          "fcCode": "000009",
+          "fcMenuName": "VSet1     210000vnd",
+          "fcMenuDetail": "1. Gỏi ngó sen tôm thịt\n\r\n2. Bó xôi xào tỏi\n\r\n3. Trứng chiên thịt bằm\n\r\n4. Cá diêu hồng sốt chanh ớt\n\r\n5. Thịt kho củ cải\n\r\n6. Canh khổ qua thịt nạc\r\n7. Cơm trắng, tráng miệng, trà đá",
+          "fcMenuType": "20231213204349644"
+        },
+        {
+          "fcCode": "000010",
+          "fcMenuName": "VSet2     210000vnd",
+          "fcMenuDetail": "1. Gỏi củ hủ dừa tôm thịt\n\r\n2. Cải ngọt xào nấm đông cô\n\r\n3. Trứng chiên hành tây\r\n\n4. Cá tai tượng chiên nước mắm rau sống\n\r\n5. Thịt kho đậu hủ\r\n\n6. Canh xà lách xoong thịt bằm\n\r\n7. Cơm trắng, tráng miệng, trà đá",
+          "fcMenuType": "20231213204349644"
+        }
+      ]
+    },
+    "stSetMenu_Type": {
+      "title": "Loại thực đơn mẫu (stSetMenu_Type)",
+      "description": "Phân loại set menu tiệc cưới, tiệc công ty, set chay...",
+      "is_master_data": true,
+      "columns": [
+        "fcCode",
+        "fcName",
+        "fcNote"
+      ],
+      "column_types": {
+        "fcCode": "nvarchar",
+        "fcName": "nvarchar",
+        "fcNote": "nvarchar"
+      },
+      "total_rows_extracted": 6,
+      "sample_data": [
+        {
+          "fcCode": "20231213204349644",
+          "fcName": "Set Cơm Đoàn",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "2024022216235164",
+          "fcName": "Set Tiec̉̀",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "20240405012850427",
+          "fcName": "TEABREAK 130.000Đ",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "20240405221256147",
+          "fcName": "LUNCHED & DINNER WESTERN SET MENU",
+          "fcNote": "Minimum 10 guests"
+        },
+        {
+          "fcCode": "20240411095400501",
+          "fcName": "BUFFET",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "20240923161600785",
+          "fcName": "TEABREAK",
+          "fcNote": ""
+        }
+      ]
+    },
+    "stBooking_Status": {
+      "title": "Trạng thái đơn tiệc (stBooking_Status)",
+      "description": "Inquiry, Tentative, Confirmed, Cancel, Báo giá...",
+      "is_master_data": true,
+      "columns": [
+        "fcCode",
+        "fcName",
+        "fnOrder"
+      ],
+      "column_types": {
+        "fcCode": "nvarchar",
+        "fcName": "nvarchar",
+        "fnOrder": "numeric"
+      },
+      "total_rows_extracted": 5,
+      "sample_data": [
+        {
+          "fcCode": "C",
+          "fcName": "Cancelled",
+          "fnOrder": "4"
+        },
+        {
+          "fcCode": "D",
+          "fcName": "Definite",
+          "fnOrder": "3"
+        },
+        {
+          "fcCode": "N",
+          "fcName": "No-Show",
+          "fnOrder": "5"
+        },
+        {
+          "fcCode": "P",
+          "fcName": "Prospect",
+          "fnOrder": "1"
+        },
+        {
+          "fcCode": "T",
+          "fcName": "Tentative",
+          "fnOrder": "2"
+        }
+      ]
+    },
+    "stBookingColor": {
+      "title": "Màu sắc lịch sảnh (stBookingColor)",
+      "description": "Bảng màu trực quan hiển thị trên Lịch Sảnh & Timeline",
+      "is_master_data": true,
+      "columns": [
+        "fcCode",
+        "fcBookStatus",
+        "fnColor",
+        "fnColor1",
+        "tam"
+      ],
+      "column_types": {
+        "fcCode": "nvarchar",
+        "fcBookStatus": "nvarchar",
+        "fnColor": "int",
+        "fnColor1": "int",
+        "tam": "int"
+      },
+      "total_rows_extracted": 7,
+      "sample_data": [
+        {
+          "fcCode": "001",
+          "fcBookStatus": "O",
+          "fnColor": 11,
+          "fnColor1": -2043927,
+          "tam": 0
+        },
+        {
+          "fcCode": "002",
+          "fcBookStatus": "A",
+          "fnColor": 12,
+          "fnColor1": -15682,
+          "tam": 1
+        },
+        {
+          "fcCode": "003",
+          "fcBookStatus": "D",
+          "fnColor": 13,
+          "fnColor1": -5712385,
+          "tam": 2
+        },
+        {
+          "fcCode": "004",
+          "fcBookStatus": "T",
+          "fnColor": 14,
+          "fnColor1": -2139,
+          "tam": 3
+        },
+        {
+          "fcCode": "005",
+          "fcBookStatus": "C",
+          "fnColor": 15,
+          "fnColor1": -16711936,
+          "tam": 4
+        },
+        {
+          "fcCode": "006",
+          "fcBookStatus": "W",
+          "fnColor": 16,
+          "fnColor1": -3605545,
+          "tam": 0
+        },
+        {
+          "fcCode": "007",
+          "fcBookStatus": "P",
+          "fnColor": 17,
+          "fnColor1": -4144960,
+          "tam": 0
+        }
+      ]
+    },
+    "stSetupType": {
+      "title": "Kiểu setup bàn tiệc (stSetupType)",
+      "description": "Bàn tròn 10 người, Kiểu chữ U, Rạp hát, Lớp học, Tiệc đứng...",
+      "is_master_data": true,
+      "columns": [
+        "fcCode",
+        "fcName",
+        "fcNote"
+      ],
+      "column_types": {
+        "fcCode": "nvarchar",
+        "fcName": "nvarchar",
+        "fcNote": "nvarchar"
+      },
+      "total_rows_extracted": 11,
+      "sample_data": [
+        {
+          "fcCode": "01",
+          "fcName": "Classroom",
+          "fcNote": "Lớp học"
+        },
+        {
+          "fcCode": "02",
+          "fcName": "Theatre",
+          "fcNote": "Rạp hát"
+        },
+        {
+          "fcCode": "03",
+          "fcName": "U - Shape",
+          "fcNote": "Chữ U"
+        },
+        {
+          "fcCode": "04",
+          "fcName": "Round table 10 pax",
+          "fcNote": "Bàn tròn 10 người"
+        },
+        {
+          "fcCode": "20081202105327729",
+          "fcName": "Board room",
+          "fcNote": "Họp lãnh đạo"
+        },
+        {
+          "fcCode": "20081202105348682",
+          "fcName": "Standing reception",
+          "fcNote": "01 reception desk with flowers set up."
+        },
+        {
+          "fcCode": "20170322220630105",
+          "fcName": "Western",
+          "fcNote": "Fine dining"
+        },
+        {
+          "fcCode": "20170322220640978",
+          "fcName": "Cocktail",
+          "fcNote": "Tiệc đứng"
+        },
+        {
+          "fcCode": "20170322220649230",
+          "fcName": "Buffet",
+          "fcNote": "Tự phục vụ"
+        },
+        {
+          "fcCode": "20170322220802987",
+          "fcName": "Round Table 12 pax",
+          "fcNote": "Bàn tròn 12 người"
+        }
+      ]
+    },
+    "stPTThanhToan": {
+      "title": "Phương thức thanh toán (stPTThanhToan)",
+      "description": "Tiền mặt, Chuyển khoản, Thẻ, Công nợ...",
+      "is_master_data": true,
+      "columns": [
+        "fcMa",
+        "fcTen",
+        "fcGhiChu"
+      ],
+      "column_types": {
+        "fcMa": "nvarchar",
+        "fcTen": "nvarchar",
+        "fcGhiChu": "nvarchar"
+      },
+      "total_rows_extracted": 4,
+      "sample_data": [
+        {
+          "fcMa": "CA",
+          "fcTen": "Cash",
+          "fcGhiChu": "Jul  3 2002  3:10PM"
+        },
+        {
+          "fcMa": "CC",
+          "fcTen": "Credit Card",
+          "fcGhiChu": "Jun 15 2002 12:03PM"
+        },
+        {
+          "fcMa": "CL",
+          "fcTen": "City Ledger",
+          "fcGhiChu": "Jun 15 2002 12:03PM"
+        },
+        {
+          "fcMa": "FC",
+          "fcTen": "Free of Charge",
+          "fcGhiChu": "Jun 15 2002 12:03PM"
+        }
+      ]
+    },
+    "stChargeType": {
+      "title": "Loại phí & Thuế (stChargeType)",
+      "description": "Phí dịch vụ 5%, Thuế GTGT 8-10%, Phí phụ thu...",
+      "is_master_data": true,
+      "columns": [
+        "fcChargeTypeCode",
+        "fcChargeTypeName",
+        "fcChargeTypeNote"
+      ],
+      "column_types": {
+        "fcChargeTypeCode": "nvarchar",
+        "fcChargeTypeName": "nvarchar",
+        "fcChargeTypeNote": "nvarchar"
+      },
+      "total_rows_extracted": 3,
+      "sample_data": [
+        {
+          "fcChargeTypeCode": "00",
+          "fcChargeTypeName": "",
+          "fcChargeTypeNote": ""
+        },
+        {
+          "fcChargeTypeCode": "01",
+          "fcChargeTypeName": "Net",
+          "fcChargeTypeNote": "Price are in US dollars and are subject to 10% VAT and 5% service charge."
+        },
+        {
+          "fcChargeTypeCode": "02",
+          "fcChargeTypeName": "Gross",
+          "fcChargeTypeNote": "Price are in US dollars Not Including"
+        }
+      ]
+    },
+    "stKhachHang_Loai": {
+      "title": "Phân khúc khách hàng (stKhachHang_Loai)",
+      "description": "Khách cá nhân, Công ty, Đoàn lữ hành, Khách VIP...",
+      "is_master_data": true,
+      "columns": [
+        "fcCode",
+        "fcName",
+        "fcNote",
+        "fcGroup"
+      ],
+      "column_types": {
+        "fcCode": "nvarchar",
+        "fcName": "nvarchar",
+        "fcNote": "nvarchar",
+        "fcGroup": "nvarchar"
+      },
+      "total_rows_extracted": 11,
+      "sample_data": [
+        {
+          "fcCode": "20170405151937546",
+          "fcName": "DMB",
+          "fcNote": "Billboard LCD...",
+          "fcGroup": "Traditional marketing"
+        },
+        {
+          "fcCode": "20170405152001427",
+          "fcName": "WOM",
+          "fcNote": "Word of mouth",
+          "fcGroup": "Customer prefer"
+        },
+        {
+          "fcCode": "20170405152122484",
+          "fcName": "SALES",
+          "fcNote": "Sales Call, Sale Blitz, Tele Sale",
+          "fcGroup": "Customer prefer"
+        },
+        {
+          "fcCode": "20170415115359978",
+          "fcName": "WK",
+          "fcNote": "Walk-in",
+          "fcGroup": "Customer prefer"
+        },
+        {
+          "fcCode": "20170417104502444",
+          "fcName": "FB",
+          "fcNote": "Facebook",
+          "fcGroup": "Social website"
+        },
+        {
+          "fcCode": "20170417110145254",
+          "fcName": "ADW",
+          "fcNote": "Adwords + SEO",
+          "fcGroup": "Digital marketing"
+        },
+        {
+          "fcCode": "20170503153922481",
+          "fcName": "OTH",
+          "fcNote": "Others - cac kenh khac",
+          "fcGroup": "3rd party agency"
+        },
+        {
+          "fcCode": "201706151147135",
+          "fcName": "EDM",
+          "fcNote": "Email Blast",
+          "fcGroup": "Traditional marketing"
+        },
+        {
+          "fcCode": "20220302135736667",
+          "fcName": "ZAL",
+          "fcNote": "Zalo",
+          "fcGroup": "Digital Marketing"
+        },
+        {
+          "fcCode": "20260707111858435",
+          "fcName": "TA",
+          "fcNote": "Travel Agent",
+          "fcGroup": "TA"
+        }
+      ]
+    },
+    "stKhachHang": {
+      "title": "Danh bạ khách hàng (stKhachHang)",
+      "description": "Thông tin khách hàng: Tên, công ty, MST, điện thoại, email, địa chỉ",
+      "is_master_data": false,
+      "columns": [
+        "fcMa",
+        "fcTen",
+        "fcLoaiKhach",
+        "fcLinhVuc",
+        "fcMaNLH",
+        "fcNguoiLienHe",
+        "fcTelephone",
+        "fcPhone_Office",
+        "fcPhone_Home",
+        "fcEmail",
+        "fcFax",
+        "fcTinh_TP",
+        "fcQuocGia",
+        "fcDiaChi",
+        "fcMST",
+        "fdNgayNhap",
+        "fcGhiChu"
+      ],
+      "column_types": {
+        "fcMa": "nvarchar",
+        "fcTen": "nvarchar",
+        "fcLoaiKhach": "nvarchar",
+        "fcLinhVuc": "nvarchar",
+        "fcMaNLH": "nvarchar",
+        "fcNguoiLienHe": "nvarchar",
+        "fcTelephone": "nvarchar",
+        "fcPhone_Office": "nvarchar",
+        "fcPhone_Home": "nvarchar",
+        "fcEmail": "nvarchar",
+        "fcFax": "nvarchar",
+        "fcTinh_TP": "nvarchar",
+        "fcQuocGia": "nvarchar",
+        "fcDiaChi": "nvarchar",
+        "fcMST": "nvarchar",
+        "fdNgayNhap": "smalldatetime",
+        "fcGhiChu": "nvarchar"
+      },
+      "total_rows_extracted": 20,
+      "sample_data": [
+        {
+          "fcMa": "5",
+          "fcTen": "CÔNG TY TNHH DU LỊCH VÀ SỰ KIỆN GOLA",
+          "fcLoaiKhach": "20071018135056656",
+          "fcLinhVuc": "20071011124354812",
+          "fcMaNLH": "20231205112734973",
+          "fcNguoiLienHe": "Mrs. Hồng Chi",
+          "fcTelephone": "0918 234 518- 0976 034 518 \n·",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcFax": "",
+          "fcTinh_TP": "20070301104534671",
+          "fcQuocGia": "VIE",
+          "fcDiaChi": "",
+          "fcMST": "0317293073",
+          "fdNgayNhap": "2023-12-05 11:01:00",
+          "fcGhiChu": ""
+        },
+        {
+          "fcMa": "4",
+          "fcTen": "CÔNG TY CỔ PHẦN PHÁT THÀNH GIANG",
+          "fcLoaiKhach": "00",
+          "fcLinhVuc": "20071011124354812",
+          "fcMaNLH": "20240305102707867",
+          "fcNguoiLienHe": "Mrs. Võ Thị Trúc Hà",
+          "fcTelephone": "0901875668",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcFax": "",
+          "fcTinh_TP": "20100610174034109",
+          "fcQuocGia": "VIE",
+          "fcDiaChi": "",
+          "fcMST": "0300969589",
+          "fdNgayNhap": "2023-12-05 11:01:00",
+          "fcGhiChu": ""
+        },
+        {
+          "fcMa": "3",
+          "fcTen": "CÔNG TY TNHH MỘT THÀNH VIÊN VẬN TẢI VÀ DU LỊCH MINH QUÂN",
+          "fcLoaiKhach": "20071018135056656",
+          "fcLinhVuc": "20071011123125984",
+          "fcMaNLH": "20231205112516765",
+          "fcNguoiLienHe": "Mr. Minh Quân",
+          "fcTelephone": "0908 35 1616",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcFax": "",
+          "fcTinh_TP": "20070301113743765",
+          "fcQuocGia": "BEL",
+          "fcDiaChi": "",
+          "fcMST": "0308114144",
+          "fdNgayNhap": "2023-12-05 11:01:00",
+          "fcGhiChu": ""
+        },
+        {
+          "fcMa": "20261117160440668",
+          "fcTen": "TASTING - WEDDING MS TUYẾT TRANG & MR TRUNG THÀNH",
+          "fcLoaiKhach": "20170503153922481",
+          "fcLinhVuc": "20261110230520329",
+          "fcMaNLH": "20261117173006276",
+          "fcNguoiLienHe": "",
+          "fcTelephone": "0834101007",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcFax": "",
+          "fcTinh_TP": "20240612135446826",
+          "fcQuocGia": "VIE",
+          "fcDiaChi": "",
+          "fcMST": "",
+          "fdNgayNhap": "2026-11-17 16:05:00",
+          "fcGhiChu": ""
+        },
+        {
+          "fcMa": "2026111615341578",
+          "fcTen": "CÔNG TY TNHH HÀNH TRÌNH Á CHÂU",
+          "fcLoaiKhach": "20260707111858435",
+          "fcLinhVuc": "20071011124354812",
+          "fcMaNLH": "20231205112734973",
+          "fcNguoiLienHe": "",
+          "fcTelephone": "",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcFax": "",
+          "fcTinh_TP": "20100610174034109",
+          "fcQuocGia": "VIE",
+          "fcDiaChi": "406 Xô Viết Nghệ Tĩnh, Phường Thạnh Mỹ Tây, Thành phố Hồ Chí Minh, Việt Nam",
+          "fcMST": "0314249855",
+          "fdNgayNhap": "1900-01-01 00:00:00",
+          "fcGhiChu": ""
+        },
+        {
+          "fcMa": "20261116152622664",
+          "fcTen": "NEW FOCUS- CÔNG TY TNHH TIÊU ĐIỂM MỚI",
+          "fcLoaiKhach": "20260707111858435",
+          "fcLinhVuc": "20071011124354812",
+          "fcMaNLH": "20231205112734973",
+          "fcNguoiLienHe": "",
+          "fcTelephone": "",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcFax": "",
+          "fcTinh_TP": "20100610174034109",
+          "fcQuocGia": "VNM",
+          "fcDiaChi": "2 Nguyễn Văn Mại, Phường Tân Sơn Nhất, TP Hồ Chí Minh, Việt Nam",
+          "fcMST": "0305254263",
+          "fdNgayNhap": "1900-01-01 00:00:00",
+          "fcGhiChu": ""
+        },
+        {
+          "fcMa": "20261116100225166",
+          "fcTen": "PARTY - MS. TUYỀN",
+          "fcLoaiKhach": "20170417104502444",
+          "fcLinhVuc": "20201210163620427",
+          "fcMaNLH": "20261116100600783",
+          "fcNguoiLienHe": "",
+          "fcTelephone": "0927187778",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcFax": "",
+          "fcTinh_TP": "20240612135446826",
+          "fcQuocGia": "VNM",
+          "fcDiaChi": "",
+          "fcMST": "",
+          "fdNgayNhap": "1900-01-01 00:00:00",
+          "fcGhiChu": ""
+        },
+        {
+          "fcMa": "20261115124541203",
+          "fcTen": "TASTING - WEDDING MR THANH HOÀNG & MS PHƯƠNG CHI",
+          "fcLoaiKhach": "20170503153922481",
+          "fcLinhVuc": "20261110230520329",
+          "fcMaNLH": "20261115124651100",
+          "fcNguoiLienHe": "",
+          "fcTelephone": "0902219120",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcFax": "",
+          "fcTinh_TP": "20240612135446826",
+          "fcQuocGia": "VIE",
+          "fcDiaChi": "",
+          "fcMST": "",
+          "fdNgayNhap": "1900-01-01 00:00:00",
+          "fcGhiChu": ""
+        },
+        {
+          "fcMa": "20261114131501142",
+          "fcTen": "PARTY - MR. SEE KOK HENG",
+          "fcLoaiKhach": "20170503153922481",
+          "fcLinhVuc": "20201210163639420",
+          "fcMaNLH": "20261114131809970",
+          "fcNguoiLienHe": "",
+          "fcTelephone": "",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcFax": "",
+          "fcTinh_TP": "",
+          "fcQuocGia": "SIN",
+          "fcDiaChi": "Singapore",
+          "fcMST": "",
+          "fdNgayNhap": "1900-01-01 00:00:00",
+          "fcGhiChu": ""
+        },
+        {
+          "fcMa": "20261114125950346",
+          "fcTen": "CÔNG TY TNHH PHÚC ĐÔNG HẢI",
+          "fcLoaiKhach": "20170503153922481",
+          "fcLinhVuc": "20201210162602770",
+          "fcMaNLH": "20261114130722770",
+          "fcNguoiLienHe": "",
+          "fcTelephone": "02633843411",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcFax": "",
+          "fcTinh_TP": "20240612135446826",
+          "fcQuocGia": "VNM",
+          "fcDiaChi": "Số 767, quốc lộ 20, Xã Đức Trọng, Tỉnh Lâm Đồng, Việt Nam",
+          "fcMST": "5801057582",
+          "fdNgayNhap": "1900-01-01 00:00:00",
+          "fcGhiChu": ""
+        }
+      ]
+    },
+    "stBooking": {
+      "title": "Đơn đặt tiệc & Sự kiện (stBooking)",
+      "description": "Bảng trung tâm lưu trữ thông tin đơn tiệc, tổng tiền, cọc, trạng thái",
+      "is_master_data": false,
+      "columns": [
+        "fcBookID",
+        "fdDate",
+        "fcTitle",
+        "fcGuestID",
+        "fcNote",
+        "fcUser",
+        "fcContactPerson",
+        "fcStatus_BkRoom",
+        "fnSoLuongDK",
+        "fdDateConfirm",
+        "fnEXP",
+        "fnLunch",
+        "fcBreakDown",
+        "fnNo_Of_Rooms",
+        "fnRoomRates",
+        "fnTotalRoomNight",
+        "fcCIn_COut_Date",
+        "fbMICE",
+        "fdDateContract",
+        "fcLoaiKH",
+        "fnDatCoc",
+        "fdDepositDate",
+        "fcDepositNote",
+        "fcTienTe",
+        "fnTyGia",
+        "fcCampaign"
+      ],
+      "column_types": {
+        "fcBookID": "nvarchar",
+        "fdDate": "smalldatetime",
+        "fcTitle": "nvarchar",
+        "fcGuestID": "nvarchar",
+        "fcNote": "nvarchar",
+        "fcUser": "nvarchar",
+        "fcContactPerson": "nvarchar",
+        "fcStatus_BkRoom": "nvarchar",
+        "fnSoLuongDK": "numeric",
+        "fdDateConfirm": "smalldatetime",
+        "fnEXP": "numeric",
+        "fnLunch": "numeric",
+        "fcBreakDown": "ntext",
+        "fnNo_Of_Rooms": "numeric",
+        "fnRoomRates": "numeric",
+        "fnTotalRoomNight": "numeric",
+        "fcCIn_COut_Date": "nvarchar",
+        "fbMICE": "char",
+        "fdDateContract": "smalldatetime",
+        "fcLoaiKH": "nvarchar",
+        "fnDatCoc": "numeric",
+        "fdDepositDate": "smalldatetime",
+        "fcDepositNote": "nvarchar",
+        "fcTienTe": "char",
+        "fnTyGia": "numeric",
+        "fcCampaign": "nvarchar"
+      },
+      "total_rows_extracted": 10,
+      "sample_data": [
+        {
+          "fcBookID": "TTK26_1000000211",
+          "fdDate": "2026-11-16 00:00:00",
+          "fcTitle": "",
+          "fcGuestID": "20261116152622664",
+          "fcNote": "80412",
+          "fcUser": "TTK",
+          "fcContactPerson": "thanh",
+          "fcStatus_BkRoom": "T",
+          "fnSoLuongDK": "0",
+          "fdDateConfirm": "2026-11-18 15:29:00",
+          "fnEXP": "0",
+          "fnLunch": "12",
+          "fcBreakDown": "",
+          "fnNo_Of_Rooms": "0",
+          "fnRoomRates": "0.00",
+          "fnTotalRoomNight": "0",
+          "fcCIn_COut_Date": "",
+          "fbMICE": "0",
+          "fdDateContract": "2026-11-18 15:29:00",
+          "fcLoaiKH": "20260707111858435",
+          "fnDatCoc": "",
+          "fdDepositDate": "",
+          "fcDepositNote": "",
+          "fcTienTe": "",
+          "fnTyGia": "",
+          "fcCampaign": "0"
+        },
+        {
+          "fcBookID": "TTK26_1000000210",
+          "fdDate": "2026-11-16 00:00:00",
+          "fcTitle": "",
+          "fcGuestID": "20261116152622664",
+          "fcNote": "80412",
+          "fcUser": "TTK",
+          "fcContactPerson": "thanh",
+          "fcStatus_BkRoom": "T",
+          "fnSoLuongDK": "0",
+          "fdDateConfirm": "2026-11-18 15:25:00",
+          "fnEXP": "0",
+          "fnLunch": "12",
+          "fcBreakDown": "",
+          "fnNo_Of_Rooms": "0",
+          "fnRoomRates": "0.00",
+          "fnTotalRoomNight": "0",
+          "fcCIn_COut_Date": "",
+          "fbMICE": "0",
+          "fdDateContract": "2026-11-18 15:25:00",
+          "fcLoaiKH": "20260707111858435",
+          "fnDatCoc": "",
+          "fdDepositDate": "",
+          "fcDepositNote": "",
+          "fcTienTe": "",
+          "fnTyGia": "",
+          "fcCampaign": "0"
+        },
+        {
+          "fcBookID": "TTK26_1000000209",
+          "fdDate": "2026-11-16 00:00:00",
+          "fcTitle": "",
+          "fcGuestID": "20240722153813426",
+          "fcNote": "",
+          "fcUser": "TTK",
+          "fcContactPerson": "",
+          "fcStatus_BkRoom": "D",
+          "fnSoLuongDK": "0",
+          "fdDateConfirm": "2026-11-18 15:07:00",
+          "fnEXP": "0",
+          "fnLunch": "12",
+          "fcBreakDown": "",
+          "fnNo_Of_Rooms": "0",
+          "fnRoomRates": "0.00",
+          "fnTotalRoomNight": "0",
+          "fcCIn_COut_Date": "",
+          "fbMICE": "0",
+          "fdDateContract": "2026-11-18 15:07:00",
+          "fcLoaiKH": "20071018135056656",
+          "fnDatCoc": "",
+          "fdDepositDate": "",
+          "fcDepositNote": "",
+          "fcTienTe": "",
+          "fnTyGia": "",
+          "fcCampaign": "0"
+        },
+        {
+          "fcBookID": "TTK26_1000000208",
+          "fdDate": "2026-11-09 00:00:00",
+          "fcTitle": "",
+          "fcGuestID": "20261109175340303",
+          "fcNote": "",
+          "fcUser": "TTK",
+          "fcContactPerson": "thanh",
+          "fcStatus_BkRoom": "T",
+          "fnSoLuongDK": "0",
+          "fdDateConfirm": "2026-11-13 17:53:00",
+          "fnEXP": "0",
+          "fnLunch": "12",
+          "fcBreakDown": "",
+          "fnNo_Of_Rooms": "0",
+          "fnRoomRates": "0.00",
+          "fnTotalRoomNight": "0",
+          "fcCIn_COut_Date": "",
+          "fbMICE": "0",
+          "fdDateContract": "2026-11-13 17:53:00",
+          "fcLoaiKH": "20260707111858435",
+          "fnDatCoc": "",
+          "fdDepositDate": "",
+          "fcDepositNote": "",
+          "fcTienTe": "",
+          "fnTyGia": "",
+          "fcCampaign": "0"
+        },
+        {
+          "fcBookID": "TTK26_1000000207",
+          "fdDate": "2026-11-09 00:00:00",
+          "fcTitle": "",
+          "fcGuestID": "20240722153813426",
+          "fcNote": "79939",
+          "fcUser": "TTK",
+          "fcContactPerson": "",
+          "fcStatus_BkRoom": "T",
+          "fnSoLuongDK": "0",
+          "fdDateConfirm": "2026-11-13 17:34:00",
+          "fnEXP": "0",
+          "fnLunch": "12",
+          "fcBreakDown": "",
+          "fnNo_Of_Rooms": "0",
+          "fnRoomRates": "0.00",
+          "fnTotalRoomNight": "0",
+          "fcCIn_COut_Date": "",
+          "fbMICE": "0",
+          "fdDateContract": "2026-11-13 17:34:00",
+          "fcLoaiKH": "20071018135056656",
+          "fnDatCoc": "",
+          "fdDepositDate": "",
+          "fcDepositNote": "",
+          "fcTienTe": "",
+          "fnTyGia": "",
+          "fcCampaign": "0"
+        },
+        {
+          "fcBookID": "TTK26_1000000206",
+          "fdDate": "2026-11-09 00:00:00",
+          "fcTitle": "",
+          "fcGuestID": "20240722153813426",
+          "fcNote": "79939",
+          "fcUser": "TTK",
+          "fcContactPerson": "",
+          "fcStatus_BkRoom": "T",
+          "fnSoLuongDK": "0",
+          "fdDateConfirm": "2026-11-13 17:33:00",
+          "fnEXP": "0",
+          "fnLunch": "12",
+          "fcBreakDown": "",
+          "fnNo_Of_Rooms": "0",
+          "fnRoomRates": "0.00",
+          "fnTotalRoomNight": "0",
+          "fcCIn_COut_Date": "",
+          "fbMICE": "0",
+          "fdDateContract": "2026-11-13 17:33:00",
+          "fcLoaiKH": "20071018135056656",
+          "fnDatCoc": "",
+          "fdDepositDate": "",
+          "fcDepositNote": "",
+          "fcTienTe": "",
+          "fnTyGia": "",
+          "fcCampaign": "0"
+        },
+        {
+          "fcBookID": "TTK26_1000000205",
+          "fdDate": "2026-11-09 00:00:00",
+          "fcTitle": "",
+          "fcGuestID": "20261004175047490",
+          "fcNote": "",
+          "fcUser": "TTK",
+          "fcContactPerson": "thanh",
+          "fcStatus_BkRoom": "D",
+          "fnSoLuongDK": "0",
+          "fdDateConfirm": "2026-11-13 17:07:00",
+          "fnEXP": "0",
+          "fnLunch": "12",
+          "fcBreakDown": "",
+          "fnNo_Of_Rooms": "0",
+          "fnRoomRates": "0.00",
+          "fnTotalRoomNight": "0",
+          "fcCIn_COut_Date": "",
+          "fbMICE": "0",
+          "fdDateContract": "2026-11-13 17:07:00",
+          "fcLoaiKH": "20260707111858435",
+          "fnDatCoc": "",
+          "fdDepositDate": "",
+          "fcDepositNote": "",
+          "fcTienTe": "",
+          "fnTyGia": "",
+          "fcCampaign": "0"
+        },
+        {
+          "fcBookID": "TTK26_1000000204",
+          "fdDate": "2026-11-09 00:00:00",
+          "fcTitle": "",
+          "fcGuestID": "20261004175047490",
+          "fcNote": "",
+          "fcUser": "TTK",
+          "fcContactPerson": "thanh",
+          "fcStatus_BkRoom": "D",
+          "fnSoLuongDK": "0",
+          "fdDateConfirm": "2026-11-13 16:55:00",
+          "fnEXP": "0",
+          "fnLunch": "12",
+          "fcBreakDown": "",
+          "fnNo_Of_Rooms": "0",
+          "fnRoomRates": "0.00",
+          "fnTotalRoomNight": "0",
+          "fcCIn_COut_Date": "",
+          "fbMICE": "0",
+          "fdDateContract": "2026-11-13 16:55:00",
+          "fcLoaiKH": "20260707111858435",
+          "fnDatCoc": "",
+          "fdDepositDate": "",
+          "fcDepositNote": "",
+          "fcTienTe": "",
+          "fnTyGia": "",
+          "fcCampaign": "0"
+        },
+        {
+          "fcBookID": "TTK26_1000000203",
+          "fdDate": "2026-11-09 00:00:00",
+          "fcTitle": "",
+          "fcGuestID": "20261004175047490",
+          "fcNote": "",
+          "fcUser": "TTK",
+          "fcContactPerson": "thanh",
+          "fcStatus_BkRoom": "D",
+          "fnSoLuongDK": "0",
+          "fdDateConfirm": "2026-11-13 16:32:00",
+          "fnEXP": "0",
+          "fnLunch": "12",
+          "fcBreakDown": "",
+          "fnNo_Of_Rooms": "0",
+          "fnRoomRates": "0.00",
+          "fnTotalRoomNight": "0",
+          "fcCIn_COut_Date": "",
+          "fbMICE": "0",
+          "fdDateContract": "2026-11-13 16:32:00",
+          "fcLoaiKH": "20260707111858435",
+          "fnDatCoc": "",
+          "fdDepositDate": "",
+          "fcDepositNote": "",
+          "fcTienTe": "",
+          "fnTyGia": "",
+          "fcCampaign": "0"
+        },
+        {
+          "fcBookID": "TTK26_1000000202",
+          "fdDate": "2026-11-09 00:00:00",
+          "fcTitle": "TRAVEL ONE",
+          "fcGuestID": "20261004175047490",
+          "fcNote": "",
+          "fcUser": "TTK",
+          "fcContactPerson": "TRAVEL ONE",
+          "fcStatus_BkRoom": "D",
+          "fnSoLuongDK": "1",
+          "fdDateConfirm": "2026-11-12 20:57:00",
+          "fnEXP": "0",
+          "fnLunch": "12",
+          "fcBreakDown": "",
+          "fnNo_Of_Rooms": "0",
+          "fnRoomRates": "0.00",
+          "fnTotalRoomNight": "0",
+          "fcCIn_COut_Date": "",
+          "fbMICE": "0",
+          "fdDateContract": "2026-11-12 20:57:00",
+          "fcLoaiKH": "20260707111858435",
+          "fnDatCoc": "0",
+          "fdDepositDate": "",
+          "fcDepositNote": "",
+          "fcTienTe": "",
+          "fnTyGia": "",
+          "fcCampaign": "0"
+        }
+      ]
+    },
+    "stBookFunctionRoom": {
+      "title": "Chi tiết sảnh & Thời gian tiệc (stBookFunctionRoom)",
+      "description": "Chi tiết sử dụng sảnh: Ngày tiệc, giờ vào, giờ ra, số bàn, giá bàn",
+      "is_master_data": false,
+      "columns": [
+        "fcBookID",
+        "fnCodeID",
+        "fcFunctionRoom",
+        "fcFunctionType",
+        "fdDate",
+        "fdTimeIn",
+        "fdTimeOut",
+        "fnQuantity",
+        "fnMenuPrice"
+      ],
+      "column_types": {
+        "fcBookID": "nvarchar",
+        "fnCodeID": "nvarchar",
+        "fcFunctionRoom": "nvarchar",
+        "fcFunctionType": "nvarchar",
+        "fdDate": "smalldatetime",
+        "fdTimeIn": "smalldatetime",
+        "fdTimeOut": "smalldatetime",
+        "fnQuantity": "numeric",
+        "fnMenuPrice": "numeric"
+      },
+      "total_rows_extracted": 15,
+      "sample_data": [
+        {
+          "fcBookID": "TTK26_1000000211",
+          "fnCodeID": "20261116152900650",
+          "fcFunctionRoom": "04",
+          "fcFunctionType": "17",
+          "fdDate": "2026-12-03 00:00:00",
+          "fdTimeIn": "2026-12-03 12:00:00",
+          "fdTimeOut": "2026-12-03 13:00:00",
+          "fnQuantity": "40.00",
+          "fnMenuPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000211",
+          "fnCodeID": "20261116152831956",
+          "fcFunctionRoom": "03",
+          "fcFunctionType": "20170615134050841",
+          "fdDate": "2026-12-03 00:00:00",
+          "fdTimeIn": "2026-12-03 08:00:00",
+          "fdTimeOut": "2026-12-03 17:00:00",
+          "fnQuantity": "40.00",
+          "fnMenuPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000210",
+          "fnCodeID": "20261116152449931",
+          "fcFunctionRoom": "03",
+          "fcFunctionType": "20240412083523547",
+          "fdDate": "2026-12-02 00:00:00",
+          "fdTimeIn": "2026-12-02 13:00:00",
+          "fdTimeOut": "2026-12-02 17:00:00",
+          "fnQuantity": "40.00",
+          "fnMenuPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000209",
+          "fnCodeID": "20261116150549742",
+          "fcFunctionRoom": "10",
+          "fcFunctionType": "20171103122205424",
+          "fdDate": "2026-11-19 00:00:00",
+          "fdTimeIn": "2026-11-19 12:00:00",
+          "fdTimeOut": "2026-11-19 12:30:00",
+          "fnQuantity": "5.00",
+          "fnMenuPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000208",
+          "fnCodeID": "20261109175327384",
+          "fcFunctionRoom": "02",
+          "fcFunctionType": "20070307171300812",
+          "fdDate": "2027-01-16 00:00:00",
+          "fdTimeIn": "2027-01-16 18:00:00",
+          "fdTimeOut": "2027-01-16 22:00:00",
+          "fnQuantity": "350.00",
+          "fnMenuPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000207",
+          "fnCodeID": "20261109173331226",
+          "fcFunctionRoom": "01",
+          "fcFunctionType": "20070307171300812",
+          "fdDate": "2027-01-22 00:00:00",
+          "fdTimeIn": "2027-01-22 18:00:00",
+          "fdTimeOut": "2027-01-22 22:00:00",
+          "fnQuantity": "200.00",
+          "fnMenuPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000206",
+          "fnCodeID": "20261109173244153",
+          "fcFunctionRoom": "03",
+          "fcFunctionType": "20240412083523547",
+          "fdDate": "2027-01-21 00:00:00",
+          "fdTimeIn": "2027-01-21 13:00:00",
+          "fdTimeOut": "2027-01-21 17:00:00",
+          "fnQuantity": "40.00",
+          "fnMenuPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000205",
+          "fnCodeID": "20261109152606122",
+          "fcFunctionRoom": "04",
+          "fcFunctionType": "17",
+          "fdDate": "2026-11-20 00:00:00",
+          "fdTimeIn": "2026-11-20 12:00:00",
+          "fdTimeOut": "2026-11-20 13:00:00",
+          "fnQuantity": "0.00",
+          "fnMenuPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000205",
+          "fnCodeID": "20261109152525706",
+          "fcFunctionRoom": "03",
+          "fcFunctionType": "20250409142346379",
+          "fdDate": "2026-11-20 00:00:00",
+          "fdTimeIn": "2026-11-20 08:00:00",
+          "fdTimeOut": "2026-11-20 17:00:00",
+          "fnQuantity": "0.00",
+          "fnMenuPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000204",
+          "fnCodeID": "20261109152454326",
+          "fcFunctionRoom": "08",
+          "fcFunctionType": "17",
+          "fdDate": "2026-11-19 00:00:00",
+          "fdTimeIn": "2026-11-19 12:00:00",
+          "fdTimeOut": "2026-11-19 13:00:00",
+          "fnQuantity": "0.00",
+          "fnMenuPrice": "0.00"
+        }
+      ]
+    },
+    "stBooking_Charges": {
+      "title": "Chi tiết khoản thu & Món ăn (stBooking_Charges)",
+      "description": "Chi tiết từng món ăn, thức uống, dịch vụ phát sinh kèm đơn giá, số lượng",
+      "is_master_data": false,
+      "columns": [
+        "fcBookID",
+        "fnCodeID",
+        "fcDoanhThu_Loai",
+        "fnID",
+        "fnQuantity",
+        "fnPrice",
+        "fnVAT",
+        "fnService",
+        "fnAmount",
+        "fcNote",
+        "fnBreakDownLunch",
+        "fnLunchPrice"
+      ],
+      "column_types": {
+        "fcBookID": "nvarchar",
+        "fnCodeID": "nvarchar",
+        "fcDoanhThu_Loai": "nvarchar",
+        "fnID": "int",
+        "fnQuantity": "numeric",
+        "fnPrice": "numeric",
+        "fnVAT": "numeric",
+        "fnService": "numeric",
+        "fnAmount": "numeric",
+        "fcNote": "nvarchar",
+        "fnBreakDownLunch": "bit",
+        "fnLunchPrice": "numeric"
+      },
+      "total_rows_extracted": 25,
+      "sample_data": [
+        {
+          "fcBookID": "TTK26_1000000204",
+          "fnCodeID": "20261109152342484",
+          "fcDoanhThu_Loai": "70",
+          "fnID": 29850,
+          "fnQuantity": "57.00",
+          "fnPrice": "100000.0000",
+          "fnVAT": "0.0000",
+          "fnService": "0.00",
+          "fnAmount": "5700000.00",
+          "fcNote": "Teabreak chiều",
+          "fnBreakDownLunch": false,
+          "fnLunchPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000204",
+          "fnCodeID": "20261109152342484",
+          "fcDoanhThu_Loai": "50",
+          "fnID": 29849,
+          "fnQuantity": "57.00",
+          "fnPrice": "350000.0000",
+          "fnVAT": "0.0000",
+          "fnService": "0.00",
+          "fnAmount": "19950000.00",
+          "fcNote": "Food",
+          "fnBreakDownLunch": false,
+          "fnLunchPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000204",
+          "fnCodeID": "20261109152342484",
+          "fcDoanhThu_Loai": "33",
+          "fnID": 29848,
+          "fnQuantity": "57.00",
+          "fnPrice": "100000.0000",
+          "fnVAT": "0.0000",
+          "fnService": "0.00",
+          "fnAmount": "5700000.00",
+          "fcNote": "Teabreak",
+          "fnBreakDownLunch": false,
+          "fnLunchPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000204",
+          "fnCodeID": "20261109152342484",
+          "fcDoanhThu_Loai": "22",
+          "fnID": 29847,
+          "fnQuantity": "1.00",
+          "fnPrice": "13500000.0000",
+          "fnVAT": "0.0000",
+          "fnService": "0.00",
+          "fnAmount": "13500000.00",
+          "fcNote": "Full-day room rental",
+          "fnBreakDownLunch": false,
+          "fnLunchPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000203",
+          "fnCodeID": "20261109152203122",
+          "fcDoanhThu_Loai": "89",
+          "fnID": 29878,
+          "fnQuantity": "69.00",
+          "fnPrice": "600000.0000",
+          "fnVAT": "0.0000",
+          "fnService": "0.00",
+          "fnAmount": "41400000.00",
+          "fcNote": "GROUP DINNER",
+          "fnBreakDownLunch": false,
+          "fnLunchPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000203",
+          "fnCodeID": "20261109152203122",
+          "fcDoanhThu_Loai": "70",
+          "fnID": 29882,
+          "fnQuantity": "72.00",
+          "fnPrice": "100000.0000",
+          "fnVAT": "0.0000",
+          "fnService": "0.00",
+          "fnAmount": "7200000.00",
+          "fcNote": "TEABREAK",
+          "fnBreakDownLunch": false,
+          "fnLunchPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000203",
+          "fnCodeID": "20261109152203122",
+          "fcDoanhThu_Loai": "69",
+          "fnID": 29885,
+          "fnQuantity": "1.00",
+          "fnPrice": "500000.0000",
+          "fnVAT": "0.0000",
+          "fnService": "0.00",
+          "fnAmount": "500000.00",
+          "fcNote": "GIẤY",
+          "fnBreakDownLunch": false,
+          "fnLunchPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000203",
+          "fnCodeID": "20261109152203122",
+          "fcDoanhThu_Loai": "66",
+          "fnID": 29879,
+          "fnQuantity": "1.00",
+          "fnPrice": "10000000.0000",
+          "fnVAT": "0.0000",
+          "fnService": "0.00",
+          "fnAmount": "10000000.00",
+          "fcNote": "VENUE UPGRADE (NÂNG SẢNH)",
+          "fnBreakDownLunch": false,
+          "fnLunchPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000203",
+          "fnCodeID": "20261109152203122",
+          "fcDoanhThu_Loai": "50",
+          "fnID": 29883,
+          "fnQuantity": "72.00",
+          "fnPrice": "400000.0000",
+          "fnVAT": "0.0000",
+          "fnService": "0.00",
+          "fnAmount": "28800000.00",
+          "fcNote": "BANQUET SET MENU",
+          "fnBreakDownLunch": false,
+          "fnLunchPrice": "0.00"
+        },
+        {
+          "fcBookID": "TTK26_1000000203",
+          "fnCodeID": "20261109152203122",
+          "fcDoanhThu_Loai": "35",
+          "fnID": 29884,
+          "fnQuantity": "1.00",
+          "fnPrice": "300000.0000",
+          "fnVAT": "0.0000",
+          "fnService": "0.00",
+          "fnAmount": "300000.00",
+          "fcNote": "MICRO",
+          "fnBreakDownLunch": false,
+          "fnLunchPrice": "0.00"
+        }
+      ]
+    },
+    "stMaster_EO": {
+      "title": "Thông tin điều hành BEO (stMaster_EO)",
+      "description": "Chi tiết phiếu BEO: Người lập, người duyệt, lưu ý âm thanh, trang trí, nghi thức",
+      "is_master_data": false,
+      "columns": [
+        "fcMaster_EO",
+        "fdDate",
+        "fcBookID",
+        "fcGuestCode",
+        "fcContactPerson",
+        "fcContractNo",
+        "fdContractDate",
+        "fcBill_To",
+        "fcPTTT",
+        "fnDatCoc",
+        "fdDepositDate",
+        "fcDepositNote",
+        "fcTienTe",
+        "fnTyGia",
+        "fcNguoiLap",
+        "fdLastUpdate",
+        "fcPaymentNotes",
+        "fcEndUser",
+        "fcBookCode"
+      ],
+      "column_types": {
+        "fcMaster_EO": "nvarchar",
+        "fdDate": "smalldatetime",
+        "fcBookID": "nvarchar",
+        "fcGuestCode": "nvarchar",
+        "fcContactPerson": "nvarchar",
+        "fcContractNo": "nvarchar",
+        "fdContractDate": "smalldatetime",
+        "fcBill_To": "nvarchar",
+        "fcPTTT": "nvarchar",
+        "fnDatCoc": "numeric",
+        "fdDepositDate": "smalldatetime",
+        "fcDepositNote": "nvarchar",
+        "fcTienTe": "char",
+        "fnTyGia": "numeric",
+        "fcNguoiLap": "nvarchar",
+        "fdLastUpdate": "smalldatetime",
+        "fcPaymentNotes": "ntext",
+        "fcEndUser": "nvarchar",
+        "fcBookCode": "nvarchar"
+      },
+      "total_rows_extracted": 10,
+      "sample_data": [
+        {
+          "fcMaster_EO": "20261118164556183",
+          "fdDate": "2026-11-18 00:00:00",
+          "fcBookID": "DTPT26_1000000012",
+          "fcGuestCode": "20261114131501142",
+          "fcContactPerson": "Ms. Ngân",
+          "fcContractNo": "",
+          "fdContractDate": "1900-01-01 00:00:00",
+          "fcBill_To": "",
+          "fcPTTT": "",
+          "fnDatCoc": "0",
+          "fdDepositDate": "1900-01-01 00:00:00",
+          "fcDepositNote": "",
+          "fcTienTe": "VND",
+          "fnTyGia": "1",
+          "fcNguoiLap": "DTPT",
+          "fdLastUpdate": "2026-11-18 00:00:00",
+          "fcPaymentNotes": "",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20261117173550321",
+          "fdDate": "2026-11-17 00:00:00",
+          "fcBookID": "LVH26_1000000074",
+          "fcGuestCode": "20261117160440668",
+          "fcContactPerson": "Ms Tuyết Hương (mẹ cd)",
+          "fcContractNo": "",
+          "fdContractDate": "1900-01-01 00:00:00",
+          "fcBill_To": "",
+          "fcPTTT": "",
+          "fnDatCoc": "0",
+          "fdDepositDate": "1900-01-01 00:00:00",
+          "fcDepositNote": "",
+          "fcTienTe": "VND",
+          "fnTyGia": "1",
+          "fcNguoiLap": "LVH",
+          "fdLastUpdate": "2026-11-17 00:00:00",
+          "fcPaymentNotes": "",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20261116180828808",
+          "fdDate": "2026-11-16 00:00:00",
+          "fcBookID": "TTK26_1000000145",
+          "fcGuestCode": "20251124162956954",
+          "fcContactPerson": "thanh",
+          "fcContractNo": "",
+          "fdContractDate": "1900-01-01 00:00:00",
+          "fcBill_To": "",
+          "fcPTTT": "",
+          "fnDatCoc": "0",
+          "fdDepositDate": "1900-01-01 00:00:00",
+          "fcDepositNote": "",
+          "fcTienTe": "VND",
+          "fnTyGia": "1",
+          "fcNguoiLap": "TTK",
+          "fdLastUpdate": "2026-11-16 00:00:00",
+          "fcPaymentNotes": "",
+          "fcEndUser": "BIO PHARMACHEMIE",
+          "fcBookCode": "74681"
+        },
+        {
+          "fcMaster_EO": "20261116151328853",
+          "fdDate": "2026-11-16 00:00:00",
+          "fcBookID": "TTK26_1000000209",
+          "fcGuestCode": "20240722153813426",
+          "fcContactPerson": "",
+          "fcContractNo": "",
+          "fdContractDate": "1900-01-01 00:00:00",
+          "fcBill_To": "",
+          "fcPTTT": "",
+          "fnDatCoc": "0",
+          "fdDepositDate": "1900-01-01 00:00:00",
+          "fcDepositNote": "",
+          "fcTienTe": "VND",
+          "fnTyGia": "1",
+          "fcNguoiLap": "TTK",
+          "fdLastUpdate": "2026-11-16 00:00:00",
+          "fcPaymentNotes": "",
+          "fcEndUser": "TASTE MÓN ĐOÀN THÁNG 1 NĂM 2027",
+          "fcBookCode": "80407"
+        },
+        {
+          "fcMaster_EO": "20261116094842130",
+          "fdDate": "2026-11-16 00:00:00",
+          "fcBookID": "DTPT26_1000000008",
+          "fcGuestCode": "2026111316042182",
+          "fcContactPerson": "Nguyễn Mậu Cường",
+          "fcContractNo": "",
+          "fdContractDate": "1900-01-01 00:00:00",
+          "fcBill_To": "",
+          "fcPTTT": "",
+          "fnDatCoc": "6000000",
+          "fdDepositDate": "2026-11-14 00:00:00",
+          "fcDepositNote": "",
+          "fcTienTe": "VND",
+          "fnTyGia": "1",
+          "fcNguoiLap": "DTPT",
+          "fdLastUpdate": "2026-11-16 00:00:00",
+          "fcPaymentNotes": "14/11/2026                                     5426-73491\t0\t6,000,000\t1,165,692,470\t6318VPBKI2ZH82FD.NGUYEN MAU CUONG Workshop nhiep anh 24-11.20261114.131924.113739886.NGUYEN MAU CUONG.970432",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20261115124941382",
+          "fdDate": "2026-11-15 00:00:00",
+          "fcBookID": "LVH26_1000000073",
+          "fcGuestCode": "20261115124541203",
+          "fcContactPerson": "Ms Phương Chi",
+          "fcContractNo": "",
+          "fdContractDate": "1900-01-01 00:00:00",
+          "fcBill_To": "",
+          "fcPTTT": "",
+          "fnDatCoc": "0",
+          "fdDepositDate": "1900-01-01 00:00:00",
+          "fcDepositNote": "",
+          "fcTienTe": "VND",
+          "fnTyGia": "1",
+          "fcNguoiLap": "LVH",
+          "fdLastUpdate": "2026-11-15 00:00:00",
+          "fcPaymentNotes": "",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "2026111415560599",
+          "fdDate": "2026-11-14 00:00:00",
+          "fcBookID": "LVH26_1000000070",
+          "fcGuestCode": "20261113141945506",
+          "fcContactPerson": "Ms Thùy Dương",
+          "fcContractNo": "",
+          "fdContractDate": "1900-01-01 00:00:00",
+          "fcBill_To": "",
+          "fcPTTT": "",
+          "fnDatCoc": "0",
+          "fdDepositDate": "1900-01-01 00:00:00",
+          "fcDepositNote": "",
+          "fcTienTe": "VND",
+          "fnTyGia": "1",
+          "fcNguoiLap": "LVH",
+          "fdLastUpdate": "2026-11-14 00:00:00",
+          "fcPaymentNotes": "",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20261114144509117",
+          "fdDate": "2026-11-14 00:00:00",
+          "fcBookID": "LVH26_1000000047",
+          "fcGuestCode": "20261112152644704",
+          "fcContactPerson": "Ms Trang",
+          "fcContractNo": "",
+          "fdContractDate": "1900-01-01 00:00:00",
+          "fcBill_To": "Công Ty Sika Hữu Hạn Việt Nam",
+          "fcPTTT": "Chuyển khoản / Tiền mặt",
+          "fnDatCoc": "550000000",
+          "fdDepositDate": "1900-01-01 00:00:00",
+          "fcDepositNote": "",
+          "fcTienTe": "VND",
+          "fnTyGia": "1",
+          "fcNguoiLap": "LVH",
+          "fdLastUpdate": "2026-11-19 10:02:00",
+          "fcPaymentNotes": "",
+          "fcEndUser": "Công Ty Sika Hữu Hạn Việt Nam",
+          "fcBookCode": "LVH26_1000000047"
+        },
+        {
+          "fcMaster_EO": "2026111413110339",
+          "fdDate": "2026-11-14 00:00:00",
+          "fcBookID": "LMHH26_1000000107",
+          "fcGuestCode": "20261114125950346",
+          "fcContactPerson": "Ms. Uyên Nhi",
+          "fcContractNo": "",
+          "fdContractDate": "1900-01-01 00:00:00",
+          "fcBill_To": "",
+          "fcPTTT": "",
+          "fnDatCoc": "10000000",
+          "fdDepositDate": "1900-01-01 00:00:00",
+          "fcDepositNote": "",
+          "fcTienTe": "VND",
+          "fnTyGia": "1",
+          "fcNguoiLap": "DTPT",
+          "fdLastUpdate": "2026-11-14 00:00:00",
+          "fcPaymentNotes": "",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20261113111409148",
+          "fdDate": "2026-11-13 00:00:00",
+          "fcBookID": "LVH26_1000000071",
+          "fcGuestCode": "20261113104442559",
+          "fcContactPerson": "Ms Tuyết Vân (mẹ cr)",
+          "fcContractNo": "",
+          "fdContractDate": "1900-01-01 00:00:00",
+          "fcBill_To": "",
+          "fcPTTT": "",
+          "fnDatCoc": "0",
+          "fdDepositDate": "1900-01-01 00:00:00",
+          "fcDepositNote": "",
+          "fcTienTe": "VND",
+          "fnTyGia": "1",
+          "fcNguoiLap": "LVH",
+          "fdLastUpdate": "2026-11-13 00:00:00",
+          "fcPaymentNotes": "",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        }
+      ]
+    },
+    "stLinhVuc": {
+      "title": "Phân khúc thị trường (stLinhVuc)",
+      "description": "Phân khúc thị trường (stLinhVuc)",
+      "is_master_data": true,
+      "columns": [
+        "fcCode",
+        "fcName",
+        "fcNote"
+      ],
+      "total_rows_extracted": 60,
+      "sample_data": [
+        {
+          "fcCode": "20071011124354812",
+          "fcName": "GIT-LE-DO",
+          "fcNote": "Group Leisure Domestic"
+        },
+        {
+          "fcCode": "20071011124410203",
+          "fcName": "GIT-LE-KO",
+          "fcNote": "Group Leisure Korean"
+        },
+        {
+          "fcCode": "20071011124447875",
+          "fcName": "MIL",
+          "fcNote": "Govt./Millitary"
+        },
+        {
+          "fcCode": "20071011124742562",
+          "fcName": "NOM",
+          "fcNote": "No Market Specified"
+        },
+        {
+          "fcCode": "20071011124818937",
+          "fcName": "GCO",
+          "fcNote": "Group Corporate"
+        },
+        {
+          "fcCode": "20071011124934500",
+          "fcName": "EDU",
+          "fcNote": "Education"
+        },
+        {
+          "fcCode": "20201210162542255",
+          "fcName": "Accounting",
+          "fcNote": "Accounting"
+        },
+        {
+          "fcCode": "20201210162602770",
+          "fcName": "Business, Mgmt, Marketing, Communications Advertising & PR",
+          "fcNote": "Business, Mgmt, Marketing, Communications Advertising & PR"
+        },
+        {
+          "fcCode": "20201210162619476",
+          "fcName": "Commerce",
+          "fcNote": "Commerce"
+        },
+        {
+          "fcCode": "20201210162638661",
+          "fcName": "Cosmetics",
+          "fcNote": "Cosmetics"
+        },
+        {
+          "fcCode": "20201210162653776",
+          "fcName": "Embassy & Government, Local & Ministries",
+          "fcNote": "Embassy & Government, Local & Ministries"
+        },
+        {
+          "fcCode": "20201210162707392",
+          "fcName": "Express, Logistic",
+          "fcNote": "Express, Logistic"
+        },
+        {
+          "fcCode": "20201210162727668",
+          "fcName": "Fashion & Beauty",
+          "fcNote": "Fashion & Beauty"
+        },
+        {
+          "fcCode": "20201210162740146",
+          "fcName": "Funiture Outside",
+          "fcNote": "Funiture Outside"
+        },
+        {
+          "fcCode": "2020121016280016",
+          "fcName": "Import/ Export",
+          "fcNote": "Import/ Export"
+        }
+      ]
+    },
+    "stSuKien": {
+      "title": "Loại hình sự kiện (stSuKien)",
+      "description": "Loại hình sự kiện (stSuKien)",
+      "is_master_data": true,
+      "columns": [
+        "fcMa",
+        "fcTen",
+        "fcGhiChu"
+      ],
+      "total_rows_extracted": 36,
+      "sample_data": [
+        {
+          "fcMa": "02",
+          "fcTen": "Dinner (E)",
+          "fcGhiChu": ""
+        },
+        {
+          "fcMa": "11",
+          "fcTen": "Meeting",
+          "fcGhiChu": "Họp"
+        },
+        {
+          "fcMa": "14",
+          "fcTen": "Seminar",
+          "fcGhiChu": ""
+        },
+        {
+          "fcMa": "17",
+          "fcTen": "Lunch",
+          "fcGhiChu": ""
+        },
+        {
+          "fcMa": "20070307171300812",
+          "fcTen": "Gala Dinner (E)",
+          "fcGhiChu": "Bữa tối Gala"
+        },
+        {
+          "fcMa": "20120109170454218",
+          "fcTen": "Wedding (W)",
+          "fcGhiChu": "Tiệc Cưới"
+        },
+        {
+          "fcMa": "20120114134341515",
+          "fcTen": "Hall Rental-Event (E)",
+          "fcGhiChu": "Thuê sảnh"
+        },
+        {
+          "fcMa": "201704051302124",
+          "fcTen": "Birthday (E)",
+          "fcGhiChu": "Tiệc sinh nhật"
+        },
+        {
+          "fcMa": "20170406164035852",
+          "fcTen": "Lunch (E)",
+          "fcGhiChu": "Ăn trưa"
+        },
+        {
+          "fcMa": "20170425114628118",
+          "fcTen": "Breakfast",
+          "fcGhiChu": "Ăn sáng"
+        },
+        {
+          "fcMa": "20170615134026597",
+          "fcTen": "Meeting 1/2 W Lunch (E)",
+          "fcGhiChu": "Họp 1/2 ngày + ăn trưa"
+        },
+        {
+          "fcMa": "20170615134050841",
+          "fcTen": "Meeting Full W Lunch (E)",
+          "fcGhiChu": "Họp nguyên ngày + Ăn trưa"
+        },
+        {
+          "fcMa": "20170615134311373",
+          "fcTen": "Meeting 1/2 WO Lunch (E)",
+          "fcGhiChu": "Họp 1/2 ngày"
+        },
+        {
+          "fcMa": "20170615134331120",
+          "fcTen": "Meeting Full WO Lunch (E)",
+          "fcGhiChu": ""
+        },
+        {
+          "fcMa": "20170615134415453",
+          "fcTen": "Finger Food (E)",
+          "fcGhiChu": ""
+        }
+      ]
+    },
+    "stDepartment": {
+      "title": "9 Bộ phận điều phối BEO (stDepartment)",
+      "description": "9 Bộ phận điều phối BEO (stDepartment)",
+      "is_master_data": true,
+      "columns": [
+        "fcCode",
+        "fcName",
+        "fcManager",
+        "fcPosition",
+        "fnShow"
+      ],
+      "total_rows_extracted": 15,
+      "sample_data": [
+        {
+          "fcCode": "001",
+          "fcName": "F&B",
+          "fcManager": "",
+          "fcPosition": "",
+          "fnShow": "0"
+        },
+        {
+          "fcCode": "002",
+          "fcName": "HK",
+          "fcManager": "",
+          "fcPosition": "",
+          "fnShow": "0"
+        },
+        {
+          "fcCode": "003",
+          "fcName": "MAINTENANCE",
+          "fcManager": "",
+          "fcPosition": "",
+          "fnShow": "0"
+        },
+        {
+          "fcCode": "004",
+          "fcName": "BQT-Banquet",
+          "fcManager": "",
+          "fcPosition": "",
+          "fnShow": "0"
+        },
+        {
+          "fcCode": "005",
+          "fcName": "LEISURE CENTER",
+          "fcManager": "Leisure center (Tour",
+          "fcPosition": "",
+          "fnShow": "0"
+        },
+        {
+          "fcCode": "006",
+          "fcName": "FO",
+          "fcManager": "",
+          "fcPosition": "",
+          "fnShow": "0"
+        },
+        {
+          "fcCode": "007",
+          "fcName": "ACCOUNTING",
+          "fcManager": "",
+          "fcPosition": "",
+          "fnShow": "0"
+        },
+        {
+          "fcCode": "008",
+          "fcName": "KITCHEN",
+          "fcManager": "",
+          "fcPosition": "",
+          "fnShow": "0"
+        },
+        {
+          "fcCode": "009",
+          "fcName": "PURCHASING",
+          "fcManager": "",
+          "fcPosition": "",
+          "fnShow": "0"
+        },
+        {
+          "fcCode": "010",
+          "fcName": "AV",
+          "fcManager": "Audio Visual",
+          "fcPosition": "",
+          "fnShow": "0"
+        },
+        {
+          "fcCode": "011",
+          "fcName": "SERCURITY",
+          "fcManager": "",
+          "fcPosition": "",
+          "fnShow": "0"
+        },
+        {
+          "fcCode": "012",
+          "fcName": "DESIGNER",
+          "fcManager": "Designer",
+          "fcPosition": "",
+          "fnShow": "0"
+        },
+        {
+          "fcCode": "013",
+          "fcName": "IT",
+          "fcManager": "",
+          "fcPosition": "",
+          "fnShow": "0"
+        },
+        {
+          "fcCode": "014",
+          "fcName": "HR",
+          "fcManager": "",
+          "fcPosition": "",
+          "fnShow": "0"
+        },
+        {
+          "fcCode": "015",
+          "fcName": "CAHIER",
+          "fcManager": "",
+          "fcPosition": "",
+          "fnShow": "0"
+        }
+      ]
+    },
+    "stTinh_TP": {
+      "title": "Tỉnh / Thành phố (stTinh_TP)",
+      "description": "Tỉnh / Thành phố (stTinh_TP)",
+      "is_master_data": true,
+      "columns": [
+        "fcCode",
+        "fcDescription1",
+        "fcDescription2",
+        "fcNote"
+      ],
+      "total_rows_extracted": 45,
+      "sample_data": [
+        {
+          "fcCode": "20070214170700828",
+          "fcDescription1": "HÀ NỘI",
+          "fcDescription2": "HÀ NỘI",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "20070301104534671",
+          "fcDescription1": "TIỀN GIANG",
+          "fcDescription2": "TIEN GIANG",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "20070301104625953",
+          "fcDescription1": "KIÊN GIANG",
+          "fcDescription2": "Kien Giang",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "20070301113743765",
+          "fcDescription1": "BÌNH DƯƠNG",
+          "fcDescription2": "BINH DUONG",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "20070302172224109",
+          "fcDescription1": "NINH BÌNH",
+          "fcDescription2": "NINH BINH",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "20070305090403921",
+          "fcDescription1": "QUANG BINH",
+          "fcDescription2": "QUẢNG BÌNH",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "20070320082642734",
+          "fcDescription1": "QUẢNG NAM",
+          "fcDescription2": "QUANG NAM",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "20070328134105109",
+          "fcDescription1": "QUẢNG NGÃI",
+          "fcDescription2": "QUANG NGAI",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "20070613184127171",
+          "fcDescription1": "QUẢNG NINH",
+          "fcDescription2": "QUẢNG NINH",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "2007072009285762",
+          "fcDescription1": "TRA VINH",
+          "fcDescription2": "TRÀ VINH",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "2007072317091962",
+          "fcDescription1": "Hongkong",
+          "fcDescription2": "Hongkong",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "20070730172533531",
+          "fcDescription1": "Thailand",
+          "fcDescription2": "Thailand",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "20070918095147875",
+          "fcDescription1": "ĐỒNG NAI",
+          "fcDescription2": "DONG NAI",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "20071019163200687",
+          "fcDescription1": "TÂY NINH",
+          "fcDescription2": "TAY NINH",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "20071113100304468",
+          "fcDescription1": "CẦN THƠ",
+          "fcDescription2": "CAN THO",
+          "fcNote": ""
+        }
+      ]
+    },
+    "stQuocGia": {
+      "title": "Quốc gia (stQuocGia)",
+      "description": "Quốc gia (stQuocGia)",
+      "is_master_data": true,
+      "columns": [
+        "fcCode",
+        "fcName",
+        "fdDate"
+      ],
+      "total_rows_extracted": 28,
+      "sample_data": [
+        {
+          "fcCode": "ASU",
+          "fcName": "Australia",
+          "fdDate": "1900-01-01 00:00:00"
+        },
+        {
+          "fcCode": "Aus",
+          "fcName": "Italy",
+          "fdDate": "2002-10-04 12:25:00"
+        },
+        {
+          "fcCode": "BEL",
+          "fcName": "Belgium",
+          "fdDate": "1900-01-01 00:00:00"
+        },
+        {
+          "fcCode": "CA",
+          "fcName": "Canada",
+          "fdDate": "1900-01-01 00:00:00"
+        },
+        {
+          "fcCode": "CHN",
+          "fcName": "China",
+          "fdDate": "2004-04-15 15:50:00"
+        },
+        {
+          "fcCode": "DNK",
+          "fcName": "DENMARK",
+          "fdDate": "1900-01-01 00:00:00"
+        },
+        {
+          "fcCode": "Eng",
+          "fcName": "England",
+          "fdDate": "2002-08-08 14:59:00"
+        },
+        {
+          "fcCode": "FRA",
+          "fcName": "France",
+          "fdDate": "2002-07-09 10:27:00"
+        },
+        {
+          "fcCode": "GER",
+          "fcName": "Germany",
+          "fdDate": "2002-07-09 10:27:00"
+        },
+        {
+          "fcCode": "HKG",
+          "fcName": "Hong Kong",
+          "fdDate": "2002-07-09 10:27:00"
+        },
+        {
+          "fcCode": "IND",
+          "fcName": "Indian",
+          "fdDate": "2002-07-09 10:29:00"
+        },
+        {
+          "fcCode": "INS",
+          "fcName": "Indonesia",
+          "fdDate": "2002-07-09 10:29:00"
+        },
+        {
+          "fcCode": "JPN",
+          "fcName": "Japan",
+          "fdDate": "2003-09-22 09:59:00"
+        },
+        {
+          "fcCode": "KOR",
+          "fcName": "Korea",
+          "fdDate": "2004-07-06 09:59:00"
+        },
+        {
+          "fcCode": "MAL",
+          "fcName": "Malaysia",
+          "fdDate": "2002-07-09 10:28:00"
+        }
+      ]
+    },
+    "stRoomType": {
+      "title": "Loại phòng sảnh (stRoomType)",
+      "description": "Loại phòng sảnh (stRoomType)",
+      "is_master_data": true,
+      "columns": [
+        "fcCode",
+        "fcName",
+        "fcNote"
+      ],
+      "total_rows_extracted": 3,
+      "sample_data": [
+        {
+          "fcCode": "ES",
+          "fcName": "Executive Suite",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "NK",
+          "fcName": "Deluxe City view- King",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "NT",
+          "fcName": "Deluxe City view –Twin",
+          "fcNote": ""
+        }
+      ]
+    },
+    "stSaleType": {
+      "title": "Loại hình kinh doanh (stSaleType)",
+      "description": "Loại hình kinh doanh (stSaleType)",
+      "is_master_data": true,
+      "columns": [
+        "fcCode",
+        "fcName",
+        "fcNote"
+      ],
+      "total_rows_extracted": 3,
+      "sample_data": [
+        {
+          "fcCode": "AS",
+          "fcName": "Series",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "GW",
+          "fcName": "Wholesales Group",
+          "fcNote": ""
+        },
+        {
+          "fcCode": "MI",
+          "fcName": "Corporate Group",
+          "fcNote": ""
+        }
+      ]
+    },
+    "stRoomNight": {
+      "title": "Phòng nghỉ khách sạn (stRoomNight)",
+      "description": "Phòng nghỉ khách sạn (stRoomNight)",
+      "is_master_data": true,
+      "columns": [
+        "fcMa",
+        "fcTen",
+        "fcKhuVuc",
+        "fcDienThoai",
+        "fdNgayNhap",
+        "fcGhiChu"
+      ],
+      "total_rows_extracted": 2,
+      "sample_data": [
+        {
+          "fcMa": "001",
+          "fcTen": "Deluxe Rooms TWN",
+          "fcKhuVuc": "3",
+          "fcDienThoai": "1234",
+          "fdNgayNhap": "2006-12-19 16:48:00",
+          "fcGhiChu": ""
+        },
+        {
+          "fcMa": "002",
+          "fcTen": "Deluxe Room SGL",
+          "fcKhuVuc": "2",
+          "fcDienThoai": "",
+          "fdNgayNhap": "2006-12-19 16:49:00",
+          "fcGhiChu": ""
+        }
+      ]
+    },
+    "stTienTe": {
+      "title": "Tiền tệ (stTienTe)",
+      "description": "Tiền tệ (stTienTe)",
+      "is_master_data": true,
+      "columns": [
+        "fcMa",
+        "fcTen",
+        "fcGhiChu"
+      ],
+      "total_rows_extracted": 2,
+      "sample_data": [
+        {
+          "fcMa": "USD",
+          "fcTen": "Đô la Mỹ",
+          "fcGhiChu": ""
+        },
+        {
+          "fcMa": "VND",
+          "fcTen": "Việt Nam đồng",
+          "fcGhiChu": ""
+        }
+      ]
+    },
+    "stTyGia": {
+      "title": "Tỷ giá (stTyGia)",
+      "description": "Tỷ giá (stTyGia)",
+      "is_master_data": true,
+      "columns": [
+        "fdNgay",
+        "fcTienTe",
+        "fnGia",
+        "fcNguoiNhap",
+        "fcGhiChu"
+      ],
+      "total_rows_extracted": 1,
+      "sample_data": [
+        {
+          "fdNgay": "2006-11-08 00:00:00",
+          "fcTienTe": "VND",
+          "fnGia": "1",
+          "fcNguoiNhap": "lam",
+          "fcGhiChu": "Fixed"
+        }
+      ]
+    },
+    "stSK_TrangThai": {
+      "title": "Trạng thái sự kiện (stSK_TrangThai)",
+      "description": "Trạng thái sự kiện (stSK_TrangThai)",
+      "is_master_data": true,
+      "columns": [
+        "fcMa",
+        "fcTen",
+        "fcNgay",
+        "fcOrder"
+      ],
+      "total_rows_extracted": 4,
+      "sample_data": [
+        {
+          "fcMa": "C",
+          "fcTen": "Cancelled",
+          "fcNgay": "2002-06-17 14:48:00",
+          "fcOrder": "3"
+        },
+        {
+          "fcMa": "D",
+          "fcTen": "Definite",
+          "fcNgay": "1900-01-01 00:00:00",
+          "fcOrder": ""
+        },
+        {
+          "fcMa": "P",
+          "fcTen": "Postponed",
+          "fcNgay": "1900-01-01 00:00:00",
+          "fcOrder": "0"
+        },
+        {
+          "fcMa": "R",
+          "fcTen": "Remove",
+          "fcNgay": "1900-01-01 00:00:00",
+          "fcOrder": ""
+        }
+      ]
+    },
+    "stCampaign": {
+      "title": "Chiến dịch tiếp thị (stCampaign)",
+      "description": "Chiến dịch tiếp thị (stCampaign)",
+      "is_master_data": true,
+      "columns": [
+        "fcCampaignCode",
+        "fcCampaignName",
+        "fcCampaignNote"
+      ],
+      "total_rows_extracted": 29,
+      "sample_data": [
+        {
+          "fcCampaignCode": "20170506114522508",
+          "fcCampaignName": "First Birthday",
+          "fcCampaignNote": "3,500,000 NET + trang tri 15 trieu"
+        },
+        {
+          "fcCampaignCode": "20170615120240607",
+          "fcCampaignName": "Others",
+          "fcCampaignNote": "Them ghi chu"
+        },
+        {
+          "fcCampaignCode": "20170707095549676",
+          "fcCampaignName": "Cưới Sang Hãy Đến Khách Sạn",
+          "fcCampaignNote": "Thực đơn từ 3.500.000đ"
+        },
+        {
+          "fcCampaignCode": "20171013123831429",
+          "fcCampaignName": "Cuoi An Tuong - Qua Chat Luong",
+          "fcCampaignNote": ""
+        },
+        {
+          "fcCampaignCode": "2017102513093021",
+          "fcCampaignName": "Tiec Hoi Nghi Cuoi Nam 2017",
+          "fcCampaignNote": ""
+        },
+        {
+          "fcCampaignCode": "20171113163716422",
+          "fcCampaignName": "Year End Party 2017",
+          "fcCampaignNote": ""
+        },
+        {
+          "fcCampaignCode": "20180226094713795",
+          "fcCampaignName": "Vẹn Khởi đầu - Tròn Hạnh Phúc",
+          "fcCampaignNote": ""
+        },
+        {
+          "fcCampaignCode": "20180301113617996",
+          "fcCampaignName": "Meeting Packages 2018",
+          "fcCampaignNote": ""
+        },
+        {
+          "fcCampaignCode": "20180419161803863",
+          "fcCampaignName": "Đông Niềm Vui - Khui Bất Ngờ",
+          "fcCampaignNote": ""
+        },
+        {
+          "fcCampaignCode": "20180419161819566",
+          "fcCampaignName": "Đại Hội Cồ Đông 2018",
+          "fcCampaignNote": ""
+        },
+        {
+          "fcCampaignCode": "20180419161841517",
+          "fcCampaignName": "Khởi động hăng say - Thứ 2 hiệu quả",
+          "fcCampaignNote": ""
+        },
+        {
+          "fcCampaignCode": "20180512115739376",
+          "fcCampaignName": "He Ruc Ro",
+          "fcCampaignNote": ""
+        },
+        {
+          "fcCampaignCode": "20180512115755124",
+          "fcCampaignName": "He Ruc Ro",
+          "fcCampaignNote": ""
+        },
+        {
+          "fcCampaignCode": "20181024143318837",
+          "fcCampaignName": "Tất niên 2018 & Tân niên 2019",
+          "fcCampaignNote": ""
+        },
+        {
+          "fcCampaignCode": "20181024143333176",
+          "fcCampaignName": "Tiệc cưới ấn tượng – Diện váy thời thường",
+          "fcCampaignNote": ""
+        }
+      ]
+    },
+    "stKhachHang_NguoiLH": {
+      "title": "Người liên hệ khách hàng (stKhachHang_NguoiLH)",
+      "description": "Người liên hệ khách hàng (stKhachHang_NguoiLH)",
+      "is_master_data": false,
+      "columns": [
+        "fcKhachHang_ID",
+        "fcMaNLH",
+        "fcTenNLH",
+        "fcTelephone",
+        "fcPhone_Office",
+        "fcPhone_Home",
+        "fcEmail",
+        "fcGhiChu",
+        "fdDate"
+      ],
+      "total_rows_extracted": 30,
+      "sample_data": [
+        {
+          "fcKhachHang_ID": "1",
+          "fcMaNLH": "20231205111442778",
+          "fcTenNLH": "Mr.Sơn",
+          "fcTelephone": "",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "sale1.vosatravel@gmail.com",
+          "fcGhiChu": "",
+          "fdDate": "2023-12-05 11:15:00"
+        },
+        {
+          "fcKhachHang_ID": "10",
+          "fcMaNLH": "20231205111531757",
+          "fcTenNLH": "Vân",
+          "fcTelephone": "0903456",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcGhiChu": "",
+          "fdDate": "2023-12-05 11:16:00"
+        },
+        {
+          "fcKhachHang_ID": "11",
+          "fcMaNLH": "20231205111620657",
+          "fcTenNLH": "Long",
+          "fcTelephone": "87767782",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcGhiChu": "",
+          "fdDate": "2023-12-05 11:17:00"
+        },
+        {
+          "fcKhachHang_ID": "11",
+          "fcMaNLH": "20231208101635856",
+          "fcTenNLH": "Ms Tâm",
+          "fcTelephone": "399304i49",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcGhiChu": "",
+          "fdDate": "2023-12-08 10:18:00"
+        },
+        {
+          "fcKhachHang_ID": "12",
+          "fcMaNLH": "20231205111701607",
+          "fcTenNLH": "Michale",
+          "fcTelephone": "002345698",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcGhiChu": "",
+          "fdDate": "2023-12-05 11:17:00"
+        },
+        {
+          "fcKhachHang_ID": "13",
+          "fcMaNLH": "20231205111753441",
+          "fcTenNLH": "Huong",
+          "fcTelephone": "234556",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcGhiChu": "",
+          "fdDate": "2023-12-05 11:18:00"
+        },
+        {
+          "fcKhachHang_ID": "14",
+          "fcMaNLH": "20231205111844348",
+          "fcTenNLH": "Huyền",
+          "fcTelephone": "34678900",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcGhiChu": "",
+          "fdDate": "2023-12-05 11:19:00"
+        },
+        {
+          "fcKhachHang_ID": "15",
+          "fcMaNLH": "20231205111925388",
+          "fcTenNLH": "",
+          "fcTelephone": "",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcGhiChu": "",
+          "fdDate": "2023-12-05 11:20:00"
+        },
+        {
+          "fcKhachHang_ID": "17",
+          "fcMaNLH": "20231205112010509",
+          "fcTenNLH": "Vũ Long",
+          "fcTelephone": "2345678",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcGhiChu": "",
+          "fdDate": "2023-12-05 11:21:00"
+        },
+        {
+          "fcKhachHang_ID": "18",
+          "fcMaNLH": "20231205112145299",
+          "fcTenNLH": "Maldini",
+          "fcTelephone": "23456",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcGhiChu": "",
+          "fdDate": "2023-12-05 11:22:00"
+        },
+        {
+          "fcKhachHang_ID": "19",
+          "fcMaNLH": "20231205112327965",
+          "fcTenNLH": "Ms Oanh",
+          "fcTelephone": "0981247766",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcGhiChu": "",
+          "fdDate": "2023-12-05 11:24:00"
+        },
+        {
+          "fcKhachHang_ID": "2",
+          "fcMaNLH": "20231205112400181",
+          "fcTenNLH": "Ms.Nhung",
+          "fcTelephone": "0983378837",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "hotel@worldtrans.vn",
+          "fcGhiChu": "",
+          "fdDate": "2023-12-05 11:24:00"
+        },
+        {
+          "fcKhachHang_ID": "20",
+          "fcMaNLH": "20231205112440270",
+          "fcTenNLH": "Anh Sáu",
+          "fcTelephone": "876543",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcGhiChu": "",
+          "fdDate": "2023-12-05 11:25:00"
+        },
+        {
+          "fcKhachHang_ID": "2023121513202398",
+          "fcMaNLH": "20231215132143210",
+          "fcTenNLH": "TRẦN NGỌC LAN QUYÊN",
+          "fcTelephone": "0784230299",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcGhiChu": "",
+          "fdDate": "2023-12-15 13:24:00"
+        },
+        {
+          "fcKhachHang_ID": "20231215142003147",
+          "fcMaNLH": "20231215142308798",
+          "fcTenNLH": "HOÀNG LÊ THỊ THANH NGA",
+          "fcTelephone": "0909514524",
+          "fcPhone_Office": "",
+          "fcPhone_Home": "",
+          "fcEmail": "",
+          "fcGhiChu": "",
+          "fdDate": "2023-12-15 14:24:00"
+        }
+      ]
+    },
+    "stSKLK": {
+      "title": "Chi tiết lệnh BEO (stSKLK)",
+      "description": "Chi tiết lệnh BEO (stSKLK)",
+      "is_master_data": false,
+      "columns": [
+        "fcMaster_EO",
+        "fcOrderNo",
+        "fdOrderDate",
+        "fcEO_ID",
+        "fcTitle_EO_ID",
+        "fcPrepared_by",
+        "fcEndorsed_by",
+        "fnBEO_Color",
+        "fcMaSK",
+        "fdEventDate",
+        "fcTrangThai",
+        "fcLyDo",
+        "fdNgayXacNhan",
+        "fdValidityDate",
+        "fnStatusEvent_Color",
+        "fcNoidung",
+        "fnShow",
+        "fcGUA",
+        "fcEXP",
+        "fcNguoiNhap",
+        "fdLastUpdated",
+        "fcBottom",
+        "fnLunch",
+        "fcBreakDown",
+        "fcPrice",
+        "fcBeverage",
+        "fcMenuDetail",
+        "fcMenuCode",
+        "fcFileNo",
+        "fcChargeNotes",
+        "fcChargeType",
+        "fnMenuPrice",
+        "fcEndUser",
+        "fcBookCode"
+      ],
+      "total_rows_extracted": 30,
+      "sample_data": [
+        {
+          "fcMaster_EO": "20231215135555954",
+          "fcOrderNo": "20231215135555954_01",
+          "fdOrderDate": "2023-12-15 00:00:00",
+          "fcEO_ID": "20231215135555954",
+          "fcTitle_EO_ID": "EVENT ORDER",
+          "fcPrepared_by": "Nguyễn Trần Thu Hạnh",
+          "fcEndorsed_by": "",
+          "fnBEO_Color": "0",
+          "fcMaSK": "20120109170454218",
+          "fdEventDate": "2023-12-24 00:00:00",
+          "fcTrangThai": "D",
+          "fcLyDo": "",
+          "fdNgayXacNhan": "2023-12-15 00:00:00",
+          "fdValidityDate": "1900-01-01 00:00:00",
+          "fnStatusEvent_Color": "0",
+          "fcNoidung": "",
+          "fnShow": "False",
+          "fcGUA": "350 Pax",
+          "fcEXP": "360 Pax",
+          "fcNguoiNhap": "NTTH",
+          "fdLastUpdated": "2023-12-15 00:00:00",
+          "fcBottom": "EO               BQT Service          FBM                        Poolside                        Kitchen                        Purchasing               Finance\r\nFO               HK                          ME                           Security                        Terrace Rest               AV",
+          "fnLunch": "0",
+          "fcBreakDown": "",
+          "fcPrice": "",
+          "fcBeverage": "",
+          "fcMenuDetail": "MENU TU CHON 4.750.000 VND/BAN:\r\n \r\n\tMÓN ĂN\t                                                       ĐƠN GIÁ\r\n1\tGỏi Sứa Gà Xé + Bánh Phồng Tôm\t              520,000\r\n2\tSườn Heo Non Chiên Sốt XO\t              670,000\r\n3\tCá Chẽm Hấp Hông Kông\t                            970,000\r\n4\tBò Mỹ Hầm Rượu Vang Đỏ + Bánh MÌ\t960,000\r\n5\tLẩu Riêu Cua Hải Sản + Bánh Đa\t            1,210,000\r\n6\tRau Câu Cốm Dừa\t                                          420,000",
+          "fcMenuCode": "000001",
+          "fcFileNo": "",
+          "fcChargeNotes": "Prices are in VND and inclusive  VAT and service charge.",
+          "fcChargeType": "",
+          "fnMenuPrice": "0.00",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20231215144924345",
+          "fcOrderNo": "20231215144924345_01",
+          "fdOrderDate": "2024-08-22 00:00:00",
+          "fcEO_ID": "20231215144924345",
+          "fcTitle_EO_ID": "EVENT ORDER",
+          "fcPrepared_by": "Nguyễn Trần Thu Hạnh",
+          "fcEndorsed_by": "",
+          "fnBEO_Color": "0",
+          "fcMaSK": "11",
+          "fdEventDate": "2023-12-20 00:00:00",
+          "fcTrangThai": "D",
+          "fcLyDo": "set up tone do, ban tron, set up san chen dia tren ban de dung com toi",
+          "fdNgayXacNhan": "2023-12-15 00:00:00",
+          "fdValidityDate": "1900-01-01 00:00:00",
+          "fnStatusEvent_Color": "0",
+          "fcNoidung": "",
+          "fnShow": "True",
+          "fcGUA": "200 Pax",
+          "fcEXP": "200 Pax",
+          "fcNguoiNhap": "NTTH",
+          "fdLastUpdated": "2024-08-22 00:00:00",
+          "fcBottom": "EO               BQT Service          FBM                        Poolside                        Kitchen                        Purchasing               Finance\r\nFO               HK                          ME                           Security                        Terrace Rest               AV",
+          "fnLunch": "0",
+          "fcBreakDown": "",
+          "fcPrice": "",
+          "fcBeverage": "",
+          "fcMenuDetail": "",
+          "fcMenuCode": "",
+          "fcFileNo": "",
+          "fcChargeNotes": "Prices are in VND and inclusive  VAT and service charge.",
+          "fcChargeType": "",
+          "fnMenuPrice": "0.00",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20231215163720825",
+          "fcOrderNo": "20231215163720825_01",
+          "fdOrderDate": "2023-12-15 00:00:00",
+          "fcEO_ID": "20231215163720825",
+          "fcTitle_EO_ID": "EVENT ORDER",
+          "fcPrepared_by": "LE CHAU ANH THU",
+          "fcEndorsed_by": "",
+          "fnBEO_Color": "0",
+          "fcMaSK": "20070307171300812",
+          "fdEventDate": "2023-12-20 00:00:00",
+          "fcTrangThai": "D",
+          "fcLyDo": "",
+          "fdNgayXacNhan": "2023-12-15 00:00:00",
+          "fdValidityDate": "1900-01-01 00:00:00",
+          "fnStatusEvent_Color": "0",
+          "fcNoidung": "",
+          "fnShow": "False",
+          "fcGUA": "200 Pax",
+          "fcEXP": "200 Pax",
+          "fcNguoiNhap": "LCAT",
+          "fdLastUpdated": "2023-12-15 00:00:00",
+          "fcBottom": "EO               BQT Service          FBM                        Poolside                        Kitchen                        Purchasing               Finance\r\nFO               HK                          ME                           Security                        Terrace Rest               AV",
+          "fnLunch": "0",
+          "fcBreakDown": "",
+          "fcPrice": "580.000VNĐ/pax",
+          "fcBeverage": "250.000VNĐ/bàn",
+          "fcMenuDetail": "SET MENU 580.000VNĐ/PAX :\r\n \r\n\tMÓN ĂN\t                                                      \r\n1. Bánh Pateso \r\n2. Súp Hải sản măng tây tươi và nấm \r\n3. Tôm sú xóc bơ tỏi \r\n4. Cá Tầm phi lê chiên xốt tiêu kem \r\n5. Bò Hầm tiêu xanh + bánh mì\r\n6. Lẩu cá lăng nấu măng chua cay + bún tươi \r\n7. Nho Mỹ",
+          "fcMenuCode": "",
+          "fcFileNo": "",
+          "fcChargeNotes": "Price are in Vietnamdong and are subject to 10% VAT and 5% service charge.",
+          "fcChargeType": "01",
+          "fnMenuPrice": "0.00",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20231227115411664",
+          "fcOrderNo": "20231227115411664_01",
+          "fdOrderDate": "2024-09-03 00:00:00",
+          "fcEO_ID": "20231227115411664",
+          "fcTitle_EO_ID": "EVENT ORDER",
+          "fcPrepared_by": "Nguyễn Trần Thu Hạnh",
+          "fcEndorsed_by": "",
+          "fnBEO_Color": "0",
+          "fcMaSK": "201704051302124",
+          "fdEventDate": "2024-01-14 00:00:00",
+          "fcTrangThai": "D",
+          "fcLyDo": "- Khách sẽ vào trang trí backdrop & sân khấu từ sáng 14/01",
+          "fdNgayXacNhan": "2023-12-27 00:00:00",
+          "fdValidityDate": "1900-01-01 00:00:00",
+          "fnStatusEvent_Color": "0",
+          "fcNoidung": "THÔI NÔI BÉ KHÁNH AN\r\n14/01/2024\r\nSảnh Classic",
+          "fnShow": "True",
+          "fcGUA": "250 Pax",
+          "fcEXP": "250 Pax",
+          "fcNguoiNhap": "NTTH",
+          "fdLastUpdated": "2024-09-03 00:00:00",
+          "fcBottom": "FB            Kitchen                   Purchasing               Finance                  IT\r\nFO               HK                          ME                        Security                  Sales",
+          "fnLunch": "0",
+          "fcBreakDown": "",
+          "fcPrice": "5.800.000Đ x 25 bàn",
+          "fcBeverage": "ken bạc, nước suối, nước ngọt",
+          "fcMenuDetail": "MGala3     580000vnd:\r\n \r\n1. Bánh Pa te so\n\r\n2. Gỏi Bò Thái Lan + Bánh Phồng Tôm\r\n3. Tôm Rang Muối Hong Kong\r\n\n4. Cá Chẽm Chưng Tương \r\n\n5. Bò Hầm Tiêu Xanh + Bánh Mì\r\n\n6. Lẩu Cá Tầm Lá Giang + Bún Tươi\n\r\n7. Chè Hạt Sen Tuyết Nhĩ Táo Tàu",
+          "fcMenuCode": "",
+          "fcFileNo": "",
+          "fcChargeNotes": "Price are in VND and are subject to 8% VAT and 5% service charge.",
+          "fcChargeType": "01",
+          "fnMenuPrice": "0.00",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20231227115411664",
+          "fcOrderNo": "20231227115411664_02",
+          "fdOrderDate": "2024-08-13 00:00:00",
+          "fcEO_ID": "20231227115411664",
+          "fcTitle_EO_ID": "EVENT ORDER",
+          "fcPrepared_by": "Nguyễn Trần Thu Hạnh",
+          "fcEndorsed_by": "",
+          "fnBEO_Color": "0",
+          "fcMaSK": "",
+          "fdEventDate": "1900-01-01 00:00:00",
+          "fcTrangThai": "D",
+          "fcLyDo": "",
+          "fdNgayXacNhan": "2023-12-27 00:00:00",
+          "fdValidityDate": "1900-01-01 00:00:00",
+          "fnStatusEvent_Color": "0",
+          "fcNoidung": "THÔI NÔI BÉ KHÁNH AN\r\n14/01/2024\r\nSảnh Classic",
+          "fnShow": "False",
+          "fcGUA": "250 Pax",
+          "fcEXP": "250 Pax",
+          "fcNguoiNhap": "NTTH",
+          "fdLastUpdated": "2024-08-13 00:00:00",
+          "fcBottom": "EO               BQT Service          FBM                        Poolside                        Kitchen                        Purchasing               Finance\r\nFO               HK                          ME                           Security                        Terrace Rest               AV",
+          "fnLunch": "0",
+          "fcBreakDown": "",
+          "fcPrice": "5.800.000Đ x 25 bàn",
+          "fcBeverage": "ken bạc, nước suối, nước ngọt",
+          "fcMenuDetail": "",
+          "fcMenuCode": "",
+          "fcFileNo": "",
+          "fcChargeNotes": "Prices are in VND and inclusive  VAT and service charge.",
+          "fcChargeType": "",
+          "fnMenuPrice": "0.00",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20231227163157495",
+          "fcOrderNo": "20231227163157495_01",
+          "fdOrderDate": "2024-08-17 00:00:00",
+          "fcEO_ID": "20231227163157495",
+          "fcTitle_EO_ID": "EVENT ORDER",
+          "fcPrepared_by": "LE CHAU ANH THU",
+          "fcEndorsed_by": "",
+          "fnBEO_Color": "0",
+          "fcMaSK": "2017061513494494",
+          "fdEventDate": "2024-01-07 00:00:00",
+          "fcTrangThai": "D",
+          "fcLyDo": "",
+          "fdNgayXacNhan": "2023-12-27 00:00:00",
+          "fdValidityDate": "1900-01-01 00:00:00",
+          "fnStatusEvent_Color": "0",
+          "fcNoidung": "Show thiệp cưới\r\nBảng hướng dẫn vào sảnh Romance tầng G",
+          "fnShow": "True",
+          "fcGUA": "480 Pax",
+          "fcEXP": "480 Pax",
+          "fcNguoiNhap": "LCAT",
+          "fdLastUpdated": "2024-08-17 00:00:00",
+          "fcBottom": "EO               BQT Service          FBM                        Poolside                        Kitchen                        Purchasing               Finance\r\nFO               HK                          ME                           Security                        Terrace Rest               AV",
+          "fnLunch": "0",
+          "fcBreakDown": "",
+          "fcPrice": "527.000VNĐ",
+          "fcBeverage": "Phụ thu đem nước từ ngoài vào 200.000VNĐ/bàn",
+          "fcMenuDetail": "SET MENU 527.000VNĐ/PAX \r\n1. Bánh pateso \r\n2. Súp bắp cua gà xé \r\n3. Chả đùm trứng muối + bánh đa \r\n4. Tôm sú xóc bơ tỏi \r\n5. Bò hầm tiêu xanh + bánh mì \r\n6. Lẩu cá lăng nấu măng chua cay + bún tươi \r\n7. Chè nhãn nhục hạt sen.",
+          "fcMenuCode": "",
+          "fcFileNo": "",
+          "fcChargeNotes": "Tính theo giá vietnam đồng.",
+          "fcChargeType": "01",
+          "fnMenuPrice": "0.00",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20231230120845493",
+          "fcOrderNo": "20231230120845493_01",
+          "fdOrderDate": "2024-08-17 00:00:00",
+          "fcEO_ID": "20231230120845493",
+          "fcTitle_EO_ID": "EVENT ORDER",
+          "fcPrepared_by": "Nguyễn Trần Thu Hạnh",
+          "fcEndorsed_by": "",
+          "fnBEO_Color": "0",
+          "fcMaSK": "02",
+          "fdEventDate": "2024-01-02 00:00:00",
+          "fcTrangThai": "D",
+          "fcLyDo": "- Set up 2 phòng riêng biệt, Diamond set up 4 bàn tròn cho khách mời, Sapphire \r\nset up bàn 10 cho tài xế\r\n- Set up Bảng hướng dẫn bên ngoài phòng tiệc\r\n- Set up ly uống rượu nhỏ trên bàn\r\n- Hoa tươi trang trí trên bàn",
+          "fdNgayXacNhan": "2023-12-30 00:00:00",
+          "fdValidityDate": "1900-01-01 00:00:00",
+          "fnStatusEvent_Color": "0",
+          "fcNoidung": "AGRIBANK LÂM ĐỒNG\r\n02/01/2024\r\nSẢNH DIAMOND - TẦNG M",
+          "fnShow": "True",
+          "fcGUA": "47 Pax",
+          "fcEXP": "50 Pax",
+          "fcNguoiNhap": "NTTH",
+          "fdLastUpdated": "2024-08-17 00:00:00",
+          "fcBottom": "EO               BQT Service          FBM                        Poolside                        Kitchen                        Purchasing               Finance\r\nFO               HK                          ME                           Security                        Terrace Rest               AV",
+          "fnLunch": "0",
+          "fcBreakDown": "",
+          "fcPrice": "590000",
+          "fcBeverage": "Mang rượu bên ngoài vào, phụ thu 200.000/chai",
+          "fcMenuDetail": "MENU CHỌN MÓN 5.900.000VNĐ/BÀN:\r\n \r\n\r\n1.\tSúp Hải Sản Măng Tây Tươi và Nấm\r\n2.\tChả Giò Tôm Thịt Khoai Môn\r\n3.\tVẹm Úc Đút Lò Phô Mai\r\n4.\tBông Cải Đông Cô Dầu Hào\r\n5.\tCá Bống Mú Hấp Triều Châu\t\r\n6.\tLẩu Riêu Cua Hải Sản + Bánh Đa\r\n7.\tChè Hạt Sen Táo Đỏ",
+          "fcMenuCode": "",
+          "fcFileNo": "",
+          "fcChargeNotes": "Price are in VND and are subject to 8% VAT and 5% service charge.",
+          "fcChargeType": "01",
+          "fnMenuPrice": "0.00",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20240103144438492",
+          "fcOrderNo": "20240103144438492_01",
+          "fdOrderDate": "2024-08-09 00:00:00",
+          "fcEO_ID": "20240103144438492",
+          "fcTitle_EO_ID": "EVENT ORDER",
+          "fcPrepared_by": "TRẦN THIÊN KIM",
+          "fcEndorsed_by": "",
+          "fnBEO_Color": "0",
+          "fcMaSK": "20070307171300812",
+          "fdEventDate": "2024-01-13 00:00:00",
+          "fcTrangThai": "D",
+          "fcLyDo": "",
+          "fdNgayXacNhan": "2024-01-03 00:00:00",
+          "fdValidityDate": "1900-01-01 00:00:00",
+          "fnStatusEvent_Color": "0",
+          "fcNoidung": "",
+          "fnShow": "False",
+          "fcGUA": "100 Pax",
+          "fcEXP": "120 Pax",
+          "fcNguoiNhap": "TTK",
+          "fdLastUpdated": "2024-08-09 00:00:00",
+          "fcBottom": "EO               BQT Service          FBM                        Poolside                        Kitchen                        Purchasing               Finance\r\nFO               HK                          ME                           Security                        Terrace Rest               AV",
+          "fnLunch": "0",
+          "fcBreakDown": "",
+          "fcPrice": "925000",
+          "fcBeverage": "Free-flow Premium\r\nNước suối Aquafina ( chai)\r\nNước ngọt Coke/ Sprite ( lon)\r\nBia Heineken (lon)\r\nRượu vang đỏ Santa Carolina Vistana Chardonnay/ Cabernet Sauvignon (chai)",
+          "fcMenuDetail": "Gala Dinner Menu\r\nStarter\r\nVẹm xanh úc nước phô mai\r\nGỏi bê MerPerle\r\nMực chiên giòn\r\nSúp bào ngư hải sâm\r\n\r\nMain\r\nTôm càng sốt phô mai\r\nCua sữa sốt chanh dây\r\nCá hồi sốt tiêu\r\nThăn nội nướng với khoai tây nghiền và rau\r\nBào ngư úc nấm nhật bông cải sốt dầu hào\r\nCanh bồ câu củ sen\r\n\r\nDessert\r\nBánh moussee Panna Cotta",
+          "fcMenuCode": "",
+          "fcFileNo": "",
+          "fcChargeNotes": "Price are in US dollars and are subject to 10% VAT and 5% service charge.",
+          "fcChargeType": "01",
+          "fnMenuPrice": "0.00",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20240105152140348",
+          "fcOrderNo": "20240105152140348_01",
+          "fdOrderDate": "2024-08-17 00:00:00",
+          "fcEO_ID": "20240105152140348",
+          "fcTitle_EO_ID": "EVENT ORDER",
+          "fcPrepared_by": "Nguyễn Trần Thu Hạnh",
+          "fcEndorsed_by": "",
+          "fnBEO_Color": "0",
+          "fcMaSK": "20170615134450123",
+          "fdEventDate": "2024-01-12 00:00:00",
+          "fcTrangThai": "D",
+          "fcLyDo": "",
+          "fdNgayXacNhan": "2024-01-05 00:00:00",
+          "fdValidityDate": "1900-01-01 00:00:00",
+          "fnStatusEvent_Color": "0",
+          "fcNoidung": "VPB Lâm Đồng\r\nGALA DINNER\r\n12/01/2024",
+          "fnShow": "True",
+          "fcGUA": "50 Pax",
+          "fcEXP": "50 Pax",
+          "fcNguoiNhap": "NTTH",
+          "fdLastUpdated": "2024-08-17 00:00:00",
+          "fcBottom": "EO               BQT Service          FBM                        Poolside                        Kitchen                        Purchasing               Finance\r\nFO               HK                          ME                           Security                        Terrace Rest               AV",
+          "fnLunch": "0",
+          "fcBreakDown": "",
+          "fcPrice": "5.200.000 x 5 bàn",
+          "fcBeverage": "phụ thu nước uống mang ngoài vào: 500.000 x 5 bàn",
+          "fcMenuDetail": "",
+          "fcMenuCode": "",
+          "fcFileNo": "",
+          "fcChargeNotes": "Price are in VND and are subject to 8% VAT and 5% service charge.",
+          "fcChargeType": "01",
+          "fnMenuPrice": "0.00",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20240105152140348",
+          "fcOrderNo": "20240105152140348_02",
+          "fdOrderDate": "2024-08-17 00:00:00",
+          "fcEO_ID": "20240105152140348",
+          "fcTitle_EO_ID": "EVENT ORDER",
+          "fcPrepared_by": "Nguyễn Trần Thu Hạnh",
+          "fcEndorsed_by": "",
+          "fnBEO_Color": "0",
+          "fcMaSK": "",
+          "fdEventDate": "1900-01-01 00:00:00",
+          "fcTrangThai": "D",
+          "fcLyDo": "",
+          "fdNgayXacNhan": "2024-01-06 00:00:00",
+          "fdValidityDate": "1900-01-01 00:00:00",
+          "fnStatusEvent_Color": "0",
+          "fcNoidung": "VPB Lâm Đồng\r\nGALA DINNER\r\n12/01/2024",
+          "fnShow": "False",
+          "fcGUA": "50 Pax",
+          "fcEXP": "50 Pax",
+          "fcNguoiNhap": "NTTH",
+          "fdLastUpdated": "2024-08-17 00:00:00",
+          "fcBottom": "EO               BQT Service          FBM                        Poolside                        Kitchen                        Purchasing               Finance\r\nFO               HK                          ME                           Security                        Terrace Rest               AV",
+          "fnLunch": "0",
+          "fcBreakDown": "",
+          "fcPrice": "5.200.000 x 5 bàn",
+          "fcBeverage": "phụ thu nước uống mang ngoài vào: 500.000 x 5 bàn",
+          "fcMenuDetail": "MENU 5.200.000VNĐ/BÀN:\r\n \r\n\r\n1\tBánh Pa te so\r\n2\tGỏi Sứa Gà Xé + Bánh Phồng Tôm\r\n3\tTôm Rang Muối Hong Kong\r\n4\tCá Chẽm Phi Lê Chiên Sốt Tiêu Kem\r\n5\tBắp Bò Mỹ Nấu Patê + Bánh Mì\r\n6\tCanh Gà Tiềm Củ Sen\r\n7\tChè Hạt Sen Táo Đỏ",
+          "fcMenuCode": "",
+          "fcFileNo": "",
+          "fcChargeNotes": "Prices are in VND and inclusive  VAT and service charge.",
+          "fcChargeType": "",
+          "fnMenuPrice": "0.00",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20240105172955491",
+          "fcOrderNo": "20240105172955491_01",
+          "fdOrderDate": "2024-01-05 00:00:00",
+          "fcEO_ID": "20240105172955491",
+          "fcTitle_EO_ID": "EVENT ORDER",
+          "fcPrepared_by": "LE CHAU ANH THU",
+          "fcEndorsed_by": "",
+          "fnBEO_Color": "0",
+          "fcMaSK": "20120109170454218",
+          "fdEventDate": "2024-03-16 00:00:00",
+          "fcTrangThai": "D",
+          "fcLyDo": "",
+          "fdNgayXacNhan": "2024-01-05 00:00:00",
+          "fdValidityDate": "1900-01-01 00:00:00",
+          "fnStatusEvent_Color": "0",
+          "fcNoidung": "",
+          "fnShow": "False",
+          "fcGUA": "100 Pax",
+          "fcEXP": "100 Pax",
+          "fcNguoiNhap": "LCAT",
+          "fdLastUpdated": "2024-01-05 00:00:00",
+          "fcBottom": "EO               BQT Service          FBM                        Poolside                        Kitchen                        Purchasing               Finance\r\nFO               HK                          ME                           Security                        Terrace Rest               AV",
+          "fnLunch": "0",
+          "fcBreakDown": "",
+          "fcPrice": "",
+          "fcBeverage": "",
+          "fcMenuDetail": "",
+          "fcMenuCode": "",
+          "fcFileNo": "",
+          "fcChargeNotes": "Prices are in VND and inclusive  VAT and service charge.",
+          "fcChargeType": "",
+          "fnMenuPrice": "0.00",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20240105174515446",
+          "fcOrderNo": "20240105174515446_01",
+          "fdOrderDate": "2024-08-17 00:00:00",
+          "fcEO_ID": "20240105174515446",
+          "fcTitle_EO_ID": "EVENT ORDER",
+          "fcPrepared_by": "LE CHAU ANH THU",
+          "fcEndorsed_by": "THANH LAM",
+          "fnBEO_Color": "0",
+          "fcMaSK": "02",
+          "fdEventDate": "2024-01-13 00:00:00",
+          "fcTrangThai": "D",
+          "fcLyDo": "",
+          "fdNgayXacNhan": "2024-01-05 00:00:00",
+          "fdValidityDate": "1900-01-01 00:00:00",
+          "fnStatusEvent_Color": "0",
+          "fcNoidung": "Lễ Khai trương Chi nhánh Hùng Vương - Đà Lạt",
+          "fnShow": "True",
+          "fcGUA": "70 Pax",
+          "fcEXP": "70 Pax",
+          "fcNguoiNhap": "LCAT",
+          "fdLastUpdated": "2024-08-17 00:00:00",
+          "fcBottom": "EO               BQT Service          FBM                        Poolside                        Kitchen                        Purchasing               Finance\r\nFO               HK                          ME                           Security                        Terrace Rest               AV",
+          "fnLunch": "0",
+          "fcBreakDown": "",
+          "fcPrice": "550.000/pax\r\n130.000/pax",
+          "fcBeverage": "Mineral water set up for each participant during the Meeting.Free flow of Soft drinks, mineral water and beer during Dinner for maximum 03 hours.",
+          "fcMenuDetail": "Phần teabreak 130.000VNĐ/pax bao gồm \r\nTrà café nước suối\r\n2 loại chè\r\n5 loại bánh\r\n6 loại trái cây theo mùa\r\n\r\nSet menu 550.000VNĐ/pax\r\n1. Bánh Pateso\r\n2. Súp hải sản măng tây tươi và nấm  \r\n3. Tôm rang muối Hongkong  \r\n4. Cá chẽm phi lê chiên sốt tiêu kem \r\n5. Lẩu gà tiềm ớt sim xanh + mì rau \r\n6. Chè hạt sen tuyết nhĩ táo tàu",
+          "fcMenuCode": "",
+          "fcFileNo": "",
+          "fcChargeNotes": "Chờ xuất hóa đơn sau",
+          "fcChargeType": "02",
+          "fnMenuPrice": "0.00",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20240116083726366",
+          "fcOrderNo": "20240116083726366_01",
+          "fdOrderDate": "2024-11-27 00:00:00",
+          "fcEO_ID": "20240116083726366",
+          "fcTitle_EO_ID": "PHIẾU ĐẶT SỰ KIỆN",
+          "fcPrepared_by": "TRẦN THIÊN KIM",
+          "fcEndorsed_by": "Ms Thư 0942 892 289",
+          "fnBEO_Color": "0",
+          "fcMaSK": "2024011609052798",
+          "fdEventDate": "2024-01-19 00:00:00",
+          "fcTrangThai": "D",
+          "fcLyDo": "",
+          "fdNgayXacNhan": "2024-01-16 00:00:00",
+          "fdValidityDate": "1900-01-01 00:00:00",
+          "fnStatusEvent_Color": "0",
+          "fcNoidung": "Hội nghị\r\nSảnh Romance\r\nGala Dinner\r\r\nSảnh Classic",
+          "fnShow": "True",
+          "fcGUA": "250 Pax",
+          "fcEXP": "250 Pax",
+          "fcNguoiNhap": "TTK",
+          "fdLastUpdated": "2024-11-27 00:00:00",
+          "fcBottom": "EO               BQT Service          FBM                        Poolside                        Kitchen                        Purchasing               Finance\r\nFO               HK                          ME                           Security                        Terrace Rest               AV",
+          "fnLunch": "0",
+          "fcBreakDown": "",
+          "fcPrice": "Reabreak 100,000vnd/ pax\r\nGala 500,000vnd/ pax",
+          "fcBeverage": "Khách mang nước bên ngoài vào.\r\nPhụ thu theo bảng giá nước tiệc.",
+          "fcMenuDetail": "Teabreak hội nghị 130,000vnd/ pax\r\nTea break\r\n\n+ Chè Việt Nam\r\n\n+ Raisin cookie /Bánh quy nho khô\n\r\n+ Bánh rán lắc\r\n\n+ Tiramisu / Bánh ngọt kiểu Ý\r\n\n+ Fruity muffin / Muffin trái cây\r\n\n+ Coffee butter cake / Bánh bơ vị cà phê\r\n\n+ Green tea mousse / Kem mềm vị trà xanh\n\r\n+ Trái cây: theo mùa\r\n\nNước uống: \r\n\n+ Trà túi lọc: 1 loại\r\n\n+ Cà phê: 1\r\n\n+ Nước Lọc\n\r\n+ Sữa đặc, sữa tươi, đường gói\r\n\r\nMenu Gala Dinner 580,000vnd/ pax\r\n1/ Bánh Pateso\r\n2/ Gỏi bò thái lan & bánh phồng tôm\r\n3/ Tôm rang muối Hong Kong\r\n4/ Cá chẽm chưng tương\r\n5/ Bò hầm tiêu xanh & bánh mì\r\n6/ Lẩu cá tầm lá giang\r\n7/ Chè hạt sen tuyết nhĩ táo tàu\r\n\r\nLưu ý: 10 suất cơm nội bộ 60,000vnd/ suất",
+          "fcMenuCode": "",
+          "fcFileNo": "",
+          "fcChargeNotes": "Price are in Vietnamdong and are subject to VAT and service charge.",
+          "fcChargeType": "02",
+          "fnMenuPrice": "0.00",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20240119183506565",
+          "fcOrderNo": "20240119183506565_01",
+          "fdOrderDate": "2024-01-19 00:00:00",
+          "fcEO_ID": "20240119183506565",
+          "fcTitle_EO_ID": "PHIẾU ĐẶT SỰ KIỆN",
+          "fcPrepared_by": "Nguyễn Trần Thu Hạnh",
+          "fcEndorsed_by": "",
+          "fnBEO_Color": "0",
+          "fcMaSK": "20170425114628118",
+          "fdEventDate": "2024-01-21 00:00:00",
+          "fcTrangThai": "D",
+          "fcLyDo": "7h30 – 9h00: dùng bữa sáng buffet tại nhà hàng Rustic\r\n9h00 – 10h30: họp tại sảnh Diamond, sử dụng TV LCD\r\n(không bao gồm chi phí set up cho họp như: giấy, bút, nước, hoa trang \r\ntrí, micro,…)",
+          "fdNgayXacNhan": "2024-01-19 00:00:00",
+          "fdValidityDate": "1900-01-01 00:00:00",
+          "fnStatusEvent_Color": "0",
+          "fcNoidung": "",
+          "fnShow": "False",
+          "fcGUA": "20 Pax",
+          "fcEXP": "20 Pax",
+          "fcNguoiNhap": "NTTH",
+          "fdLastUpdated": "2024-01-19 00:00:00",
+          "fcBottom": "EO                 BQT Service          FBM                        Poolside                        Kitchen                        Purchasing               Finance\r\nFO               HK                          ME                           Security                        Terrace Rest               AV",
+          "fnLunch": "0",
+          "fcBreakDown": "",
+          "fcPrice": "buffet sáng: 250.000/khách x 20 khách\r\nPhụ thu phí sử dụng sảnh Diamond: 3.500.000 VND",
+          "fcBeverage": "",
+          "fcMenuDetail": "",
+          "fcMenuCode": "",
+          "fcFileNo": "",
+          "fcChargeNotes": "Prices are in VND and inclusive  VAT and service charge.",
+          "fcChargeType": "02",
+          "fnMenuPrice": "0.00",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        },
+        {
+          "fcMaster_EO": "20240120134655776",
+          "fcOrderNo": "20240120134655776_01",
+          "fdOrderDate": "2024-08-12 00:00:00",
+          "fcEO_ID": "20240120134655776",
+          "fcTitle_EO_ID": "PHIẾU ĐẶT SỰ KIỆN",
+          "fcPrepared_by": "LE CHAU ANH THU",
+          "fcEndorsed_by": "",
+          "fnBEO_Color": "0",
+          "fcMaSK": "17",
+          "fdEventDate": "2024-01-28 00:00:00",
+          "fcTrangThai": "D",
+          "fcLyDo": "Giờ đón khách là 11h00, giờ kết thúc tiệc là 15h00, kịch bản chương trình và thư mời gửi kèm B.E.O, khách tới sớm vào lúc 9h00 để dựng backdrop và chạy thử chương trình lúc 9h00 sáng.",
+          "fdNgayXacNhan": "2024-01-20 00:00:00",
+          "fdValidityDate": "1900-01-01 00:00:00",
+          "fnStatusEvent_Color": "0",
+          "fcNoidung": "Đặt bảng hướng dẫn vào sự kiện \"FPT Lâm Đồng\"",
+          "fnShow": "True",
+          "fcGUA": "150 pax",
+          "fcEXP": "150 Pax",
+          "fcNguoiNhap": "LCAT",
+          "fdLastUpdated": "2024-08-12 00:00:00",
+          "fcBottom": "EO               BQT Service          FBM                        Poolside                        Kitchen                        Purchasing               Finance\r\nFO               HK                          ME                           Security                        Terrace Rest               AV",
+          "fnLunch": "0",
+          "fcBreakDown": "",
+          "fcPrice": "520,000",
+          "fcBeverage": "Đem nước bên ngoài vào, phụ thu phí phục vụ : 200.000VNĐ/bàn",
+          "fcMenuDetail": "SET MENU MENU 5.200.000VNĐ/BÀN:\r\n \r\n\r\n1. Bánh nhân thịt gà Atiso \r\n2. Súp bong bóng cá cua \r\n3. Gỏi bò Thái Lan + Bánh phồng tôm \r\n4. Cá chẽm hấp Hong Kong \r\n5. Gà quay Tứ Xuyên + Xôi hạt sen \r\n6. Lẩu cá Tầm nấu măng chua + bún tươi \r\n7. Nho Mỹ",
+          "fcMenuCode": "",
+          "fcFileNo": "",
+          "fcChargeNotes": "Prices are in VND and inclusive  VAT and service charge.",
+          "fcChargeType": "01",
+          "fnMenuPrice": "0.00",
+          "fcEndUser": "",
+          "fcBookCode": ""
+        }
+      ]
+    },
+    "stSKLK_DoanhThu": {
+      "title": "Bảng kê chi phí BEO (stSKLK_DoanhThu)",
+      "description": "Bảng kê chi phí BEO (stSKLK_DoanhThu)",
+      "is_master_data": false,
+      "columns": [
+        "fcMaster_EO",
+        "fcOrderNo",
+        "fnCodeID",
+        "fcDoanhThu_Type",
+        "fnID",
+        "fnQuantity",
+        "fnPrice",
+        "fnVAT",
+        "fnServiceCharge",
+        "fnAmount",
+        "fnCharged",
+        "fcNote",
+        "fcUser",
+        "fnBreakDownLunch",
+        "fnLunchPrice"
+      ],
+      "total_rows_extracted": 30,
+      "sample_data": [
+        {
+          "fcMaster_EO": "20231215144924345",
+          "fcOrderNo": "20231215144924345_01",
+          "fnCodeID": "20231215141850751",
+          "fcDoanhThu_Type": "04",
+          "fnID": "25815",
+          "fnQuantity": "1",
+          "fnPrice": "20000000.00",
+          "fnVAT": "10",
+          "fnServiceCharge": "5",
+          "fnAmount": "20000000.00",
+          "fnCharged": "True",
+          "fcNote": "",
+          "fcUser": "",
+          "fnBreakDownLunch": "False",
+          "fnLunchPrice": "0"
+        },
+        {
+          "fcMaster_EO": "20231215144924345",
+          "fcOrderNo": "20231215144924345_01",
+          "fnCodeID": "20240822160826673",
+          "fcDoanhThu_Type": "50",
+          "fnID": "30339",
+          "fnQuantity": "156",
+          "fnPrice": "350000.00",
+          "fnVAT": "8",
+          "fnServiceCharge": "5",
+          "fnAmount": "54600000.00",
+          "fnCharged": "True",
+          "fcNote": "350000 x 156 persons",
+          "fcUser": "",
+          "fnBreakDownLunch": "False",
+          "fnLunchPrice": "0"
+        },
+        {
+          "fcMaster_EO": "20231215163720825",
+          "fcOrderNo": "20231215163720825_01",
+          "fnCodeID": "20231215161736215",
+          "fcDoanhThu_Type": "22",
+          "fnID": "25816",
+          "fnQuantity": "1",
+          "fnPrice": "15000000.00",
+          "fnVAT": "10",
+          "fnServiceCharge": "5",
+          "fnAmount": "15000000.00",
+          "fnCharged": "True",
+          "fcNote": "",
+          "fcUser": "",
+          "fnBreakDownLunch": "False",
+          "fnLunchPrice": "0"
+        },
+        {
+          "fcMaster_EO": "20231227115411664",
+          "fcOrderNo": "20231227115411664_01",
+          "fnCodeID": "20231223154118639",
+          "fcDoanhThu_Type": "011",
+          "fnID": "30414",
+          "fnQuantity": "1",
+          "fnPrice": "30178000.00",
+          "fnVAT": "8",
+          "fnServiceCharge": "5",
+          "fnAmount": "30178000.00",
+          "fnCharged": "True",
+          "fcNote": "30178000",
+          "fcUser": "",
+          "fnBreakDownLunch": "False",
+          "fnLunchPrice": "0"
+        },
+        {
+          "fcMaster_EO": "20231227115411664",
+          "fcOrderNo": "20231227115411664_01",
+          "fnCodeID": "20231223154118639",
+          "fcDoanhThu_Type": "46",
+          "fnID": "30413",
+          "fnQuantity": "1",
+          "fnPrice": "9000000.00",
+          "fnVAT": "8",
+          "fnServiceCharge": "5",
+          "fnAmount": "9000000.00",
+          "fnCharged": "True",
+          "fcNote": "9000000",
+          "fcUser": "",
+          "fnBreakDownLunch": "False",
+          "fnLunchPrice": "0"
+        },
+        {
+          "fcMaster_EO": "20231227115411664",
+          "fcOrderNo": "20231227115411664_01",
+          "fnCodeID": "20231223154118639",
+          "fcDoanhThu_Type": "50",
+          "fnID": "26807",
+          "fnQuantity": "260",
+          "fnPrice": "580000.00",
+          "fnVAT": "8",
+          "fnServiceCharge": "5",
+          "fnAmount": "150800000.00",
+          "fnCharged": "True",
+          "fcNote": "580000.00 x 260 persons",
+          "fcUser": "",
+          "fnBreakDownLunch": "False",
+          "fnLunchPrice": "0"
+        },
+        {
+          "fcMaster_EO": "20231227163157495",
+          "fcOrderNo": "20231227163157495_01",
+          "fnCodeID": "20231217160038921",
+          "fcDoanhThu_Type": "06",
+          "fnID": "26809",
+          "fnQuantity": "40",
+          "fnPrice": "200000.00",
+          "fnVAT": "10",
+          "fnServiceCharge": "5",
+          "fnAmount": "8000000.00",
+          "fnCharged": "True",
+          "fcNote": "",
+          "fcUser": "",
+          "fnBreakDownLunch": "False",
+          "fnLunchPrice": "0"
+        },
+        {
+          "fcMaster_EO": "20231227163157495",
+          "fcOrderNo": "20231227163157495_01",
+          "fnCodeID": "20231217160038921",
+          "fcDoanhThu_Type": "57",
+          "fnID": "26808",
+          "fnQuantity": "480",
+          "fnPrice": "527000.00",
+          "fnVAT": "10",
+          "fnServiceCharge": "5",
+          "fnAmount": "252960000.00",
+          "fnCharged": "True",
+          "fcNote": "",
+          "fcUser": "",
+          "fnBreakDownLunch": "False",
+          "fnLunchPrice": "0"
+        },
+        {
+          "fcMaster_EO": "20231230120845493",
+          "fcOrderNo": "20231230120845493_01",
+          "fnCodeID": "20231223165021419",
+          "fcDoanhThu_Type": "06",
+          "fnID": "26810",
+          "fnQuantity": "5",
+          "fnPrice": "200000.00",
+          "fnVAT": "8",
+          "fnServiceCharge": "5",
+          "fnAmount": "1000000.00",
+          "fnCharged": "True",
+          "fcNote": "200000.00 x 5 persons",
+          "fcUser": "",
+          "fnBreakDownLunch": "False",
+          "fnLunchPrice": "0"
+        },
+        {
+          "fcMaster_EO": "20231230120845493",
+          "fcOrderNo": "20231230120845493_01",
+          "fnCodeID": "20231223165021419",
+          "fcDoanhThu_Type": "50",
+          "fnID": "30299",
+          "fnQuantity": "50",
+          "fnPrice": "590000.00",
+          "fnVAT": "10",
+          "fnServiceCharge": "6",
+          "fnAmount": "29500000.00",
+          "fnCharged": "True",
+          "fcNote": "590000 x 50 persons",
+          "fcUser": "",
+          "fnBreakDownLunch": "False",
+          "fnLunchPrice": "0"
+        },
+        {
+          "fcMaster_EO": "20231230120845493",
+          "fcOrderNo": "20231230120845493_01",
+          "fnCodeID": "20231230104710959",
+          "fcDoanhThu_Type": "06",
+          "fnID": "26811",
+          "fnQuantity": "0",
+          "fnPrice": "200000.00",
+          "fnVAT": "8",
+          "fnServiceCharge": "5",
+          "fnAmount": "0.00",
+          "fnCharged": "True",
+          "fcNote": "200000 x 0 persons",
+          "fcUser": "",
+          "fnBreakDownLunch": "False",
+          "fnLunchPrice": "0"
+        },
+        {
+          "fcMaster_EO": "20240103144438492",
+          "fcOrderNo": "20240103144438492_01",
+          "fnCodeID": "20231215184415174",
+          "fcDoanhThu_Type": "011",
+          "fnID": "27808",
+          "fnQuantity": "100",
+          "fnPrice": "640000.00",
+          "fnVAT": "10",
+          "fnServiceCharge": "6",
+          "fnAmount": "64000000.00",
+          "fnCharged": "True",
+          "fcNote": "640000 x 100 persons",
+          "fcUser": "",
+          "fnBreakDownLunch": "False",
+          "fnLunchPrice": "0"
+        },
+        {
+          "fcMaster_EO": "20240103144438492",
+          "fcOrderNo": "20240103144438492_01",
+          "fnCodeID": "20231215184415174",
+          "fcDoanhThu_Type": "50",
+          "fnID": "27807",
+          "fnQuantity": "100",
+          "fnPrice": "925000.00",
+          "fnVAT": "10",
+          "fnServiceCharge": "6",
+          "fnAmount": "92500000.00",
+          "fnCharged": "True",
+          "fcNote": "925000 x 100 persons",
+          "fcUser": "",
+          "fnBreakDownLunch": "False",
+          "fnLunchPrice": "0"
+        },
+        {
+          "fcMaster_EO": "20240105152140348",
+          "fcOrderNo": "20240105152140348_01",
+          "fnCodeID": "20231223160810905",
+          "fcDoanhThu_Type": "06",
+          "fnID": "27809",
+          "fnQuantity": "5",
+          "fnPrice": "500000.00",
+          "fnVAT": "8",
+          "fnServiceCharge": "5",
+          "fnAmount": "2500000.00",
+          "fnCharged": "True",
+          "fcNote": "",
+          "fcUser": "",
+          "fnBreakDownLunch": "False",
+          "fnLunchPrice": "0"
+        },
+        {
+          "fcMaster_EO": "20240105152140348",
+          "fcOrderNo": "20240105152140348_01",
+          "fnCodeID": "20231223160810905",
+          "fcDoanhThu_Type": "50",
+          "fnID": "30307",
+          "fnQuantity": "50",
+          "fnPrice": "520000.00",
+          "fnVAT": "8",
+          "fnServiceCharge": "5",
+          "fnAmount": "26000000.00",
+          "fnCharged": "True",
+          "fcNote": "520000 x 50 persons",
+          "fcUser": "",
+          "fnBreakDownLunch": "False",
+          "fnLunchPrice": "0"
+        }
+      ]
+    },
+    "stSKLK_Notes": {
+      "title": "Ghi chú 9 bộ phận BEO (stSKLK_Notes)",
+      "description": "Ghi chú 9 bộ phận BEO (stSKLK_Notes)",
+      "is_master_data": false,
+      "columns": [
+        "fcMaster_EO",
+        "fcOrderNo",
+        "fcDept",
+        "fcNote"
+      ],
+      "total_rows_extracted": 30,
+      "sample_data": [
+        {
+          "fcMaster_EO": "",
+          "fcOrderNo": "20240409162957445_01",
+          "fcDept": "001",
+          "fcNote": "- Tông màu set up: Overlay trắng, bọc ghế xanh navy, nơ trắng.\r\n- Set up layout: 8 bàn 8 pax và 1 bàn 9 pax.\r\n- Set up standee digital bên ngoài sảnh Classic.\r\n- Kiểm tra tín hiệu wifi.\r\n- Hoa tươi trên bàn tiệc.\r\n- Dùng menu buffet món Hàn.\r\n- Nước uống: freeflow bia tiger, nước ngọt, nước suối 250,000/khách."
+        },
+        {
+          "fcMaster_EO": "",
+          "fcOrderNo": "20240409162957445_01",
+          "fcDept": "002",
+          "fcNote": "BP Buồng phòng:\r\n- Đảm bảo lối đi, khu vực vệ sinh xung quanh sảnh\r Classic luôn sạch sẽ trong quá trình  diễn ra tiệc.\r\r\n- Toilet luôn được giữ gìn sạch sẽ trong quá trình\rdiễn ra sự kiện."
+        },
+        {
+          "fcMaster_EO": "",
+          "fcOrderNo": "20240409162957445_01",
+          "fcDept": "006",
+          "fcNote": "- Thông tin, hướng dẫn khách dự tiệc tại sảnh\r Classic.\r\n- Thanh toán: Room charge vào phòng (booking code: 6129).\r\n- Đã cọc: 90,000,000 chung với tiền phòng ngày 28/02/2024."
+        },
+        {
+          "fcMaster_EO": "",
+          "fcOrderNo": "20240409162957445_01",
+          "fcDept": "007",
+          "fcNote": "- Thanh toán: Room charge vào phòng (booking code: 6129).\r\n- Đã cọc: 90,000,000 chung với tiền phòng ngày 28/02/2024."
+        },
+        {
+          "fcMaster_EO": "",
+          "fcOrderNo": "20240409162957445_01",
+          "fcDept": "008",
+          "fcNote": "- Buffet món Hàn như menu đính kèm.\r\n- Yêu cầu: Món ăn phải nóng."
+        },
+        {
+          "fcMaster_EO": "",
+          "fcOrderNo": "20240409162957445_01",
+          "fcDept": "010",
+          "fcNote": "- Kỹ thuật có mặt tại sảnh Classic trước 30 phút\r\nđể test màn hình Led, file chiếu Led trước khi tiệc\r\nbắt đầu.\r\n- Nhân viên kỹ thuật hỗ trực suốt tiệc."
+        },
+        {
+          "fcMaster_EO": "",
+          "fcOrderNo": "20240409162957445_01",
+          "fcDept": "011",
+          "fcNote": "- Thông tin, hướng dẫn khách dự tiệc tại sảnh Classic."
+        },
+        {
+          "fcMaster_EO": "",
+          "fcOrderNo": "20240409162957445_01",
+          "fcDept": "013",
+          "fcNote": "- Đảm bảo nhân sự trực trong quá trình diễn ra tiệc.\r\n- Set up standee digital bên ngoài sảnh Classic.\r\n- Đảm bảo wifi hoạt động tốt trong thời gian diễn ra tiệc."
+        },
+        {
+          "fcMaster_EO": "",
+          "fcOrderNo": "20240520134927191_01",
+          "fcDept": "001",
+          "fcNote": "Liên hệ hdv xác nhận khu vực ăn, thời gian ăn cho\r\nđoàn"
+        },
+        {
+          "fcMaster_EO": "",
+          "fcOrderNo": "20240520134927191_01",
+          "fcDept": "006",
+          "fcNote": "Gửi thông tin tên + điện thoai HDV cho nhà hàng\r\nliên hệ xác nhận lại giờ ăn khi đến"
+        },
+        {
+          "fcMaster_EO": "",
+          "fcOrderNo": "20240520134927191_01",
+          "fcDept": "015",
+          "fcNote": "Phát sinh tại chỗ ( nếu có) liên hệ sales xác nhận lại\r\nCho hdv thanh toán tại chỗ hay cho hdv ký TA \r\nthanh toán"
+        },
+        {
+          "fcMaster_EO": "",
+          "fcOrderNo": "20241004083211867_01",
+          "fcDept": "001",
+          "fcNote": "Phụ trách đoàn nghệ sĩ Ms Linh: 0906 971 402\r\nSảnh lễ tân: 12h00-13h00\r\n- Khách nhận phòng tại sảnh FO, wellcome nước bằng Cocktail\r\n- Số lượng: 25 khách\r\n- Giá: 120.000vnđ/ 1 khách\r\n\r\nSảnh Sapphire: 14h00-15h00\r\n- Setup bàn cho 25 khách sử dụng hight tea \r\n- Giá: 400.000vnđ/ 1 suất * 5 suất\r\n- Lưu ý: 25 khách sẽ dùng chung 5 suất hight tea được tài trợ\r\n\r\nSảnh Diamond: 19h00-22h00\r\n- Gala dinner: 25 khách\r\n- Giá 500.000vnđ/ 1 khách\r\n- Setup: Setup bàn dài, tông màu tự chọn\r\n=> Nhà hàng lưu ý: Đoàn nghệ sĩ khách mời nên phục vụ chu đáo, setup tông màu phù hợp, sang trọng"
+        },
+        {
+          "fcMaster_EO": "",
+          "fcOrderNo": "20241004083211867_01",
+          "fcDept": "002",
+          "fcNote": "Vệ sinh tất cả các khu vực sảnh sạch sẽ, gọn gàng\r\nLưu ý các khu vực toilet"
+        },
+        {
+          "fcMaster_EO": "",
+          "fcOrderNo": "20241004083211867_01",
+          "fcDept": "006",
+          "fcNote": "Hỗ trợ nghệ sĩ nhận phòng theo danh sách\r\nPhối hợp với bộ phận GRO và FB wellcome drink cocktail cho nghệ sĩ"
+        },
+        {
+          "fcMaster_EO": "",
+          "fcOrderNo": "20241004083211867_01",
+          "fcDept": "008",
+          "fcNote": "Chuẩn bị menu hight tea và menu gala theo thực đơn \r\nĐảm bảo vệ sinh an toàn thực phẩm\r\nĐảm bảo chất lượng món ăn"
+        }
+      ]
+    },
+    "stRoom_Setup": {
+      "title": "Lịch trình & Setup sảnh BEO (stRoom_Setup)",
+      "description": "Lịch trình & Setup sảnh BEO (stRoom_Setup)",
+      "is_master_data": false,
+      "columns": [
+        "fcMaster_EO",
+        "fcOrderNo",
+        "fnCodeID",
+        "fcRoom",
+        "fcSetup",
+        "fcImageCode",
+        "fdTimeIn",
+        "fdTimeOut",
+        "fcNote",
+        "fnQuantity"
+      ],
+      "total_rows_extracted": 30,
+      "sample_data": [
+        {
+          "fcMaster_EO": "20090122152857765",
+          "fcOrderNo": "20090122152857765_01",
+          "fnCodeID": "20090110103027203",
+          "fcRoom": "18",
+          "fcSetup": "03",
+          "fcImageCode": "",
+          "fdTimeIn": "2009-02-03 08:00:00",
+          "fdTimeOut": "2009-02-03 17:00:00",
+          "fcNote": "U-shape style arranged for 14 people\r\n01 small table with 02 chairs set up in the front for interview\r\n02 Flip charts and markers\r\nWriting pads and pens",
+          "fnQuantity": "14"
+        },
+        {
+          "fcMaster_EO": "20090123162921500",
+          "fcOrderNo": "20090123162921500_01",
+          "fnCodeID": "20090123162552656",
+          "fcRoom": "01",
+          "fcSetup": "04",
+          "fcImageCode": "",
+          "fdTimeIn": "2009-01-30 19:00:00",
+          "fdTimeOut": "2009-01-30 22:00:00",
+          "fcNote": "Reception desk with flower arrangement\r\nBuffet line set up for food at Me Linh 1\r\nRound tables arranged for 40 people",
+          "fnQuantity": "0"
+        },
+        {
+          "fcMaster_EO": "20090123162921500",
+          "fcOrderNo": "20090123162921500_01",
+          "fnCodeID": "20090123162743375",
+          "fcRoom": "02",
+          "fcSetup": "",
+          "fcImageCode": "",
+          "fdTimeIn": "2009-01-30 19:00:00",
+          "fdTimeOut": "2009-01-30 22:00:00",
+          "fcNote": "",
+          "fnQuantity": "0"
+        },
+        {
+          "fcMaster_EO": "200901301230000",
+          "fcOrderNo": "200901301230000_01",
+          "fnCodeID": "20090110103435359",
+          "fcRoom": "02",
+          "fcSetup": "",
+          "fcImageCode": "",
+          "fdTimeIn": "2009-02-11 18:00:00",
+          "fdTimeOut": "2009-02-11 21:00:00",
+          "fcNote": "06 round tables arranged for 55 people\r\nBuffet line set up in Me Linh 1\r\n01 small stage set up\r\nPodium with mikes set up\r\nReception desk with flowers arranged\r\nBanner hang up",
+          "fnQuantity": "45"
+        },
+        {
+          "fcMaster_EO": "200901301230000",
+          "fcOrderNo": "200901301230000_01",
+          "fnCodeID": "20090110103655328",
+          "fcRoom": "01",
+          "fcSetup": "",
+          "fcImageCode": "",
+          "fdTimeIn": "2009-02-11 18:00:00",
+          "fdTimeOut": "2009-02-11 21:00:00",
+          "fcNote": "",
+          "fnQuantity": "45"
+        },
+        {
+          "fcMaster_EO": "20090130150118781",
+          "fcOrderNo": "20090130150118781_01",
+          "fnCodeID": "20090120090831779",
+          "fcRoom": "01",
+          "fcSetup": "",
+          "fcImageCode": "",
+          "fdTimeIn": "2009-02-01 18:00:00",
+          "fdTimeOut": "2009-02-01 21:00:00",
+          "fcNote": "Round tables arranged for 80 people\r\nStage with banner set up\r\nBalloons decorated in the room (Contact person: Mr. Chau: 0903 977 796)\r\nPodium with mikes set up\r\nGuest own birthday cake",
+          "fnQuantity": "70"
+        },
+        {
+          "fcMaster_EO": "20090130150118781",
+          "fcOrderNo": "20090130150118781_01",
+          "fnCodeID": "20090120091301808",
+          "fcRoom": "02",
+          "fcSetup": "",
+          "fcImageCode": "",
+          "fdTimeIn": "2009-02-01 18:00:00",
+          "fdTimeOut": "2009-02-01 21:00:00",
+          "fcNote": "",
+          "fnQuantity": "0"
+        },
+        {
+          "fcMaster_EO": "20090130150118781",
+          "fcOrderNo": "20090130150118781_01",
+          "fnCodeID": "20090120091307637",
+          "fcRoom": "03",
+          "fcSetup": "",
+          "fcImageCode": "",
+          "fdTimeIn": "2009-02-01 18:00:00",
+          "fdTimeOut": "2009-02-01 21:00:00",
+          "fcNote": "",
+          "fnQuantity": "0"
+        },
+        {
+          "fcMaster_EO": "20090202113921908",
+          "fcOrderNo": "20090202113921908_01",
+          "fnCodeID": "20090115115302222",
+          "fcRoom": "01",
+          "fcSetup": "03",
+          "fcImageCode": "",
+          "fdTimeIn": "2009-02-05 08:00:00",
+          "fdTimeOut": "2009-02-05 17:00:00",
+          "fcNote": "Me LInh 1:\r\nU shape style arranged for 18 persons\r\nReception desk with flowers arranged\r\n2 flip charts and markers\r\nWriting pads, pens, water set up\r\nName tag for all participants\r\n2 laser pointers\r\nMe Linh 2: No require for any set up",
+          "fnQuantity": "16"
+        },
+        {
+          "fcMaster_EO": "20090202113921908",
+          "fcOrderNo": "20090202113921908_01",
+          "fnCodeID": "2009011914311479",
+          "fcRoom": "02",
+          "fcSetup": "",
+          "fcImageCode": "",
+          "fdTimeIn": "2009-02-05 15:00:00",
+          "fdTimeOut": "2009-02-05 19:00:00",
+          "fcNote": "",
+          "fnQuantity": "16"
+        },
+        {
+          "fcMaster_EO": "20090202113921908",
+          "fcOrderNo": "20090202113921908_02",
+          "fnCodeID": "20090115115735128",
+          "fcRoom": "01",
+          "fcSetup": "",
+          "fcImageCode": "",
+          "fdTimeIn": "2009-02-06 08:00:00",
+          "fdTimeOut": "2009-02-06 12:00:00",
+          "fcNote": "Me LInh 1:\r\nU shape style arranged for 18 persons\r\nReception desk with flowers arranged\r\n2 flip charts and markers\r\nWriting pads, pens, water set up\r\nName tag for all participants\r\n2 laser pointers",
+          "fnQuantity": "16"
+        },
+        {
+          "fcMaster_EO": "2009020217385862",
+          "fcOrderNo": "2009020217385862_01",
+          "fnCodeID": "20090202154630787",
+          "fcRoom": "02",
+          "fcSetup": "04",
+          "fcImageCode": "",
+          "fdTimeIn": "2009-02-06 13:00:00",
+          "fdTimeOut": "2009-02-06 17:00:00",
+          "fcNote": "Round tables arranged for 40 people\r\nFlip charts and markers \r\nLaser pointer arranged\r\nWriting pads and pens",
+          "fnQuantity": "0"
+        },
+        {
+          "fcMaster_EO": "20090203111418765",
+          "fcOrderNo": "20090203111418765_01",
+          "fnCodeID": "20090202112102335",
+          "fcRoom": "18",
+          "fcSetup": "20081202105327729",
+          "fcImageCode": "",
+          "fdTimeIn": "2009-02-07 14:00:00",
+          "fdTimeOut": "2009-02-07 19:00:00",
+          "fcNote": "Board room style arranged for 09 people\r\n01 Flip chart and markers\r\nWriting pads and pens",
+          "fnQuantity": "0"
+        },
+        {
+          "fcMaster_EO": "2009020409404146",
+          "fcOrderNo": "2009020409404146_01",
+          "fnCodeID": "20090202144349745",
+          "fcRoom": "12",
+          "fcSetup": "",
+          "fcImageCode": "",
+          "fdTimeIn": "2009-02-13 19:00:00",
+          "fdTimeOut": "2009-02-13 21:00:00",
+          "fcNote": "04 long tables (at back of house) with 06 persons per each arranged for 24 people\r\n\"Apex\" signage on the tables",
+          "fnQuantity": "24"
+        },
+        {
+          "fcMaster_EO": "20090204141036238",
+          "fcOrderNo": "20090204141036238_01",
+          "fnCodeID": "20090110103948703",
+          "fcRoom": "01",
+          "fcSetup": "01",
+          "fcImageCode": "",
+          "fdTimeIn": "2009-02-12 07:00:00",
+          "fdTimeOut": "2009-02-12 23:00:00",
+          "fcNote": "Me Linh 1: 9 IBM tables and 28 chairs arranged as per floor plan attached",
+          "fnQuantity": "28"
+        }
+      ]
+    },
+    "stPhong_Loai": {
+      "title": "b. Kind of Room (Loại Sảnh / Phòng)",
+      "description": "b. Kind of Room (Loại Sảnh / Phòng)",
+      "is_master_data": true,
+      "columns": [
+        "fcMa",
+        "fcTen",
+        "fdUpdate",
+        "fcNote"
+      ],
+      "total_rows_extracted": 10,
+      "sample_data": [
+        {
+          "fcMa": "20170413090214311",
+          "fcTen": "Function Room",
+          "fdUpdate": "1900-01-01 00:00:00",
+          "fcNote": "Function Room"
+        },
+        {
+          "fcMa": "2026041200020138",
+          "fcTen": "Yoga",
+          "fdUpdate": "1900-01-01 00:00:00",
+          "fcNote": "Tập Yoga"
+        },
+        {
+          "fcMa": "2026041200024593",
+          "fcTen": "Teambuiltding",
+          "fdUpdate": "1900-01-01 00:00:00",
+          "fcNote": "Teambuiltding"
+        },
+        {
+          "fcMa": "20260412000610309",
+          "fcTen": "Gala Dinner",
+          "fdUpdate": "1900-01-01 00:00:00",
+          "fcNote": "Tiệc Gala"
+        },
+        {
+          "fcMa": "20260412000643617",
+          "fcTen": "Lunch",
+          "fdUpdate": "1900-01-01 00:00:00",
+          "fcNote": "Cơm đoàn - trưa"
+        },
+        {
+          "fcMa": "20260412000709245",
+          "fcTen": "Dinner",
+          "fdUpdate": "1900-01-01 00:00:00",
+          "fcNote": "Cơm đoàn - Tối"
+        },
+        {
+          "fcMa": "20260412235409636",
+          "fcTen": "Pre-function Area",
+          "fdUpdate": "1900-01-01 00:00:00",
+          "fcNote": "Khu vực tiền sảnh (đón khách, tea break)"
+        },
+        {
+          "fcMa": "2026041223561226",
+          "fcTen": "Outdoor Venue",
+          "fdUpdate": "1900-01-01 00:00:00",
+          "fcNote": "Không gian ngoài trời"
+        },
+        {
+          "fcMa": "20260412235643561",
+          "fcTen": "Private Dining Room",
+          "fdUpdate": "1900-01-01 00:00:00",
+          "fcNote": "Phòng ăn riêng"
+        },
+        {
+          "fcMa": "20260412235827736",
+          "fcTen": "Poolside",
+          "fdUpdate": "1900-01-01 00:00:00",
+          "fcNote": "Khu vực hồ bơi"
+        }
+      ]
+    },
+    "stReasonCancel": {
+      "title": "R. ReasonCancel (Lý Do Hủy Tiệc)",
+      "description": "R. ReasonCancel (Lý Do Hủy Tiệc)",
+      "is_master_data": true,
+      "columns": [
+        "fcCode",
+        "fcName",
+        "fcNote",
+        "fdUpdate"
+      ],
+      "total_rows_extracted": 11,
+      "sample_data": [
+        {
+          "fcCode": "AT",
+          "fcName": "Agency/End-user Transfer",
+          "fcNote": "Chuyển booking qua đại lý du lịch hoặc End-user",
+          "fdUpdate": "2026-11-18 14:14:00"
+        },
+        {
+          "fcCode": "CL",
+          "fcName": "Change Location",
+          "fcNote": "Thay đổi điểm đến/địa điểm",
+          "fdUpdate": "1900-01-01 00:00:00"
+        },
+        {
+          "fcCode": "EE",
+          "fcName": "Entry Error",
+          "fcNote": "Nhập sai thông tin",
+          "fdUpdate": "1900-01-01 00:00:00"
+        },
+        {
+          "fcCode": "EX",
+          "fcName": "Cancelled Meeting Plan",
+          "fcNote": "Sự kiện bị hủy",
+          "fdUpdate": "1900-01-01 00:00:00"
+        },
+        {
+          "fcCode": "FM",
+          "fcName": "Force Majeure",
+          "fcNote": "Bất khả kháng",
+          "fdUpdate": "1900-01-01 00:00:00"
+        },
+        {
+          "fcCode": "MR",
+          "fcName": "Changed requirements",
+          "fcNote": "Thay đổi yêu cầu",
+          "fdUpdate": "1900-01-01 00:00:00"
+        },
+        {
+          "fcCode": "NR",
+          "fcName": "No Response",
+          "fcNote": "Khách không phản hồi.",
+          "fdUpdate": "2026-11-18 14:15:00"
+        },
+        {
+          "fcCode": "PO",
+          "fcName": "Postponed Meeting",
+          "fcNote": "Gia hạn sự kiện",
+          "fdUpdate": "1900-01-01 00:00:00"
+        },
+        {
+          "fcCode": "SC",
+          "fcName": "Speaker cancelled",
+          "fcNote": "Diễn giả hủy tham dự / hủy lịch trình bày",
+          "fdUpdate": "1900-01-01 00:00:00"
+        },
+        {
+          "fcCode": "WA",
+          "fcName": "Act of God",
+          "fcNote": "Thiên tai hoặc sự kiện tự nhiên ngoài khả năng kiểm soát",
+          "fdUpdate": "1900-01-01 00:00:00"
+        },
+        {
+          "fcCode": "WE",
+          "fcName": "Weather",
+          "fcNote": "Thời tiết",
+          "fdUpdate": "1900-01-01 00:00:00"
+        }
+      ]
+    }
+  }
+}

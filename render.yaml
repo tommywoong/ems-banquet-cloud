@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: ems-banquet-cloud
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    region: singapore
+    envVars:
+      - key: EMS_DB_MODE
+        value: google_sheets
+      - key: EMS_GSHEET_ID
+        sync: false
+      - key: EMS_GSHEET_WEBHOOK_URL
+        sync: false
+      - key: PORT
+        value: 10000
