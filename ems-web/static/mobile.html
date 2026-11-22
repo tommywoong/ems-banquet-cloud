@@ -527,12 +527,31 @@
 
         // Initialization
         document.addEventListener('DOMContentLoaded', async () => {
+            loadMobileBranding();
             document.getElementById('mSchedulerDate').value = mSelectedDate;
             await checkMobileAuth();
             await loadMasterData();
             await loadMobileScheduler();
             lucide.createIcons();
         });
+
+        async function loadMobileBranding() {
+            try {
+                const res = await fetch('/api/system/branding');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.hotel_name) {
+                        const el = document.getElementById('mBrandTitle');
+                        if (el) el.textContent = data.hotel_name;
+                        document.title = data.hotel_name + " - Mobile EMS";
+                    }
+                    if (data.hotel_subtitle) {
+                        const sub = document.getElementById('mBrandSub');
+                        if (sub) sub.textContent = data.hotel_subtitle;
+                    }
+                }
+            } catch (e) {}
+        }
 
         // ==================== AUTHENTICATION ====================
         async function checkMobileAuth() {

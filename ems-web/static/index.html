@@ -140,8 +140,8 @@
                 <i data-lucide="hotel" class="w-5 h-5"></i>
             </div>
             <div>
-                <h1 class="text-sm font-bold text-white tracking-wide">EMS Banquet Web</h1>
-                <p id="sidebarHotelSubtitle" class="text-[11px] text-blue-400 font-medium">Hệ Thống Quản Lý Tiệc Cưới & Sự Kiện</p>
+                <h1 id="sidebarHotelTitle" class="text-sm font-bold text-white tracking-wide truncate max-w-[150px]">EMS Banquet Web</h1>
+                <p id="sidebarHotelSubtitle" class="text-[11px] text-blue-400 font-medium truncate max-w-[150px]">Hệ Thống Quản Lý Tiệc Cưới & Sự Kiện</p>
             </div>
         </div>
 
@@ -245,6 +245,9 @@
                     </div>
                     <button onclick="openChangePasswordModal()" title="Đổi mật khẩu cá nhân" class="ml-1 p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition cursor-pointer">
                         <i data-lucide="key-round" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="openBrandingModal()" title="Cài đặt tên khách sạn & thương hiệu" class="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition cursor-pointer">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
                     </button>
                     <a href="/m" title="Chuyển sang giao diện Điện thoại (Mobile)" class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition cursor-pointer">
                         <i data-lucide="smartphone" class="w-4 h-4"></i>
@@ -2439,6 +2442,9 @@
                         window.systemBranding.hotel_name = data.hotel_name;
                         const el = document.getElementById('loginModalHotelTitle');
                         if (el) el.textContent = data.hotel_name;
+                        const sideTitle = document.getElementById('sidebarHotelTitle');
+                        if (sideTitle) sideTitle.textContent = data.hotel_name;
+                        document.title = data.hotel_name + " - EMS Banquet Web";
                     }
                     if (data.hotel_subtitle) {
                         window.systemBranding.hotel_subtitle = data.hotel_subtitle;
@@ -2447,6 +2453,8 @@
                         const sideSub = document.getElementById('sidebarHotelSubtitle');
                         if (sideSub) sideSub.textContent = data.hotel_subtitle;
                     }
+                    if (data.hotel_address) window.systemBranding.hotel_address = data.hotel_address;
+                    if (data.hotel_phone) window.systemBranding.hotel_phone = data.hotel_phone;
                 }
             } catch(e) {}
         }
@@ -10835,6 +10843,88 @@ function scrollWebBookingsTable(dir) {
             }
         }
 
+        function openBrandingModal() {
+            document.getElementById('txtBrandHotelName').value = window.systemBranding.hotel_name || '';
+            document.getElementById('txtBrandHotelSubtitle').value = window.systemBranding.hotel_subtitle || '';
+            document.getElementById('txtBrandHotelPhone').value = window.systemBranding.hotel_phone || '';
+            document.getElementById('txtBrandHotelAddress').value = window.systemBranding.hotel_address || '';
+            document.getElementById('brandSuccessMsg').classList.add('hidden');
+            document.getElementById('brandErrorMsg').classList.add('hidden');
+            document.getElementById('modalBrandingConfig').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeBrandingModal() {
+            document.getElementById('modalBrandingConfig').classList.add('hidden');
+        }
+
+        async function submitBrandingConfig(e) {
+            e.preventDefault();
+            const errBox = document.getElementById('brandErrorMsg');
+            const succBox = document.getElementById('brandSuccessMsg');
+            errBox.classList.add('hidden');
+            succBox.classList.add('hidden');
+
+            const name = document.getElementById('txtBrandHotelName').value.trim();
+            const subtitle = document.getElementById('txtBrandHotelSubtitle').value.trim();
+            const phone = document.getElementById('txtBrandHotelPhone').value.trim();
+            const address = document.getElementById('txtBrandHotelAddress').value.trim();
+
+            if (!name) {
+                errBox.textContent = 'Vui lòng nhập tên trung tâm tiệc cưới / khách sạn!';
+                errBox.classList.remove('hidden');
+                return;
+            }
+
+            const btn = document.getElementById('btnSubmitBranding');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Đang lưu...';
+
+            try {
+                const res = await fetch('/api/system/branding', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        hotel_name: name,
+                        hotel_subtitle: subtitle,
+                        hotel_phone: phone,
+                        hotel_address: address
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.detail || 'Lưu thất bại');
+                }
+                window.systemBranding.hotel_name = name;
+                window.systemBranding.hotel_subtitle = subtitle;
+                window.systemBranding.hotel_phone = phone;
+                window.systemBranding.hotel_address = address;
+
+                const topTitle = document.getElementById('sidebarHotelTitle');
+                if (topTitle) topTitle.textContent = name;
+                const sideSub = document.getElementById('sidebarHotelSubtitle');
+                if (sideSub) sideSub.textContent = subtitle;
+                const modalTitle = document.getElementById('loginModalHotelTitle');
+                if (modalTitle) modalTitle.textContent = name;
+                const modalSub = document.getElementById('loginModalHotelSubtitle');
+                if (modalSub) modalSub.textContent = subtitle;
+                document.title = name + " - EMS Banquet Web";
+
+                succBox.textContent = 'Cập nhật thương hiệu thành công!';
+                succBox.classList.remove('hidden');
+                setTimeout(() => {
+                    closeBrandingModal();
+                }, 1000);
+            } catch (err) {
+                errBox.textContent = 'Lỗi: ' + (err.message || 'Không thể lưu cài đặt');
+                errBox.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> <span>Lưu Thương Hiệu</span>';
+                lucide.createIcons();
+            }
+        }
+
         function openChangePasswordModal() {
             if (!currentUser) {
                 openLoginModal();
@@ -10914,6 +11004,88 @@ function scrollWebBookingsTable(dir) {
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = oldHtml;
+                lucide.createIcons();
+            }
+        }
+
+        function openBrandingModal() {
+            document.getElementById('txtBrandHotelName').value = window.systemBranding.hotel_name || '';
+            document.getElementById('txtBrandHotelSubtitle').value = window.systemBranding.hotel_subtitle || '';
+            document.getElementById('txtBrandHotelPhone').value = window.systemBranding.hotel_phone || '';
+            document.getElementById('txtBrandHotelAddress').value = window.systemBranding.hotel_address || '';
+            document.getElementById('brandSuccessMsg').classList.add('hidden');
+            document.getElementById('brandErrorMsg').classList.add('hidden');
+            document.getElementById('modalBrandingConfig').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeBrandingModal() {
+            document.getElementById('modalBrandingConfig').classList.add('hidden');
+        }
+
+        async function submitBrandingConfig(e) {
+            e.preventDefault();
+            const errBox = document.getElementById('brandErrorMsg');
+            const succBox = document.getElementById('brandSuccessMsg');
+            errBox.classList.add('hidden');
+            succBox.classList.add('hidden');
+
+            const name = document.getElementById('txtBrandHotelName').value.trim();
+            const subtitle = document.getElementById('txtBrandHotelSubtitle').value.trim();
+            const phone = document.getElementById('txtBrandHotelPhone').value.trim();
+            const address = document.getElementById('txtBrandHotelAddress').value.trim();
+
+            if (!name) {
+                errBox.textContent = 'Vui lòng nhập tên trung tâm tiệc cưới / khách sạn!';
+                errBox.classList.remove('hidden');
+                return;
+            }
+
+            const btn = document.getElementById('btnSubmitBranding');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Đang lưu...';
+
+            try {
+                const res = await fetch('/api/system/branding', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        hotel_name: name,
+                        hotel_subtitle: subtitle,
+                        hotel_phone: phone,
+                        hotel_address: address
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.detail || 'Lưu thất bại');
+                }
+                window.systemBranding.hotel_name = name;
+                window.systemBranding.hotel_subtitle = subtitle;
+                window.systemBranding.hotel_phone = phone;
+                window.systemBranding.hotel_address = address;
+
+                const topTitle = document.getElementById('sidebarHotelTitle');
+                if (topTitle) topTitle.textContent = name;
+                const sideSub = document.getElementById('sidebarHotelSubtitle');
+                if (sideSub) sideSub.textContent = subtitle;
+                const modalTitle = document.getElementById('loginModalHotelTitle');
+                if (modalTitle) modalTitle.textContent = name;
+                const modalSub = document.getElementById('loginModalHotelSubtitle');
+                if (modalSub) modalSub.textContent = subtitle;
+                document.title = name + " - EMS Banquet Web";
+
+                succBox.textContent = 'Cập nhật thương hiệu thành công!';
+                succBox.classList.remove('hidden');
+                setTimeout(() => {
+                    closeBrandingModal();
+                }, 1000);
+            } catch (err) {
+                errBox.textContent = 'Lỗi: ' + (err.message || 'Không thể lưu cài đặt');
+                errBox.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> <span>Lưu Thương Hiệu</span>';
                 lucide.createIcons();
             }
         }
@@ -11356,6 +11528,61 @@ setInterval(checkAppVersion, 180000);
                     <span>Lưu Phân Quyền Ngay</span>
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CÀI ĐẶT THƯƠNG HIỆU & TÊN KHÁCH SẠN (WHITE-LABEL BRANDING) -->
+    <div id="modalBrandingConfig" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden transform transition-all">
+            <div class="px-5 py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-800 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-white">
+                        <i data-lucide="hotel" class="w-4 h-4 text-blue-200"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold">Cài Đặt Thương Hiệu Khách Sạn / Trung Tâm Tiệc</h3>
+                        <p class="text-[11px] text-blue-100">Đồng bộ tên riêng, slogan, địa chỉ & hotline trên toàn hệ thống</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeBrandingModal()" class="p-1.5 text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            
+            <form onsubmit="submitBrandingConfig(event)" class="p-5 space-y-4 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Tên Trung Tâm Tiệc Cưới / Khách Sạn *</label>
+                    <input type="text" id="txtBrandHotelName" required placeholder="VD: TRUNG TÂM HỘI NGHỊ TIỆC CƯỚI MERPERLE..." class="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
+                    <p class="text-[10px] text-slate-400 mt-1">Xuất hiện trên tiêu đề trang, lệnh BEO, xuất Excel và màn hình đăng nhập.</p>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Khẩu Hiệu / Slogan / Phụ Đề</label>
+                    <input type="text" id="txtBrandHotelSubtitle" placeholder="VD: Hệ Thống Quản Lý Tiệc Cưới & Hội Nghị Đẳng Cấp..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Hotline / Số Điện Thoại</label>
+                        <input type="text" id="txtBrandHotelPhone" placeholder="VD: 028 3838 3838" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Địa Chỉ Trung Tâm</label>
+                        <input type="text" id="txtBrandHotelAddress" placeholder="VD: 123 Nguyễn Văn Cừ, Q.5..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
+                    </div>
+                </div>
+
+                <div id="brandSuccessMsg" class="hidden p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg text-xs font-semibold"></div>
+                <div id="brandErrorMsg" class="hidden p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-lg text-xs font-semibold"></div>
+
+                <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-100">
+                    <button type="button" onclick="closeBrandingModal()" class="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-100 font-semibold transition cursor-pointer">Hủy</button>
+                    <button type="submit" id="btnSubmitBranding" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold shadow-md shadow-blue-500/20 transition cursor-pointer flex items-center gap-1.5">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                        <span>Lưu Thương Hiệu</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 

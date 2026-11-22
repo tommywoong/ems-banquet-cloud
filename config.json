@@ -1,9 +1,9 @@
 {
   "mode": "google_sheets",
-  "hotel_name": "TRUNG TÂM HỘI NGHỊ & TIỆC CƯỚI",
-  "hotel_subtitle": "Hệ Thống Quản Lý Tiệc Cưới & Sự Kiện",
-  "hotel_address": "",
-  "hotel_phone": "",
+  "hotel_name": "MERPERLE CRYSTAL PALACE",
+  "hotel_subtitle": "Trung Tâm Tiệc Cưới & Hội Nghị Đẳng Cấp",
+  "hotel_address": "13 Nguyễn Lương Bằng, Phú Mỹ Hưng, Q.7, TP.HCM",
+  "hotel_phone": "028 5411 2233",
   "logo_url": "",
   "db_server": "localhost\\MSSQLSERVER2016",
   "db_name": "EMS_BANQUET",

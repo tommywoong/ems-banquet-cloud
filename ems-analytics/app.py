@@ -357,42 +357,27 @@ def get_summary(
             SELECT DISTINCT 
                 b.fcBookID,
                 b.fcStatus_BkRoom,
-                ISNULL(guestCalc.ActualGuests, 0) AS fnSoLuongDK,
+                CASE WHEN ISNULL(b.fnSoLuongDK, 0) > 0 THEN b.fnSoLuongDK ELSE ISNULL(bfr.fnQuantity, 0) END AS fnSoLuongDK,
                 b.fnDatCoc,
-                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(rev.TongDoanhThu, 0) END AS TongDoanhThu
+                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.TotalRev, ISNULL(bc_rev.TotalRev, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) END AS TongDoanhThu
             FROM stBooking b
-            LEFT JOIN stMaster_EO meo ON b.fcBookID = meo.fcBookID
+            LEFT JOIN (
+                SELECT fcBookID, MAX(fcMaster_EO) AS fcMaster_EO
+                FROM stMaster_EO
+                GROUP BY fcBookID
+            ) meo ON b.fcBookID = meo.fcBookID
             LEFT JOIN stKhachHang k ON b.fcGuestID = k.fcMa
             LEFT JOIN stBookFunctionRoom bfr ON b.fcBookID = bfr.fcBookID
-            OUTER APPLY (
-                SELECT CASE 
-                    WHEN ISNULL(b.fnSoLuongDK, 0) > 0 THEN b.fnSoLuongDK
-                    ELSE COALESCE(
-                        NULLIF(MAX(rs.fnQuantity), 0),
-                        NULLIF(MAX(bfr2.fnQuantity), 0),
-                        NULLIF(MAX(d.fnQuantity), 0),
-                        0
-                    )
-                END AS ActualGuests
-                FROM (SELECT 1 AS _dummy) _d
-                LEFT JOIN stBookFunctionRoom bfr2 ON bfr2.fcBookID = b.fcBookID
-                LEFT JOIN stRoom_Setup rs ON rs.fcMaster_EO = meo.fcMaster_EO
-                LEFT JOIN stSKLK_DoanhThu d ON d.fcMaster_EO = meo.fcMaster_EO AND d.fcDoanhThu_Type <> '22' AND d.fnQuantity > 1
-            ) guestCalc
-            OUTER APPLY (
-                SELECT ISNULL(eo.TotalRev, bc.TotalRev) AS TongDoanhThu
-                FROM (SELECT 1 AS _dm) _dm
-                OUTER APPLY (
-                    SELECT SUM(d.fnAmount) AS TotalRev
-                    FROM stSKLK_DoanhThu d
-                    WHERE meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND d.fcMaster_EO = meo.fcMaster_EO
-                ) eo
-                OUTER APPLY (
-                    SELECT SUM(c.fnAmount) AS TotalRev
-                    FROM stBooking_Charges c
-                    WHERE c.fcBookID = b.fcBookID
-                ) bc
-            ) rev
+            LEFT JOIN (
+                SELECT fcMaster_EO, SUM(fnAmount) AS TotalRev
+                FROM stSKLK_DoanhThu
+                GROUP BY fcMaster_EO
+            ) eo_rev ON meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND meo.fcMaster_EO = eo_rev.fcMaster_EO
+            LEFT JOIN (
+                SELECT fcBookID, SUM(fnAmount) AS TotalRev
+                FROM stBooking_Charges
+                GROUP BY fcBookID
+            ) bc_rev ON b.fcBookID = bc_rev.fcBookID
             WHERE {where_sql}
         )
         SELECT 
@@ -472,31 +457,27 @@ def get_hall_stats(
             ISNULL(SUM(CASE WHEN ISNULL(rs.fnQuantity, 0) > 0 THEN rs.fnQuantity WHEN ISNULL(bfr.fnQuantity, 0) > 0 THEN bfr.fnQuantity ELSE b.fnSoLuongDK END), 0) AS TotalGuests,
             COUNT(DISTINCT CASE WHEN b.fcStatus_BkRoom = 'D' THEN b.fcBookID END) AS ConfirmedCount,
             COUNT(DISTINCT CASE WHEN b.fcStatus_BkRoom = 'C' THEN b.fcBookID END) AS CancelledCount,
-            ISNULL(SUM(CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE rev.DoanhThu END), 0) AS TotalRevenue
+            ISNULL(SUM(CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.TotalRev, ISNULL(bc_rev.TotalRev, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) END), 0) AS TotalRevenue
         FROM stBookFunctionRoom bfr
         INNER JOIN stBooking b ON bfr.fcBookID = b.fcBookID
-        LEFT JOIN stMaster_EO meo ON b.fcBookID = meo.fcBookID
+        LEFT JOIN (
+            SELECT fcBookID, MAX(fcMaster_EO) AS fcMaster_EO
+            FROM stMaster_EO
+            GROUP BY fcBookID
+        ) meo ON b.fcBookID = meo.fcBookID
         LEFT JOIN stPhong p ON bfr.fcFunctionRoom = p.fcMa
         LEFT JOIN stKhachHang k ON b.fcGuestID = k.fcMa
         LEFT JOIN stRoom_Setup rs ON meo.fcMaster_EO = rs.fcMaster_EO AND bfr.fnCodeID = rs.fnCodeID
-        OUTER APPLY (
-            SELECT 
-                ISNULL(eo.DoanhThu, bc.DoanhThu) AS DoanhThu
-            FROM (SELECT 1 AS _dm) _dm
-            OUTER APPLY (
-                SELECT SUM(d.fnAmount) AS DoanhThu
-                FROM stSKLK_DoanhThu d
-                WHERE meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' 
-                  AND d.fcMaster_EO = meo.fcMaster_EO
-                  AND (d.fnCodeID = bfr.fnCodeID OR (d.fnCodeID IS NULL AND NOT EXISTS (SELECT 1 FROM stBookFunctionRoom WHERE fcBookID = b.fcBookID AND fnCodeID <> bfr.fnCodeID)))
-            ) eo
-            OUTER APPLY (
-                SELECT SUM(c.fnAmount) AS DoanhThu
-                FROM stBooking_Charges c
-                WHERE c.fcBookID = b.fcBookID 
-                  AND (c.fnCodeID = bfr.fnCodeID OR (c.fnCodeID IS NULL AND NOT EXISTS (SELECT 1 FROM stBookFunctionRoom WHERE fcBookID = b.fcBookID AND fnCodeID <> bfr.fnCodeID)))
-            ) bc
-        ) rev
+        LEFT JOIN (
+            SELECT fcMaster_EO, SUM(fnAmount) AS TotalRev
+            FROM stSKLK_DoanhThu
+            GROUP BY fcMaster_EO
+        ) eo_rev ON meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND meo.fcMaster_EO = eo_rev.fcMaster_EO
+        LEFT JOIN (
+            SELECT fcBookID, SUM(fnAmount) AS TotalRev
+            FROM stBooking_Charges
+            GROUP BY fcBookID
+        ) bc_rev ON b.fcBookID = bc_rev.fcBookID
         WHERE {where_sql}
         GROUP BY p.fcMa, p.fcTen, p.fcKhuVuc, p.fnDienTich
         ORDER BY TotalBookings DESC;
@@ -565,26 +546,26 @@ def get_segment_stats(
             ISNULL(SUM(b.fnSoLuongDK), 0) AS TotalGuests,
             COUNT(DISTINCT CASE WHEN b.fcStatus_BkRoom = 'D' THEN b.fcBookID END) AS ConfirmedCount,
             COUNT(DISTINCT CASE WHEN b.fcStatus_BkRoom = 'C' THEN b.fcBookID END) AS CancelledCount,
-            ISNULL(SUM(CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE rev.DoanhThu END), 0) AS TotalRevenue
+            ISNULL(SUM(CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.TotalRev, ISNULL(bc_rev.TotalRev, 0)) END), 0) AS TotalRevenue
         FROM MatchedBookings mb
         INNER JOIN stBooking b ON mb.fcBookID = b.fcBookID
-        LEFT JOIN stMaster_EO meo ON b.fcBookID = meo.fcBookID
+        LEFT JOIN (
+            SELECT fcBookID, MAX(fcMaster_EO) AS fcMaster_EO
+            FROM stMaster_EO
+            GROUP BY fcBookID
+        ) meo ON b.fcBookID = meo.fcBookID
         LEFT JOIN stKhachHang k ON b.fcGuestID = k.fcMa
         LEFT JOIN stLinhVuc lv ON k.fcLinhVuc = lv.fcCode
-        OUTER APPLY (
-            SELECT ISNULL(eo.TotalRev, bc.TotalRev) AS DoanhThu
-            FROM (SELECT 1 AS _dm) _dm
-            OUTER APPLY (
-                SELECT SUM(d.fnAmount) AS TotalRev
-                FROM stSKLK_DoanhThu d
-                WHERE meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND d.fcMaster_EO = meo.fcMaster_EO
-            ) eo
-            OUTER APPLY (
-                SELECT SUM(c.fnAmount) AS TotalRev
-                FROM stBooking_Charges c
-                WHERE c.fcBookID = b.fcBookID
-            ) bc
-        ) rev
+        LEFT JOIN (
+            SELECT fcMaster_EO, SUM(fnAmount) AS TotalRev
+            FROM stSKLK_DoanhThu
+            GROUP BY fcMaster_EO
+        ) eo_rev ON meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND meo.fcMaster_EO = eo_rev.fcMaster_EO
+        LEFT JOIN (
+            SELECT fcBookID, SUM(fnAmount) AS TotalRev
+            FROM stBooking_Charges
+            GROUP BY fcBookID
+        ) bc_rev ON b.fcBookID = bc_rev.fcBookID
         GROUP BY lv.fcCode, lv.fcName, lv.fcNote
         ORDER BY TotalBookings DESC;
         """
@@ -648,26 +629,26 @@ def get_channel_stats(
             ISNULL(SUM(b.fnSoLuongDK), 0) AS TotalGuests,
             COUNT(DISTINCT CASE WHEN b.fcStatus_BkRoom = 'D' THEN b.fcBookID END) AS ConfirmedCount,
             COUNT(DISTINCT CASE WHEN b.fcStatus_BkRoom = 'C' THEN b.fcBookID END) AS CancelledCount,
-            ISNULL(SUM(CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE rev.DoanhThu END), 0) AS TotalRevenue
+            ISNULL(SUM(CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.TotalRev, ISNULL(bc_rev.TotalRev, 0)) END), 0) AS TotalRevenue
         FROM MatchedBookings mb
         INNER JOIN stBooking b ON mb.fcBookID = b.fcBookID
-        LEFT JOIN stMaster_EO meo ON b.fcBookID = meo.fcBookID
+        LEFT JOIN (
+            SELECT fcBookID, MAX(fcMaster_EO) AS fcMaster_EO
+            FROM stMaster_EO
+            GROUP BY fcBookID
+        ) meo ON b.fcBookID = meo.fcBookID
         LEFT JOIN stKhachHang k ON b.fcGuestID = k.fcMa
         LEFT JOIN stKhachHang_Loai kl ON k.fcLoaiKhach = kl.fcCode
-        OUTER APPLY (
-            SELECT ISNULL(eo.TotalRev, bc.TotalRev) AS DoanhThu
-            FROM (SELECT 1 AS _dm) _dm
-            OUTER APPLY (
-                SELECT SUM(d.fnAmount) AS TotalRev
-                FROM stSKLK_DoanhThu d
-                WHERE meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND d.fcMaster_EO = meo.fcMaster_EO
-            ) eo
-            OUTER APPLY (
-                SELECT SUM(c.fnAmount) AS TotalRev
-                FROM stBooking_Charges c
-                WHERE c.fcBookID = b.fcBookID
-            ) bc
-        ) rev
+        LEFT JOIN (
+            SELECT fcMaster_EO, SUM(fnAmount) AS TotalRev
+            FROM stSKLK_DoanhThu
+            GROUP BY fcMaster_EO
+        ) eo_rev ON meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND meo.fcMaster_EO = eo_rev.fcMaster_EO
+        LEFT JOIN (
+            SELECT fcBookID, SUM(fnAmount) AS TotalRev
+            FROM stBooking_Charges
+            GROUP BY fcBookID
+        ) bc_rev ON b.fcBookID = bc_rev.fcBookID
         GROUP BY kl.fcCode, kl.fcName, kl.fcNote, kl.fcGroup
         ORDER BY TotalBookings DESC;
         """
@@ -733,26 +714,26 @@ def get_sales_stats(
             ISNULL(SUM(b.fnSoLuongDK), 0) AS TotalGuests,
             COUNT(DISTINCT CASE WHEN b.fcStatus_BkRoom = 'D' THEN b.fcBookID END) AS ConfirmedCount,
             COUNT(DISTINCT CASE WHEN b.fcStatus_BkRoom = 'C' THEN b.fcBookID END) AS CancelledCount,
-            ISNULL(SUM(CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE rev.DoanhThu END), 0) AS TotalRevenue
+            ISNULL(SUM(CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.TotalRev, ISNULL(bc_rev.TotalRev, 0)) END), 0) AS TotalRevenue
         FROM MatchedBookings mb
         INNER JOIN stBooking b ON mb.fcBookID = b.fcBookID
-        LEFT JOIN stMaster_EO meo ON b.fcBookID = meo.fcBookID
+        LEFT JOIN (
+            SELECT fcBookID, MAX(fcMaster_EO) AS fcMaster_EO, MAX(fcNguoiLap) AS fcNguoiLap
+            FROM stMaster_EO
+            GROUP BY fcBookID
+        ) meo ON b.fcBookID = meo.fcBookID
         LEFT JOIN stUser u ON ISNULL(NULLIF(meo.fcNguoiLap, ''), b.fcUser) = u.fcUserName
         LEFT JOIN stKhachHang k ON b.fcGuestID = k.fcMa
-        OUTER APPLY (
-            SELECT ISNULL(eo.TotalRev, bc.TotalRev) AS DoanhThu
-            FROM (SELECT 1 AS _dm) _dm
-            OUTER APPLY (
-                SELECT SUM(d.fnAmount) AS TotalRev
-                FROM stSKLK_DoanhThu d
-                WHERE meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND d.fcMaster_EO = meo.fcMaster_EO
-            ) eo
-            OUTER APPLY (
-                SELECT SUM(c.fnAmount) AS TotalRev
-                FROM stBooking_Charges c
-                WHERE c.fcBookID = b.fcBookID
-            ) bc
-        ) rev
+        LEFT JOIN (
+            SELECT fcMaster_EO, SUM(fnAmount) AS TotalRev
+            FROM stSKLK_DoanhThu
+            GROUP BY fcMaster_EO
+        ) eo_rev ON meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND meo.fcMaster_EO = eo_rev.fcMaster_EO
+        LEFT JOIN (
+            SELECT fcBookID, SUM(fnAmount) AS TotalRev
+            FROM stBooking_Charges
+            GROUP BY fcBookID
+        ) bc_rev ON b.fcBookID = bc_rev.fcBookID
         WHERE ISNULL(NULLIF(meo.fcNguoiLap, ''), b.fcUser) IS NOT NULL AND ISNULL(NULLIF(meo.fcNguoiLap, ''), b.fcUser) <> ''
         GROUP BY ISNULL(NULLIF(meo.fcNguoiLap, ''), b.fcUser), u.fcFullName, u.fcPosition
         ORDER BY TotalRevenue DESC;
@@ -821,22 +802,18 @@ def get_timeline_stats(
             mb.Thang,
             COUNT(DISTINCT mb.fcBookID) AS TotalBookings,
             ISNULL(SUM(mb.fnSoLuongDK), 0) AS TotalGuests,
-            ISNULL(SUM(CASE WHEN mb.fcStatus_BkRoom = 'C' THEN 0 ELSE rev.DoanhThu END), 0) AS TotalRevenue
+            ISNULL(SUM(CASE WHEN mb.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.TotalRev, ISNULL(bc_rev.TotalRev, 0)) END), 0) AS TotalRevenue
         FROM MatchedBookings mb
-        OUTER APPLY (
-            SELECT ISNULL(eo.TotalRev, bc.TotalRev) AS DoanhThu
-            FROM (SELECT 1 AS _dm) _dm
-            OUTER APPLY (
-                SELECT SUM(d.fnAmount) AS TotalRev
-                FROM stSKLK_DoanhThu d
-                WHERE mb.fcMaster_EO IS NOT NULL AND mb.fcMaster_EO <> '' AND d.fcMaster_EO = mb.fcMaster_EO
-            ) eo
-            OUTER APPLY (
-                SELECT SUM(c.fnAmount) AS TotalRev
-                FROM stBooking_Charges c
-                WHERE c.fcBookID = mb.fcBookID
-            ) bc
-        ) rev
+        LEFT JOIN (
+            SELECT fcMaster_EO, SUM(fnAmount) AS TotalRev
+            FROM stSKLK_DoanhThu
+            GROUP BY fcMaster_EO
+        ) eo_rev ON mb.fcMaster_EO IS NOT NULL AND mb.fcMaster_EO <> '' AND mb.fcMaster_EO = eo_rev.fcMaster_EO
+        LEFT JOIN (
+            SELECT fcBookID, SUM(fnAmount) AS TotalRev
+            FROM stBooking_Charges
+            GROUP BY fcBookID
+        ) bc_rev ON mb.fcBookID = bc_rev.fcBookID
         GROUP BY mb.Nam, mb.Thang
         ORDER BY Nam ASC, Thang ASC;
         """
@@ -911,36 +888,37 @@ def get_service_stats(
         
         sql = f"""
         WITH MatchedBookings AS (
-            SELECT DISTINCT b.fcBookID
+            SELECT DISTINCT b.fcBookID, meo.fcMaster_EO
             FROM stBooking b
             LEFT JOIN stBookFunctionRoom bfr ON b.fcBookID = bfr.fcBookID
-            LEFT JOIN stMaster_EO meo ON b.fcBookID = meo.fcBookID
+            LEFT JOIN (
+                SELECT fcBookID, MAX(fcMaster_EO) AS fcMaster_EO
+                FROM stMaster_EO
+                GROUP BY fcBookID
+            ) meo ON b.fcBookID = meo.fcBookID
             LEFT JOIN stKhachHang k ON b.fcGuestID = k.fcMa
-            WHERE {where_sql}
+            WHERE {where_sql} AND b.fcStatus_BkRoom <> 'C'
+        ),
+        ServiceItems AS (
+            SELECT d.fcDoanhThu_Type AS fcCode, d.fnAmount
+            FROM stSKLK_DoanhThu d
+            INNER JOIN MatchedBookings mb ON mb.fcMaster_EO IS NOT NULL AND mb.fcMaster_EO <> '' AND d.fcMaster_EO = mb.fcMaster_EO
+            UNION ALL
+            SELECT c.fcDoanhThu_Loai AS fcCode, c.fnAmount
+            FROM stBooking_Charges c
+            INNER JOIN MatchedBookings mb ON c.fcBookID = mb.fcBookID
+            WHERE NOT EXISTS (
+                SELECT 1 FROM stSKLK_DoanhThu d2 
+                WHERE mb.fcMaster_EO IS NOT NULL AND mb.fcMaster_EO <> '' AND d2.fcMaster_EO = mb.fcMaster_EO
+            )
         )
         SELECT 
-            ISNULL(dtl.fcName, N'Dịch vụ khác') AS ServiceName,
+            ISNULL(dtl.fcName, 'Dịch vụ khác') AS ServiceName,
             ISNULL(dtl.fcGroup, '00') AS ServiceGroup,
-            COUNT(item.fnID) AS ItemCount,
-            ISNULL(SUM(item.fnAmount), 0) AS TotalAmount
-        FROM MatchedBookings mb
-        INNER JOIN stBooking b ON mb.fcBookID = b.fcBookID
-        LEFT JOIN stMaster_EO meo ON b.fcBookID = meo.fcBookID
-        CROSS APPLY (
-            SELECT d.fnID, d.fcDoanhThu_Type AS fcCode, d.fnAmount
-            FROM stSKLK_DoanhThu d
-            WHERE meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND d.fcMaster_EO = meo.fcMaster_EO
-            UNION ALL
-            SELECT c.fnID, c.fcDoanhThu_Loai AS fcCode, c.fnAmount
-            FROM stBooking_Charges c
-            WHERE c.fcBookID = b.fcBookID 
-              AND NOT EXISTS (
-                  SELECT 1 FROM stSKLK_DoanhThu d2 
-                  WHERE meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND d2.fcMaster_EO = meo.fcMaster_EO
-              )
-        ) item
-        LEFT JOIN stDoanhThu_Loai dtl ON item.fcCode = dtl.fcCode
-        WHERE b.fcStatus_BkRoom <> 'C'
+            COUNT(*) AS ItemCount,
+            ISNULL(SUM(si.fnAmount), 0) AS TotalAmount
+        FROM ServiceItems si
+        LEFT JOIN stDoanhThu_Loai dtl ON si.fcCode = dtl.fcCode
         GROUP BY dtl.fcName, dtl.fcGroup
         ORDER BY TotalAmount DESC;
         """
@@ -1032,11 +1010,11 @@ def get_bookings(
         SELECT 
             b.fcBookID,
             CONVERT(varchar(10), b.fdDate, 120) AS BookingDate,
-            CONVERT(varchar(10), ISNULL(eventDates.FirstEventDate, b.fdDate), 120) AS EventDate,
+            ISNULL(bfr_meta.FirstEventDate, CONVERT(varchar(10), b.fdDate, 120)) AS EventDate,
             ISNULL(b.fcTitle, '') AS EventTitle,
             ISNULL(b.fcStatus_BkRoom, '') AS StatusCode,
             ISNULL(st.fcName, b.fcStatus_BkRoom) AS StatusName,
-            ISNULL(guestCalc.ActualGuests, 0) AS Guests,
+            CASE WHEN ISNULL(b.fnSoLuongDK, 0) > 0 THEN b.fnSoLuongDK ELSE ISNULL(bfr_meta.MaxQuantity, 0) END AS Guests,
             ISNULL(b.fnDatCoc, 0) AS Deposit,
             ISNULL(k.fcTen, '') AS CustomerName,
             ISNULL(k.fcTelephone, '') AS Phone,
@@ -1046,75 +1024,55 @@ def get_bookings(
             b.fcUser AS LockUserCode,
             ISNULL(u_lock.fcFullName, b.fcUser) AS LockUserName,
             ISNULL(meo.fcNguoiLap, '') AS BEOCreatorCode,
-            ISNULL(halls.HallNames, N'Chưa xếp') AS HallNames,
+            ISNULL(bfr_meta.HallNames, N'Chưa xếp') AS HallNames,
             ISNULL(lv.fcName, N'Chưa rõ') AS SegmentName,
             ISNULL(kl.fcName, N'Chưa rõ') AS ChannelName,
-            CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(rev.BanquetAmount, 0) END AS BanquetAmount,
-            CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(rev.TongTien, 0) END AS TotalAmount
+            CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.BanquetAmount, ISNULL(bc_rev.BanquetAmount, 0)) END AS BanquetAmount,
+            CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.TongTien, ISNULL(bc_rev.TongTien, 0)) END AS TotalAmount
         FROM MatchedBookings mb
         INNER JOIN stBooking b ON mb.fcBookID = b.fcBookID
-        LEFT JOIN stMaster_EO meo ON b.fcBookID = meo.fcBookID
+        LEFT JOIN (
+            SELECT fcBookID, MAX(fcMaster_EO) AS fcMaster_EO, MAX(fcNguoiLap) AS fcNguoiLap
+            FROM stMaster_EO
+            GROUP BY fcBookID
+        ) meo ON b.fcBookID = meo.fcBookID
+        LEFT JOIN (
+            SELECT 
+                bfr2.fcBookID,
+                MIN(CONVERT(varchar(10), bfr2.fdDate, 120)) AS FirstEventDate,
+                MAX(bfr2.fnQuantity) AS MaxQuantity,
+                GROUP_CONCAT(DISTINCT p2.fcTen) AS HallNames
+            FROM stBookFunctionRoom bfr2
+            LEFT JOIN stPhong p2 ON bfr2.fcFunctionRoom = p2.fcMa
+            GROUP BY bfr2.fcBookID
+        ) bfr_meta ON b.fcBookID = bfr_meta.fcBookID
         LEFT JOIN stBooking_Status st ON b.fcStatus_BkRoom = st.fcCode
         LEFT JOIN stKhachHang k ON b.fcGuestID = k.fcMa
         LEFT JOIN stLinhVuc lv ON k.fcLinhVuc = lv.fcCode
         LEFT JOIN stKhachHang_Loai kl ON k.fcLoaiKhach = kl.fcCode
         LEFT JOIN stUser u_beo ON ISNULL(NULLIF(meo.fcNguoiLap, ''), b.fcUser) = u_beo.fcUserName
         LEFT JOIN stUser u_lock ON b.fcUser = u_lock.fcUserName
-        OUTER APPLY (
-            SELECT CASE 
-                WHEN ISNULL(b.fnSoLuongDK, 0) > 0 THEN b.fnSoLuongDK
-                ELSE COALESCE(
-                    NULLIF(MAX(rs.fnQuantity), 0),
-                    NULLIF(MAX(bfr2.fnQuantity), 0),
-                    NULLIF(MAX(d.fnQuantity), 0),
-                    0
-                )
-            END AS ActualGuests
-            FROM (SELECT 1 AS _dummy) _d
-            LEFT JOIN stBookFunctionRoom bfr2 ON bfr2.fcBookID = b.fcBookID
-            LEFT JOIN stRoom_Setup rs ON rs.fcMaster_EO = meo.fcMaster_EO
-            LEFT JOIN stSKLK_DoanhThu d ON d.fcMaster_EO = meo.fcMaster_EO AND d.fcDoanhThu_Type <> '22' AND d.fnQuantity > 1
-        ) guestCalc
-        OUTER APPLY (
-            SELECT MIN(bfr3.fdDate) AS FirstEventDate
-            FROM stBookFunctionRoom bfr3
-            WHERE bfr3.fcBookID = b.fcBookID
-        ) eventDates
-        OUTER APPLY (
-            SELECT STUFF((
-                SELECT DISTINCT ', ' + p2.fcTen
-                FROM stBookFunctionRoom bfr2
-                JOIN stPhong p2 ON bfr2.fcFunctionRoom = p2.fcMa
-                WHERE bfr2.fcBookID = b.fcBookID
-                FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, '') AS HallNames
-        ) halls
-        OUTER APPLY (
-            SELECT 
-                ISNULL(eo.TongTien, bc.TongTien) AS TongTien,
-                ISNULL(eo.BanquetAmount, bc.BanquetAmount) AS BanquetAmount
-            FROM (SELECT 1 AS _dm) _dm
-            OUTER APPLY (
-                SELECT 
-                    SUM(d.fnAmount) AS TongTien,
-                    SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR d.fcDoanhThu_Type <> '56' THEN d.fnAmount ELSE 0 END) AS BanquetAmount
-                FROM stSKLK_DoanhThu d
-                LEFT JOIN stDoanhThu_Loai dt ON d.fcDoanhThu_Type = dt.fcCode
-                WHERE meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND d.fcMaster_EO = meo.fcMaster_EO
-            ) eo
-            OUTER APPLY (
-                SELECT 
-                    SUM(c.fnAmount) AS TongTien,
-                    SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR c.fcDoanhThu_Loai <> '56' THEN c.fnAmount ELSE 0 END) AS BanquetAmount
-                FROM stBooking_Charges c
-                LEFT JOIN stDoanhThu_Loai dt ON c.fcDoanhThu_Loai = dt.fcCode
-                WHERE c.fcBookID = b.fcBookID
-            ) bc
-        ) rev
-        ORDER BY ISNULL(eventDates.FirstEventDate, b.fdDate) DESC, b.fcBookID DESC
-        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;
+        LEFT JOIN (
+            SELECT fcMaster_EO,
+                   SUM(fnAmount) AS TongTien,
+                   SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR d.fcDoanhThu_Type <> '56' THEN d.fnAmount ELSE 0 END) AS BanquetAmount
+            FROM stSKLK_DoanhThu d
+            LEFT JOIN stDoanhThu_Loai dt ON d.fcDoanhThu_Type = dt.fcCode
+            GROUP BY fcMaster_EO
+        ) eo_rev ON meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND meo.fcMaster_EO = eo_rev.fcMaster_EO
+        LEFT JOIN (
+            SELECT fcBookID,
+                   SUM(fnAmount) AS TongTien,
+                   SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR c.fcDoanhThu_Loai <> '56' THEN c.fnAmount ELSE 0 END) AS BanquetAmount
+            FROM stBooking_Charges c
+            LEFT JOIN stDoanhThu_Loai dt ON c.fcDoanhThu_Loai = dt.fcCode
+            GROUP BY fcBookID
+        ) bc_rev ON b.fcBookID = bc_rev.fcBookID
+        ORDER BY ISNULL(bfr_meta.FirstEventDate, b.fdDate) DESC, b.fcBookID DESC
+        LIMIT ? OFFSET ?;
         """
         
-        page_params = params + [offset, limit]
+        page_params = params + [limit, offset]
         cur.execute(sql, page_params)
         
         items = []
@@ -1188,82 +1146,62 @@ def export_excel(
         )
         SELECT 
             b.fcBookID AS [Mã Booking],
-            CONVERT(varchar(10), ISNULL(eventDates.FirstEventDate, b.fdDate), 120) AS [Ngày Diễn Ra Tiệc],
+            ISNULL(bfr_meta.FirstEventDate, CONVERT(varchar(10), b.fdDate, 120)) AS [Ngày Diễn Ra Tiệc],
             CONVERT(varchar(10), b.fdDate, 120) AS [Ngày Đặt Cọc/Tạo Đơn],
             ISNULL(b.fcTitle, '') AS [Tên Tiệc/Sự Kiện],
             ISNULL(k.fcTen, '') AS [Khách Hàng],
             ISNULL(k.fcTelephone, '') AS [SĐT],
-            ISNULL(halls.HallNames, N'Chưa xếp') AS [Sảnh Tiệc],
+            ISNULL(bfr_meta.HallNames, N'Chưa xếp') AS [Sảnh Tiệc],
             ISNULL(lv.fcName, N'Chưa rõ') AS [Phân Khúc/Lĩnh Vực],
             ISNULL(kl.fcName, N'Chưa rõ') AS [Nguồn Tiếp Thị],
             -- Revenue belongs to BEO creator
             ISNULL(u_beo.fcFullName, ISNULL(NULLIF(meo.fcNguoiLap, ''), b.fcUser)) AS [Người Hưởng Doanh Thu (Lập BEO)],
             ISNULL(u_lock.fcFullName, b.fcUser) AS [Người Giữ Sảnh Ban Đầu (Lock)],
             ISNULL(st.fcName, b.fcStatus_BkRoom) AS [Trạng Thái],
-            ISNULL(guestCalc.ActualGuests, 0) AS [Số Khách],
+            CASE WHEN ISNULL(b.fnSoLuongDK, 0) > 0 THEN b.fnSoLuongDK ELSE ISNULL(bfr_meta.MaxQuantity, 0) END AS [Số Khách],
             ISNULL(b.fnDatCoc, 0) AS [Tiền Cọc (VNĐ)],
-            CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(rev.BanquetAmount, 0) END AS [Doanh Thu Tiệc - Banquet (VNĐ)],
-            CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(rev.TongTien, 0) END AS [Tổng Doanh Thu - Total (VNĐ)]
+            CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.BanquetAmount, ISNULL(bc_rev.BanquetAmount, 0)) END AS [Doanh Thu Tiệc - Banquet (VNĐ)],
+            CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.TongTien, ISNULL(bc_rev.TongTien, 0)) END AS [Tổng Doanh Thu - Total (VNĐ)]
         FROM MatchedBookings mb
         INNER JOIN stBooking b ON mb.fcBookID = b.fcBookID
-        LEFT JOIN stMaster_EO meo ON b.fcBookID = meo.fcBookID
+        LEFT JOIN (
+            SELECT fcBookID, MAX(fcMaster_EO) AS fcMaster_EO, MAX(fcNguoiLap) AS fcNguoiLap
+            FROM stMaster_EO
+            GROUP BY fcBookID
+        ) meo ON b.fcBookID = meo.fcBookID
+        LEFT JOIN (
+            SELECT 
+                bfr2.fcBookID,
+                MIN(CONVERT(varchar(10), bfr2.fdDate, 120)) AS FirstEventDate,
+                MAX(bfr2.fnQuantity) AS MaxQuantity,
+                GROUP_CONCAT(DISTINCT p2.fcTen) AS HallNames
+            FROM stBookFunctionRoom bfr2
+            LEFT JOIN stPhong p2 ON bfr2.fcFunctionRoom = p2.fcMa
+            GROUP BY bfr2.fcBookID
+        ) bfr_meta ON b.fcBookID = bfr_meta.fcBookID
         LEFT JOIN stBooking_Status st ON b.fcStatus_BkRoom = st.fcCode
         LEFT JOIN stKhachHang k ON b.fcGuestID = k.fcMa
         LEFT JOIN stLinhVuc lv ON k.fcLinhVuc = lv.fcCode
         LEFT JOIN stKhachHang_Loai kl ON k.fcLoaiKhach = kl.fcCode
         LEFT JOIN stUser u_beo ON ISNULL(NULLIF(meo.fcNguoiLap, ''), b.fcUser) = u_beo.fcUserName
         LEFT JOIN stUser u_lock ON b.fcUser = u_lock.fcUserName
-        OUTER APPLY (
-            SELECT CASE 
-                WHEN ISNULL(b.fnSoLuongDK, 0) > 0 THEN b.fnSoLuongDK
-                ELSE COALESCE(
-                    NULLIF(MAX(rs.fnQuantity), 0),
-                    NULLIF(MAX(bfr2.fnQuantity), 0),
-                    NULLIF(MAX(d.fnQuantity), 0),
-                    0
-                )
-            END AS ActualGuests
-            FROM (SELECT 1 AS _dummy) _d
-            LEFT JOIN stBookFunctionRoom bfr2 ON bfr2.fcBookID = b.fcBookID
-            LEFT JOIN stRoom_Setup rs ON rs.fcMaster_EO = meo.fcMaster_EO
-            LEFT JOIN stSKLK_DoanhThu d ON d.fcMaster_EO = meo.fcMaster_EO AND d.fcDoanhThu_Type <> '22' AND d.fnQuantity > 1
-        ) guestCalc
-        OUTER APPLY (
-            SELECT MIN(bfr3.fdDate) AS FirstEventDate
-            FROM stBookFunctionRoom bfr3
-            WHERE bfr3.fcBookID = b.fcBookID
-        ) eventDates
-        OUTER APPLY (
-            SELECT STUFF((
-                SELECT DISTINCT ', ' + p2.fcTen
-                FROM stBookFunctionRoom bfr2
-                JOIN stPhong p2 ON bfr2.fcFunctionRoom = p2.fcMa
-                WHERE bfr2.fcBookID = b.fcBookID
-                FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, '') AS HallNames
-        ) halls
-        OUTER APPLY (
-            SELECT 
-                ISNULL(eo.TongTien, bc.TongTien) AS TongTien,
-                ISNULL(eo.BanquetAmount, bc.BanquetAmount) AS BanquetAmount
-            FROM (SELECT 1 AS _dm) _dm
-            OUTER APPLY (
-                SELECT 
-                    SUM(d.fnAmount) AS TongTien,
-                    SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR d.fcDoanhThu_Type <> '56' THEN d.fnAmount ELSE 0 END) AS BanquetAmount
-                FROM stSKLK_DoanhThu d
-                LEFT JOIN stDoanhThu_Loai dt ON d.fcDoanhThu_Type = dt.fcCode
-                WHERE meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND d.fcMaster_EO = meo.fcMaster_EO
-            ) eo
-            OUTER APPLY (
-                SELECT 
-                    SUM(c.fnAmount) AS TongTien,
-                    SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR c.fcDoanhThu_Loai <> '56' THEN c.fnAmount ELSE 0 END) AS BanquetAmount
-                FROM stBooking_Charges c
-                LEFT JOIN stDoanhThu_Loai dt ON c.fcDoanhThu_Loai = dt.fcCode
-                WHERE c.fcBookID = b.fcBookID
-            ) bc
-        ) rev
-        ORDER BY ISNULL(eventDates.FirstEventDate, b.fdDate) DESC;
+        LEFT JOIN (
+            SELECT fcMaster_EO,
+                   SUM(fnAmount) AS TongTien,
+                   SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR d.fcDoanhThu_Type <> '56' THEN d.fnAmount ELSE 0 END) AS BanquetAmount
+            FROM stSKLK_DoanhThu d
+            LEFT JOIN stDoanhThu_Loai dt ON d.fcDoanhThu_Type = dt.fcCode
+            GROUP BY fcMaster_EO
+        ) eo_rev ON meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND meo.fcMaster_EO = eo_rev.fcMaster_EO
+        LEFT JOIN (
+            SELECT fcBookID,
+                   SUM(fnAmount) AS TongTien,
+                   SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR c.fcDoanhThu_Loai <> '56' THEN c.fnAmount ELSE 0 END) AS BanquetAmount
+            FROM stBooking_Charges c
+            LEFT JOIN stDoanhThu_Loai dt ON c.fcDoanhThu_Loai = dt.fcCode
+            GROUP BY fcBookID
+        ) bc_rev ON b.fcBookID = bc_rev.fcBookID
+        ORDER BY ISNULL(bfr_meta.FirstEventDate, b.fdDate) DESC;
         """
         
         cur.execute(sql, params)
