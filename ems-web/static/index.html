@@ -212,11 +212,11 @@
                 <span class="text-slate-400">Trạng thái:</span>
                 <span class="text-emerald-400 font-semibold flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    Port 8090 Online
+                    Hệ Thống Trực Tuyến
                 </span>
             </div>
-            <a href="#" onclick="window.open('http://' + window.location.hostname + ':8088', '_blank'); return false;" target="_blank" class="block text-center py-1.5 px-3 bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white rounded text-xs font-semibold transition border border-blue-500/30">
-                Mở EMS Analytics (Port 8088) &rarr;
+            <a href="#" onclick="openAnalyticsDashboard(); return false;" class="block text-center py-1.5 px-3 bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white rounded text-xs font-semibold transition border border-blue-500/30">
+                📊 Phân Tích & Báo Cáo Doanh Thu &rarr;
             </a>
         </div>
     </aside>
@@ -2433,7 +2433,16 @@
             return (window.systemBranding && window.systemBranding.hotel_name) ? window.systemBranding.hotel_name : 'TRUNG TÂM HỘI NGHỊ & TIỆC CƯỚI';
         }
 
-        async function loadSystemBranding() {
+        async 
+function openAnalyticsDashboard() {
+    if (window.location.port === '8090') {
+        window.open('http://' + window.location.hostname + ':8088', '_blank');
+    } else {
+        window.open('/analytics/', '_blank');
+    }
+}
+
+function loadSystemBranding() {
             try {
                 const res = await fetch('/api/system/branding');
                 if (res.ok) {

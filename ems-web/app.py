@@ -2295,6 +2295,16 @@ def list_bookings(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+def load_branding_config():
+    cfg_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config.json")
+    if os.path.exists(cfg_file):
+        try:
+            with open(cfg_file, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {}
+
 @app.get("/api/bookings/export")
 def export_bookings_excel(
     from_date: Optional[str] = None,
@@ -2457,150 +2467,176 @@ def export_bookings_excel(
         filter_desc = " • ".join(filter_parts)
 
         output = io.BytesIO()
-        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-            workbook = writer.book
-            ws = workbook.add_worksheet('DanhSach_DonTiec')
-            ws.set_paper(9) # A4
-            ws.set_landscape()
-            ws.hide_gridlines(0)
+        try:
+            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                workbook = writer.book
+                ws = workbook.add_worksheet('DanhSach_DonTiec')
+                ws.set_paper(9) # A4
+                ws.set_landscape()
+                ws.hide_gridlines(0)
+    
+                # ================= STYLES CHUẨN EXECUTIVE MERPERLE =================
+                fmt_title = workbook.add_format({'bold': True, 'font_size': 15, 'font_name': 'Calibri', 'font_color': '#0F172A', 'valign': 'vcenter'})
+                fmt_subtitle = workbook.add_format({'italic': True, 'font_size': 9.5, 'font_name': 'Calibri', 'font_color': '#475569', 'valign': 'vcenter'})
+                fmt_meta_r = workbook.add_format({'font_size': 9, 'font_name': 'Calibri', 'font_color': '#64748B', 'align': 'right', 'valign': 'vcenter'})
+                fmt_filter_box = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'font_color': '#1E293B', 'bg_color': '#F8FAFC', 'border': 1, 'border_color': '#CBD5E1', 'valign': 'vcenter'})
+    
+                # 4 Thẻ KPI Formats
+                fmt_kpi_head = workbook.add_format({'bold': True, 'font_size': 8.5, 'font_name': 'Calibri', 'font_color': '#475569', 'bg_color': '#F1F5F9', 'align': 'center', 'valign': 'vcenter', 'top': 1, 'left': 1, 'right': 1, 'border_color': '#CBD5E1'})
+                fmt_kpi_val_curr = workbook.add_format({'bold': True, 'font_size': 13, 'font_name': 'Calibri', 'font_color': '#047857', 'num_format': '#,##0 "đ"', 'bg_color': '#FFFFFF', 'align': 'center', 'valign': 'vcenter', 'left': 1, 'right': 1, 'border_color': '#CBD5E1'})
+                fmt_kpi_val_int = workbook.add_format({'bold': True, 'font_size': 13, 'font_name': 'Calibri', 'font_color': '#1D4ED8', 'num_format': '#,##0', 'bg_color': '#FFFFFF', 'align': 'center', 'valign': 'vcenter', 'left': 1, 'right': 1, 'border_color': '#CBD5E1'})
+                fmt_kpi_sub = workbook.add_format({'font_size': 8.5, 'font_name': 'Calibri', 'font_color': '#64748B', 'bg_color': '#F8FAFC', 'align': 'center', 'valign': 'vcenter', 'bottom': 1, 'left': 1, 'right': 1, 'border_color': '#CBD5E1'})
+    
+                # Table Headers & Cells
+                fmt_th = workbook.add_format({'bold': True, 'font_size': 9.5, 'font_name': 'Calibri', 'font_color': '#FFFFFF', 'bg_color': '#1E293B', 'align': 'center', 'valign': 'vcenter', 'text_wrap': True, 'border': 1, 'border_color': '#334155'})
+                fmt_td_l_w = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'valign': 'vcenter', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#FFFFFF'})
+                fmt_td_l_z = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'valign': 'vcenter', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#F8FAFC'})
+                fmt_td_c_w = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'center', 'valign': 'vcenter', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#FFFFFF'})
+                fmt_td_c_z = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'center', 'valign': 'vcenter', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#F8FAFC'})
+                fmt_td_n_w = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#FFFFFF'})
+                fmt_td_n_z = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#F8FAFC'})
+                fmt_td_m_w = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0 "đ"', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#FFFFFF'})
+                fmt_td_m_z = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0 "đ"', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#F8FAFC'})
+    
+                # Total Row Formats
+                fmt_tot_l = workbook.add_format({'bold': True, 'font_size': 10, 'font_name': 'Calibri', 'align': 'center', 'valign': 'vcenter', 'bg_color': '#E2E8F0', 'border': 1, 'border_color': '#94A3B8'})
+                fmt_tot_n = workbook.add_format({'bold': True, 'font_size': 10, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0', 'bg_color': '#E2E8F0', 'border': 1, 'border_color': '#94A3B8', 'bottom': 6})
+                fmt_tot_m = workbook.add_format({'bold': True, 'font_size': 10.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0 "đ"', 'bg_color': '#E2E8F0', 'border': 1, 'border_color': '#94A3B8', 'bottom': 6})
+    
+                # Header MerPerle
+                brand_h = load_branding_config().get('hotel_name', 'TRUNG TÂM HỘI NGHỊ TIỆC CƯỚI & SỰ KIỆN').upper()
+                ws.merge_range('A1:J1', brand_h, fmt_title)
+                ws.merge_range('K1:Q1', f'Ngày xuất: {now_str}', fmt_meta_r)
+                ws.merge_range('A2:J2', 'Hệ Thống Quản Lý Sự Kiện & Tiệc Cưới EMS • Bảng Kê Chi Tiết Đơn Đặt Tiệc', fmt_subtitle)
+                ws.merge_range('K2:Q2', 'Tiêu chuẩn: BGĐ & Phòng Kinh Doanh Banquet', fmt_meta_r)
+                ws.merge_range('A4:Q4', f'  Bộ lọc áp dụng: {filter_desc}', fmt_filter_box)
+    
+                # 4 Thẻ KPI Dashboard (A6:Q8)
+                ws.merge_range('A6:D6', 'TỔNG DOANH THU', fmt_kpi_head)
+                ws.merge_range('A7:D7', tot_full_rev, fmt_kpi_val_curr)
+                ws.merge_range('A8:D8', f'TB/tiệc: {avg_rev:,} đ', fmt_kpi_sub)
+    
+                ws.merge_range('E6:H6', 'SỐ LƯỢNG BOOKING', fmt_kpi_head)
+                ws.merge_range('E7:H7', tot_count, fmt_kpi_val_int)
+                ws.merge_range('E8:H8', f'Chốt: {cnt_d}  •  Tỷ lệ: {win_rate}%', fmt_kpi_sub)
+    
+                ws.merge_range('I6:L6', 'LƯỢNG KHÁCH (PAX)', fmt_kpi_head)
+                ws.merge_range('I7:L7', tot_pax, fmt_kpi_val_int)
+                ws.merge_range('I8:L8', f'Quy mô TB: {avg_pax:,} khách/tiệc', fmt_kpi_sub)
+    
+                ws.merge_range('M6:Q6', 'ĐẶT CỌC & HỦY ĐƠN', fmt_kpi_head)
+                ws.merge_range('M7:Q7', tot_deposit, fmt_kpi_val_curr)
+                ws.merge_range('M8:Q8', f'Đã hủy: {cnt_c}  •  Tỷ lệ: {canc_rate}%', fmt_kpi_sub)
+    
+                # Bảng danh sách tiệc
+                headers = [
+                    'MÃ BOOKING', 'NGÀY TIỆC', 'KHUNG GIỜ', 'NGÀY ĐẶT',
+                    'KHÁCH HÀNG / ĐƠN VỊ', 'SỐ ĐIỆN THOẠI', 'SẢNH TIỆC', 'PHÂN KHÚC',
+                    'TRẠNG THÁI', 'NGƯỜI LÀM BEO (SALES)', 'NGƯỜI KHÓA', 'HẠN KHÓA (CUTOFF)',
+                    'KHÁCH (PAX)', 'TIỀN CỌC (VNĐ)', 'DT TIỆC - BANQUET', 'TỔNG DOANH THU', 'GHI CHÚ'
+                ]
+                ws.set_row(10, 24)
+                for col_i, h_txt in enumerate(headers):
+                    ws.write(10, col_i, h_txt, fmt_th)
+    
+                row_i = 11
+                for r in rows:
+                    is_z = (row_i % 2 == 1)
+                    t_l = fmt_td_l_z if is_z else fmt_td_l_w
+                    t_c = fmt_td_c_z if is_z else fmt_td_c_w
+                    t_n = fmt_td_n_z if is_z else fmt_td_n_w
+                    t_m = fmt_td_m_z if is_z else fmt_td_m_w
+    
+                    b_id = r[0].strip() if r[0] else ""
+                    ev_d = r[1] or ""
+                    time_str = f"{safe_time_str(r[3])} - {safe_time_str(r[4])}" if (r[3] and r[4]) else safe_time_str(r[3])
+                    bk_d = r[2] or ""
+                    g_name = r[6].strip() if r[6] else (r[5].strip() if r[5] else "")
+                    phone = r[7].strip() if r[7] else ""
+                    room_name = r[8].strip() if r[8] else ""
+                    seg_name = r[9].strip() if r[9] else ""
+                    st_code = r[10].strip() if r[10] else "T"
+                    st_name = "Đã chốt (Definite)" if st_code == 'D' else ("Giữ chỗ (Tentative)" if st_code == 'T' else ("Đã hủy (Cancelled)" if st_code == 'C' else st_code))
+                    pax_val = safe_int(r[11])
+                    coc_val = float(r[12] or 0)
+                    sales_u = r[13].strip() if r[13] else ""
+                    lock_u = r[14].strip() if r[14] else ""
+                    cutoff_d = cutoff_map.get(b_id, "")
+                    bq_val = float(r[16] or 0)
+                    tot_val = float(r[17] or 0)
+                    note_str = r[19].strip() if r[19] else ""
+    
+                    ws.write(row_i, 0, b_id, t_c)
+                    ws.write(row_i, 1, ev_d, t_c)
+                    ws.write(row_i, 2, time_str, t_c)
+                    ws.write(row_i, 3, bk_d, t_c)
+                    ws.write(row_i, 4, g_name, t_l)
+                    ws.write(row_i, 5, phone, t_c)
+                    ws.write(row_i, 6, room_name, t_l)
+                    ws.write(row_i, 7, seg_name, t_l)
+                    ws.write(row_i, 8, st_name, t_c)
+                    ws.write(row_i, 9, sales_u, t_l)
+                    ws.write(row_i, 10, lock_u, t_c)
+                    ws.write(row_i, 11, cutoff_d, t_c)
+                    ws.write(row_i, 12, pax_val, t_n)
+                    ws.write(row_i, 13, coc_val, t_m)
+                    ws.write(row_i, 14, bq_val, t_m)
+                    ws.write(row_i, 15, tot_val, t_m)
+                    ws.write(row_i, 16, note_str, t_l)
+                    ws.set_row(row_i, 20)
+                    row_i += 1
+    
+                # Dòng TỔNG CỘNG
+                ws.merge_range(row_i, 0, row_i, 11, f'TỔNG CỘNG ({tot_count} ĐƠN TIỆC)', fmt_tot_l)
+                ws.write(row_i, 12, tot_pax, fmt_tot_n)
+                ws.write(row_i, 13, tot_deposit, fmt_tot_m)
+                ws.write(row_i, 14, tot_bq_rev, fmt_tot_m)
+                ws.write(row_i, 15, tot_full_rev, fmt_tot_m)
+                ws.write(row_i, 16, '', fmt_tot_l)
+                ws.set_row(row_i, 22)
+    
+                # Căn chỉnh độ rộng cột tối ưu
+                ws.set_column('A:A', 22) # Mã booking
+                ws.set_column('B:B', 13) # Ngày tiệc
+                ws.set_column('C:C', 14) # Giờ
+                ws.set_column('D:D', 13) # Ngày đặt
+                ws.set_column('E:E', 32) # Khách hàng
+                ws.set_column('F:F', 15) # SĐT
+                ws.set_column('G:G', 18) # Sảnh
+                ws.set_column('H:H', 20) # Phân khúc
+                ws.set_column('I:I', 16) # Trạng thái
+                ws.set_column('J:J', 20) # Sales
+                ws.set_column('K:K', 14) # Lock
+                ws.set_column('L:L', 15) # Cutoff
+                ws.set_column('M:M', 13) # Pax
+                ws.set_column('N:N', 18) # Cọc
+                ws.set_column('O:P', 20) # Doanh thu
+                ws.set_column('Q:Q', 28) # Ghi chú
+                
+        except Exception as ex_excel:
+            import logging
+            logging.warning(f"[Excel Export] Fallback to openpyxl: {ex_excel}")
+            output = io.BytesIO()
+            df_fallback = pd.DataFrame([{
+                "MÃ BOOKING": r[0].strip() if r[0] else "",
+                "NGÀY TIỆC": safe_date_str(r[1]),
+                "GIỜ TIỆC": safe_time_str(r[2]),
+                "NGÀY ĐẶT": safe_date_str(r[3]),
+                "KHÁCH HÀNG": r[4].strip() if r[4] else "",
+                "SỐ ĐIỆN THOẠI": r[5].strip() if r[5] else "",
+                "SẢNH TIỆC": r[6].strip() if r[6] else "",
+                "PHÂN KHÚC": r[7].strip() if r[7] else "",
+                "TRẠNG THÁI": r[8].strip() if r[8] else "",
+                "SALES": r[13].strip() if r[13] else "",
+                "PAX": safe_int(r[11]),
+                "TIỀN CỌC": float(r[12] or 0),
+                "DOANH THU BEO": float(r[16] or 0),
+                "TỔNG DOANH THU": float(r[17] or 0),
+                "GHI CHÚ": r[19].strip() if r[19] else ""
+            } for r in rows])
+            with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                df_fallback.to_excel(writer, index=False, sheet_name='DanhSach_DonTiec')
 
-            # ================= STYLES CHUẨN EXECUTIVE MERPERLE =================
-            fmt_title = workbook.add_format({'bold': True, 'font_size': 15, 'font_name': 'Calibri', 'font_color': '#0F172A', 'valign': 'vcenter'})
-            fmt_subtitle = workbook.add_format({'italic': True, 'font_size': 9.5, 'font_name': 'Calibri', 'font_color': '#475569', 'valign': 'vcenter'})
-            fmt_meta_r = workbook.add_format({'font_size': 9, 'font_name': 'Calibri', 'font_color': '#64748B', 'align': 'right', 'valign': 'vcenter'})
-            fmt_filter_box = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'font_color': '#1E293B', 'bg_color': '#F8FAFC', 'border': 1, 'border_color': '#CBD5E1', 'valign': 'vcenter'})
-
-            # 4 Thẻ KPI Formats
-            fmt_kpi_head = workbook.add_format({'bold': True, 'font_size': 8.5, 'font_name': 'Calibri', 'font_color': '#475569', 'bg_color': '#F1F5F9', 'align': 'center', 'valign': 'vcenter', 'top': 1, 'left': 1, 'right': 1, 'border_color': '#CBD5E1'})
-            fmt_kpi_val_curr = workbook.add_format({'bold': True, 'font_size': 13, 'font_name': 'Calibri', 'font_color': '#047857', 'num_format': '#,##0 "đ"', 'bg_color': '#FFFFFF', 'align': 'center', 'valign': 'vcenter', 'left': 1, 'right': 1, 'border_color': '#CBD5E1'})
-            fmt_kpi_val_int = workbook.add_format({'bold': True, 'font_size': 13, 'font_name': 'Calibri', 'font_color': '#1D4ED8', 'num_format': '#,##0', 'bg_color': '#FFFFFF', 'align': 'center', 'valign': 'vcenter', 'left': 1, 'right': 1, 'border_color': '#CBD5E1'})
-            fmt_kpi_sub = workbook.add_format({'font_size': 8.5, 'font_name': 'Calibri', 'font_color': '#64748B', 'bg_color': '#F8FAFC', 'align': 'center', 'valign': 'vcenter', 'bottom': 1, 'left': 1, 'right': 1, 'border_color': '#CBD5E1'})
-
-            # Table Headers & Cells
-            fmt_th = workbook.add_format({'bold': True, 'font_size': 9.5, 'font_name': 'Calibri', 'font_color': '#FFFFFF', 'bg_color': '#1E293B', 'align': 'center', 'valign': 'vcenter', 'text_wrap': True, 'border': 1, 'border_color': '#334155'})
-            fmt_td_l_w = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'valign': 'vcenter', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#FFFFFF'})
-            fmt_td_l_z = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'valign': 'vcenter', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#F8FAFC'})
-            fmt_td_c_w = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'center', 'valign': 'vcenter', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#FFFFFF'})
-            fmt_td_c_z = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'center', 'valign': 'vcenter', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#F8FAFC'})
-            fmt_td_n_w = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#FFFFFF'})
-            fmt_td_n_z = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#F8FAFC'})
-            fmt_td_m_w = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0 "đ"', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#FFFFFF'})
-            fmt_td_m_z = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0 "đ"', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#F8FAFC'})
-
-            # Total Row Formats
-            fmt_tot_l = workbook.add_format({'bold': True, 'font_size': 10, 'font_name': 'Calibri', 'align': 'center', 'valign': 'vcenter', 'bg_color': '#E2E8F0', 'border': 1, 'border_color': '#94A3B8'})
-            fmt_tot_n = workbook.add_format({'bold': True, 'font_size': 10, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0', 'bg_color': '#E2E8F0', 'border': 1, 'border_color': '#94A3B8', 'bottom': 6})
-            fmt_tot_m = workbook.add_format({'bold': True, 'font_size': 10.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0 "đ"', 'bg_color': '#E2E8F0', 'border': 1, 'border_color': '#94A3B8', 'bottom': 6})
-
-            # Header MerPerle
-            ws.merge_range('A1:J1', 'TRUNG TÂM HỘI NGHỊ TIỆC CƯỚI & KHÁCH SẠN MERPERLE', fmt_title)
-            ws.merge_range('K1:Q1', f'Ngày xuất: {now_str}', fmt_meta_r)
-            ws.merge_range('A2:J2', 'Hệ Thống Quản Lý Sự Kiện & Tiệc Cưới EMS • Bảng Kê Chi Tiết Đơn Đặt Tiệc', fmt_subtitle)
-            ws.merge_range('K2:Q2', 'Tiêu chuẩn: BGĐ & Phòng Kinh Doanh Banquet', fmt_meta_r)
-            ws.merge_range('A4:Q4', f'  Bộ lọc áp dụng: {filter_desc}', fmt_filter_box)
-
-            # 4 Thẻ KPI Dashboard (A6:Q8)
-            ws.merge_range('A6:D6', 'TỔNG DOANH THU', fmt_kpi_head)
-            ws.merge_range('A7:D7', tot_full_rev, fmt_kpi_val_curr)
-            ws.merge_range('A8:D8', f'TB/tiệc: {avg_rev:,} đ', fmt_kpi_sub)
-
-            ws.merge_range('E6:H6', 'SỐ LƯỢNG BOOKING', fmt_kpi_head)
-            ws.merge_range('E7:H7', tot_count, fmt_kpi_val_int)
-            ws.merge_range('E8:H8', f'Chốt: {cnt_d}  •  Tỷ lệ: {win_rate}%', fmt_kpi_sub)
-
-            ws.merge_range('I6:L6', 'LƯỢNG KHÁCH (PAX)', fmt_kpi_head)
-            ws.merge_range('I7:L7', tot_pax, fmt_kpi_val_int)
-            ws.merge_range('I8:L8', f'Quy mô TB: {avg_pax:,} khách/tiệc', fmt_kpi_sub)
-
-            ws.merge_range('M6:Q6', 'ĐẶT CỌC & HỦY ĐƠN', fmt_kpi_head)
-            ws.merge_range('M7:Q7', tot_deposit, fmt_kpi_val_curr)
-            ws.merge_range('M8:Q8', f'Đã hủy: {cnt_c}  •  Tỷ lệ: {canc_rate}%', fmt_kpi_sub)
-
-            # Bảng danh sách tiệc
-            headers = [
-                'MÃ BOOKING', 'NGÀY TIỆC', 'KHUNG GIỜ', 'NGÀY ĐẶT',
-                'KHÁCH HÀNG / ĐƠN VỊ', 'SỐ ĐIỆN THOẠI', 'SẢNH TIỆC', 'PHÂN KHÚC',
-                'TRẠNG THÁI', 'NGƯỜI LÀM BEO (SALES)', 'NGƯỜI KHÓA', 'HẠN KHÓA (CUTOFF)',
-                'KHÁCH (PAX)', 'TIỀN CỌC (VNĐ)', 'DT TIỆC - BANQUET', 'TỔNG DOANH THU', 'GHI CHÚ'
-            ]
-            ws.set_row(10, 24)
-            for col_i, h_txt in enumerate(headers):
-                ws.write(10, col_i, h_txt, fmt_th)
-
-            row_i = 11
-            for r in rows:
-                is_z = (row_i % 2 == 1)
-                t_l = fmt_td_l_z if is_z else fmt_td_l_w
-                t_c = fmt_td_c_z if is_z else fmt_td_c_w
-                t_n = fmt_td_n_z if is_z else fmt_td_n_w
-                t_m = fmt_td_m_z if is_z else fmt_td_m_w
-
-                b_id = r[0].strip() if r[0] else ""
-                ev_d = r[1] or ""
-                time_str = f"{safe_time_str(r[3])} - {safe_time_str(r[4])}" if (r[3] and r[4]) else safe_time_str(r[3])
-                bk_d = r[2] or ""
-                g_name = r[6].strip() if r[6] else (r[5].strip() if r[5] else "")
-                phone = r[7].strip() if r[7] else ""
-                room_name = r[8].strip() if r[8] else ""
-                seg_name = r[9].strip() if r[9] else ""
-                st_code = r[10].strip() if r[10] else "T"
-                st_name = "Đã chốt (Definite)" if st_code == 'D' else ("Giữ chỗ (Tentative)" if st_code == 'T' else ("Đã hủy (Cancelled)" if st_code == 'C' else st_code))
-                pax_val = safe_int(r[11])
-                coc_val = float(r[12] or 0)
-                sales_u = r[13].strip() if r[13] else ""
-                lock_u = r[14].strip() if r[14] else ""
-                cutoff_d = cutoff_map.get(b_id, "")
-                bq_val = float(r[16] or 0)
-                tot_val = float(r[17] or 0)
-                note_str = r[19].strip() if r[19] else ""
-
-                ws.write(row_i, 0, b_id, t_c)
-                ws.write(row_i, 1, ev_d, t_c)
-                ws.write(row_i, 2, time_str, t_c)
-                ws.write(row_i, 3, bk_d, t_c)
-                ws.write(row_i, 4, g_name, t_l)
-                ws.write(row_i, 5, phone, t_c)
-                ws.write(row_i, 6, room_name, t_l)
-                ws.write(row_i, 7, seg_name, t_l)
-                ws.write(row_i, 8, st_name, t_c)
-                ws.write(row_i, 9, sales_u, t_l)
-                ws.write(row_i, 10, lock_u, t_c)
-                ws.write(row_i, 11, cutoff_d, t_c)
-                ws.write(row_i, 12, pax_val, t_n)
-                ws.write(row_i, 13, coc_val, t_m)
-                ws.write(row_i, 14, bq_val, t_m)
-                ws.write(row_i, 15, tot_val, t_m)
-                ws.write(row_i, 16, note_str, t_l)
-                ws.set_row(row_i, 20)
-                row_i += 1
-
-            # Dòng TỔNG CỘNG
-            ws.merge_range(row_i, 0, row_i, 11, f'TỔNG CỘNG ({tot_count} ĐƠN TIỆC)', fmt_tot_l)
-            ws.write(row_i, 12, tot_pax, fmt_tot_n)
-            ws.write(row_i, 13, tot_deposit, fmt_tot_m)
-            ws.write(row_i, 14, tot_bq_rev, fmt_tot_m)
-            ws.write(row_i, 15, tot_full_rev, fmt_tot_m)
-            ws.write(row_i, 16, '', fmt_tot_l)
-            ws.set_row(row_i, 22)
-
-            # Căn chỉnh độ rộng cột tối ưu
-            ws.set_column('A:A', 22) # Mã booking
-            ws.set_column('B:B', 13) # Ngày tiệc
-            ws.set_column('C:C', 14) # Giờ
-            ws.set_column('D:D', 13) # Ngày đặt
-            ws.set_column('E:E', 32) # Khách hàng
-            ws.set_column('F:F', 15) # SĐT
-            ws.set_column('G:G', 18) # Sảnh
-            ws.set_column('H:H', 20) # Phân khúc
-            ws.set_column('I:I', 16) # Trạng thái
-            ws.set_column('J:J', 20) # Sales
-            ws.set_column('K:K', 14) # Lock
-            ws.set_column('L:L', 15) # Cutoff
-            ws.set_column('M:M', 13) # Pax
-            ws.set_column('N:N', 18) # Cọc
-            ws.set_column('O:P', 20) # Doanh thu
-            ws.set_column('Q:Q', 28) # Ghi chú
-            
         output.seek(0)
         filename = f"EMS_DanhSach_DonTiec_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
         return StreamingResponse(

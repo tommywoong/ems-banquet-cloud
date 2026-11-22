@@ -10,8 +10,11 @@ Gom toàn bộ các phân hệ chạy chung trên 1 cổng HTTPS duy nhất (m�
 """
 import os
 import sys
+import importlib.util
 from pathlib import Path
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
+from starlette.routing import Mount, Route
 import uvicorn
 
 BUNDLE_ROOT = Path(__file__).resolve().parent
@@ -26,15 +29,20 @@ import app as ems_web_module
 main_app: FastAPI = ems_web_module.app
 
 
+def redirect_to_analytics_slash(request):
+    return RedirectResponse(url="/analytics/", status_code=307)
+
+
 def _mount_sub_apps():
     """Mounts Analytics, AI Lab, and Setup Wizard as sub-applications under /analytics, /ai, /setup."""
-    import importlib.util
-
     sub_configs = [
         ("/analytics", BUNDLE_ROOT / "ems-analytics" / "app.py", "ems_analytics_sub"),
         ("/ai", BUNDLE_ROOT / "ems-ai" / "app.py", "ems_ai_sub"),
         ("/setup", BUNDLE_ROOT / "setup_wizard" / "wizard_app.py", "ems_wizard_sub"),
     ]
+    # Thêm redirect /analytics -> /analytics/
+    main_app.routes.insert(0, Route("/analytics", redirect_to_analytics_slash))
+
     for prefix, file_path, mod_name in sub_configs:
         if file_path.exists():
             try:
@@ -43,7 +51,8 @@ def _mount_sub_apps():
                 sys.path.insert(0, str(file_path.parent))
                 spec.loader.exec_module(mod)
                 if hasattr(mod, "app"):
-                    main_app.mount(prefix, mod.app)
+                    # Chèn Mount lên đầu danh sách router để ưu tiên trước catch-all static ""
+                    main_app.routes.insert(1, Mount(prefix, app=mod.app))
                     print(f"[Cloud Gateway] Mounted {mod_name} at {prefix}")
             except Exception as e:
                 print(f"[Cloud Gateway] Notice mounting {prefix}: {e}")

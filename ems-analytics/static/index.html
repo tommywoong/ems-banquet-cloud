@@ -11,11 +11,11 @@
     <meta http-equiv="Surrogate-Control" content="no-store">
 
     <!-- Vendor Libraries (Loaded from Local Server for 10x VPN Speed, with Automatic CDN Fallback) -->
-    <script src="/vendor/tailwind.cdn.js"></script>
+    <script src="vendor/tailwind.cdn.js"></script>
     <script>if (!window.tailwind) { document.write('<script src="https://cdn.tailwindcss.com"><\/script>'); }</script>
-    <script src="/vendor/chart.umd.min.js"></script>
+    <script src="vendor/chart.umd.min.js"></script>
     <script>if (!window.Chart) { document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"><\/script>'); }</script>
-    <script src="/vendor/lucide.min.js"></script>
+    <script src="vendor/lucide.min.js"></script>
     <script>if (!window.lucide) { document.write('<script src="https://unpkg.com/lucide@latest"><\/script>'); }</script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -144,6 +144,11 @@
     background: #0284c7;
 }
 </style>
+
+
+    <script>
+        const API_BASE = window.location.pathname.startsWith('/analytics') ? '/analytics' : '';
+    </script>
 
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
@@ -1258,17 +1263,17 @@
                     alert('Vui lòng tick chọn ít nhất một đơn tiệc trong bảng để xuất!');
                     return;
                 }
-                window.open('/api/export?book_ids=' + encodeURIComponent(bookIds.join(',')), '_blank');
+                window.open(API_BASE + '/api/export?book_ids=' + encodeURIComponent(bookIds.join(',')), '_blank');
             } else {
                 const qs = getFilterParams();
-                window.open('/api/export?' + qs, '_blank');
+                window.open(API_BASE + '/api/export?' + qs, '_blank');
             }
         }
 
         // Initialize Filter Dropdowns with clean Optgroups & Counts
         async function initFilters() {
             try {
-                const res = await fetch('/api/filters');
+                const res = await fetch(API_BASE + '/api/filters');
                 const data = await res.json();
 
                 // 1. Halls (Grouped by Floor)
@@ -1368,7 +1373,7 @@
         // 1. KPI Summary
         async function loadSummary() {
             try {
-                const res = await fetch('/api/summary?' + getFilterParams());
+                const res = await fetch(API_BASE + '/api/summary?' + getFilterParams());
                 const d = await res.json();
                 document.getElementById('kpiRevenue').textContent = formatVND(d.total_revenue);
                 document.getElementById('kpiAvgRev').textContent = formatVND(d.avg_revenue_per_booking);
@@ -1388,7 +1393,7 @@
         // 2. Hall stats
         async function loadHallStats() {
             try {
-                const res = await fetch('/api/stats/halls?' + getFilterParams());
+                const res = await fetch(API_BASE + '/api/stats/halls?' + getFilterParams());
                 const data = await res.json();
 
                 const tbody = document.getElementById('tblHallsBody');
@@ -1452,7 +1457,7 @@
         // 3. Segment stats
         async function loadSegmentStats() {
             try {
-                const res = await fetch('/api/stats/segments?' + getFilterParams());
+                const res = await fetch(API_BASE + '/api/stats/segments?' + getFilterParams());
                 const data = await res.json();
 
                 const tbody = document.getElementById('tblSegmentsBody');
@@ -1507,7 +1512,7 @@
         // 4. Channel stats
         async function loadChannelStats() {
             try {
-                const res = await fetch('/api/stats/channels?' + getFilterParams());
+                const res = await fetch(API_BASE + '/api/stats/channels?' + getFilterParams());
                 const data = await res.json();
 
                 const tbody = document.getElementById('tblChannelsBody');
@@ -1559,7 +1564,7 @@
         // 5. Sales stats
         async function loadSalesStats() {
             try {
-                const res = await fetch('/api/stats/sales?' + getFilterParams());
+                const res = await fetch(API_BASE + '/api/stats/sales?' + getFilterParams());
                 const data = await res.json();
 
                 const tbody = document.getElementById('tblSalesBody');
@@ -1602,7 +1607,7 @@
         // 6. Timeline stats
         async function loadTimelineStats() {
             try {
-                const res = await fetch('/api/stats/timeline?' + getFilterParams());
+                const res = await fetch(API_BASE + '/api/stats/timeline?' + getFilterParams());
                 const data = await res.json();
 
                 renderChart('chartMonthlyTrend', 'line', {
@@ -1775,7 +1780,7 @@
         // 7. Services & Categories
         async function loadServiceStats() {
             try {
-                const res = await fetch('/api/stats/services?' + getFilterParams());
+                const res = await fetch(API_BASE + '/api/stats/services?' + getFilterParams());
                 const data = await res.json();
 
                 renderChart('chartServiceCategories', 'pie', {
@@ -1807,7 +1812,7 @@
         // 8. Bookings Drill-Down
         async function loadBookingsTable() {
             try {
-                const res = await fetch('/api/bookings?' + getFilterParams() + '&limit=100');
+                const res = await fetch(API_BASE + '/api/bookings?' + getFilterParams() + '&limit=100');
                 const data = await res.json();
 
                 document.getElementById('lblTotalBookingsCount').textContent = formatNumber(data.total || 0);
@@ -2008,7 +2013,7 @@ async function openBookingDetailModal(bookingId) {
     resetBookingDetailState(bookingId);
 
     try {
-        const res = await fetch(`/api/booking-detail/${encodeURIComponent(bookingId)}`);
+        const res = await fetch(`${API_BASE}/api/booking-detail/${encodeURIComponent(bookingId)}`);
         if (!res.ok) throw new Error('Không thể tải chi tiết booking');
         const data = await res.json();
         currentBookingDetail = data;
@@ -2501,7 +2506,7 @@ const CURRENT_APP_VERSION = "2026.11.20.02";
 
 async function checkAppVersion() {
     try {
-        const res = await fetch('/api/system/version?t=' + Date.now(), { cache: 'no-store' });
+        const res = await fetch(API_BASE + '/api/system/version?t=' + Date.now(), { cache: 'no-store' });
         if (res.ok) {
             const data = await res.json();
             if (data && data.app_version && data.app_version !== CURRENT_APP_VERSION) {
