@@ -2433,8 +2433,7 @@
             return (window.systemBranding && window.systemBranding.hotel_name) ? window.systemBranding.hotel_name : 'TRUNG TÂM HỘI NGHỊ & TIỆC CƯỚI';
         }
 
-        async 
-function openAnalyticsDashboard() {
+        function openAnalyticsDashboard() {
     if (window.location.port === '8090') {
         window.open('http://' + window.location.hostname + ':8088', '_blank');
     } else {
@@ -2442,7 +2441,7 @@ function openAnalyticsDashboard() {
     }
 }
 
-function loadSystemBranding() {
+async function loadSystemBranding() {
             try {
                 const res = await fetch('/api/system/branding');
                 if (res.ok) {

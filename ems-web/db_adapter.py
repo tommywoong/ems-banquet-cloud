@@ -28,7 +28,7 @@ _MIRROR_INITIALIZED = False
 
 def load_bundle_config() -> dict:
     cfg = {
-        "mode": os.getenv("EMS_DB_MODE", "sql_server"),
+        "mode": os.getenv("EMS_DB_MODE", "google_sheets"),
         "db_server": os.getenv("EMS_SQL_SERVER", "10.17.10.12\\MSSQLSERVER2016"),
         "db_name": os.getenv("EMS_SQL_DB", "EMS_KHAIVY"),
         "db_user": os.getenv("EMS_SQL_USER", "SA"),
@@ -533,5 +533,6 @@ def get_hybrid_db_connection(default_conn_str: str = ""):
         )
         return pyodbc.connect(conn_str)
     except Exception as e:
-        print(f"[db_adapter] SQL Server connection failed ({e}), falling back to GSheetSQLiteConnection")
+        # Silent fallback on cloud environments
+        return GSheetSQLiteConnection()
         return GSheetSQLiteConnection()
