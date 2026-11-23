@@ -11,11 +11,11 @@
     <meta http-equiv="Surrogate-Control" content="no-store">
 
     <!-- Vendor Libraries (Loaded from Local Server for 10x VPN Speed, with Automatic CDN Fallback) -->
-    <script src="vendor/tailwind.cdn.js"></script>
+    <script src="/vendor/tailwind.cdn.js"></script>
     <script>if (!window.tailwind) { document.write('<script src="https://cdn.tailwindcss.com"><\/script>'); }</script>
-    <script src="vendor/chart.umd.min.js"></script>
+    <script src="/vendor/chart.umd.min.js"></script>
     <script>if (!window.Chart) { document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"><\/script>'); }</script>
-    <script src="vendor/lucide.min.js"></script>
+    <script src="/vendor/lucide.min.js"></script>
     <script>if (!window.lucide) { document.write('<script src="https://unpkg.com/lucide@latest"><\/script>'); }</script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -145,11 +145,6 @@
 }
 </style>
 
-
-    <script>
-        const API_BASE = window.location.pathname.startsWith('/analytics') ? '/analytics' : '';
-    </script>
-
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
 
@@ -157,7 +152,7 @@
     <div class="print-only mb-6 border-b-2 border-slate-800 pb-4">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-xl font-bold uppercase tracking-wide text-slate-900" id="printHotelTitle">BÁO CÁO TỔNG HỢP TIỆC CƯỚI & SỰ KIỆN</h1>
+                <h1 class="text-xl font-bold uppercase tracking-wide text-slate-900">Trung Tâm Hội Nghị Tiệc Cưới & Khách Sạn MerPerle</h1>
                 <p class="text-xs text-slate-600">Hệ Thống Quản Lý Sự Kiện & Tiệc Cưới EMS &bull; Báo Cáo Tổng Hợp</p>
             </div>
             <div class="text-right text-xs text-slate-600">
@@ -185,7 +180,7 @@
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> SQL Server 2016
                         </span>
                     </h1>
-                    <p class="text-xs text-slate-400">Hệ Thống Phân Tích Dữ Liệu & Báo Cáo Doanh Thu Sự Kiện</p>
+                    <p class="text-xs text-slate-400">MerPerle / Khải Vy Banquet & Convention Center (10.17.10.12)</p>
                 </div>
             </div>
 
@@ -381,20 +376,20 @@
                 <div class="absolute bottom-0 left-0 right-0 h-1 bg-indigo-500"></div>
             </div>
 
-            <!-- Tiền Cọc & Tỷ Lệ Hủy -->
+            <!-- Doanh Thu Phòng -->
             <div class="stat-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Đặt Cọc & Hủy Đơn</span>
-                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
-                        <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Doanh Thu Phòng</span>
+                    <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                        <i data-lucide="bed-double" class="w-4 h-4"></i>
                     </div>
                 </div>
-                <div id="kpiTotalDeposit" class="text-xl font-bold text-slate-900">0 ₫</div>
+                <div id="kpiTotalRoomRevenue" class="text-xl font-bold text-slate-900">0 ₫</div>
                 <p class="text-xs text-slate-500 mt-1 flex items-center justify-between">
-                    <span>Đã hủy: <strong id="kpiCancelled" class="text-rose-600">0</strong></span>
-                    <span>Tỷ lệ hủy: <strong id="kpiCancelRate" class="text-rose-600">0%</strong></span>
+                    <span>Đơn có phòng: <strong id="kpiRoomBookings" class="text-purple-600">0</strong></span>
+                    <span>Tỷ trọng: <strong id="kpiRoomRevPct" class="text-purple-600">0%</strong></span>
                 </p>
-                <div class="absolute bottom-0 left-0 right-0 h-1 bg-amber-500"></div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-purple-500"></div>
             </div>
         </section>
 
@@ -746,6 +741,7 @@
                                 <th class="px-2.5 py-2 text-right w-[50px] whitespace-nowrap">Khách</th>
                                 <th class="px-2.5 py-2 text-right w-[85px] whitespace-nowrap">Cọc (VNĐ)</th>
                                 <th class="px-2.5 py-2 text-right text-emerald-700 font-bold w-[105px] whitespace-nowrap">DT Tiệc</th>
+                                <th class="px-2.5 py-2 text-right text-purple-700 font-bold w-[95px] whitespace-nowrap">DT Phòng</th>
                                 <th class="px-2.5 py-2 text-right text-slate-900 font-bold w-[105px] whitespace-nowrap pr-3">Tổng DT</th>
                             </tr>
                         </thead>
@@ -1263,17 +1259,17 @@
                     alert('Vui lòng tick chọn ít nhất một đơn tiệc trong bảng để xuất!');
                     return;
                 }
-                window.open(API_BASE + '/api/export?book_ids=' + encodeURIComponent(bookIds.join(',')), '_blank');
+                window.open('/api/export?book_ids=' + encodeURIComponent(bookIds.join(',')), '_blank');
             } else {
                 const qs = getFilterParams();
-                window.open(API_BASE + '/api/export?' + qs, '_blank');
+                window.open('/api/export?' + qs, '_blank');
             }
         }
 
         // Initialize Filter Dropdowns with clean Optgroups & Counts
         async function initFilters() {
             try {
-                const res = await fetch(API_BASE + '/api/filters');
+                const res = await fetch('/api/filters');
                 const data = await res.json();
 
                 // 1. Halls (Grouped by Floor)
@@ -1373,7 +1369,7 @@
         // 1. KPI Summary
         async function loadSummary() {
             try {
-                const res = await fetch(API_BASE + '/api/summary?' + getFilterParams());
+                const res = await fetch('/api/summary?' + getFilterParams());
                 const d = await res.json();
                 document.getElementById('kpiRevenue').textContent = formatVND(d.total_revenue);
                 document.getElementById('kpiAvgRev').textContent = formatVND(d.avg_revenue_per_booking);
@@ -1382,9 +1378,9 @@
                 document.getElementById('kpiWinRate').textContent = d.win_rate + '%';
                 document.getElementById('kpiTotalGuests').textContent = formatNumber(d.total_guests);
                 document.getElementById('kpiAvgGuests').textContent = Math.round(d.avg_guests_per_booking) + ' khách/tiệc';
-                document.getElementById('kpiTotalDeposit').textContent = formatVND(d.total_deposit);
-                document.getElementById('kpiCancelled').textContent = formatNumber(d.cancelled_bookings);
-                document.getElementById('kpiCancelRate').textContent = d.cancel_rate + '%';
+                document.getElementById('kpiTotalRoomRevenue').textContent = formatVND(d.total_room_revenue || 0);
+                document.getElementById('kpiRoomBookings').textContent = formatNumber(d.room_bookings_count || 0) + ' đơn';
+                document.getElementById('kpiRoomRevPct').textContent = (d.room_revenue_pct || 0) + '%';
             } catch (err) {
                 console.error(err);
             }
@@ -1393,7 +1389,7 @@
         // 2. Hall stats
         async function loadHallStats() {
             try {
-                const res = await fetch(API_BASE + '/api/stats/halls?' + getFilterParams());
+                const res = await fetch('/api/stats/halls?' + getFilterParams());
                 const data = await res.json();
 
                 const tbody = document.getElementById('tblHallsBody');
@@ -1457,7 +1453,7 @@
         // 3. Segment stats
         async function loadSegmentStats() {
             try {
-                const res = await fetch(API_BASE + '/api/stats/segments?' + getFilterParams());
+                const res = await fetch('/api/stats/segments?' + getFilterParams());
                 const data = await res.json();
 
                 const tbody = document.getElementById('tblSegmentsBody');
@@ -1512,7 +1508,7 @@
         // 4. Channel stats
         async function loadChannelStats() {
             try {
-                const res = await fetch(API_BASE + '/api/stats/channels?' + getFilterParams());
+                const res = await fetch('/api/stats/channels?' + getFilterParams());
                 const data = await res.json();
 
                 const tbody = document.getElementById('tblChannelsBody');
@@ -1564,7 +1560,7 @@
         // 5. Sales stats
         async function loadSalesStats() {
             try {
-                const res = await fetch(API_BASE + '/api/stats/sales?' + getFilterParams());
+                const res = await fetch('/api/stats/sales?' + getFilterParams());
                 const data = await res.json();
 
                 const tbody = document.getElementById('tblSalesBody');
@@ -1607,7 +1603,7 @@
         // 6. Timeline stats
         async function loadTimelineStats() {
             try {
-                const res = await fetch(API_BASE + '/api/stats/timeline?' + getFilterParams());
+                const res = await fetch('/api/stats/timeline?' + getFilterParams());
                 const data = await res.json();
 
                 renderChart('chartMonthlyTrend', 'line', {
@@ -1780,7 +1776,7 @@
         // 7. Services & Categories
         async function loadServiceStats() {
             try {
-                const res = await fetch(API_BASE + '/api/stats/services?' + getFilterParams());
+                const res = await fetch('/api/stats/services?' + getFilterParams());
                 const data = await res.json();
 
                 renderChart('chartServiceCategories', 'pie', {
@@ -1812,7 +1808,7 @@
         // 8. Bookings Drill-Down
         async function loadBookingsTable() {
             try {
-                const res = await fetch(API_BASE + '/api/bookings?' + getFilterParams() + '&limit=100');
+                const res = await fetch('/api/bookings?' + getFilterParams() + '&limit=100');
                 const data = await res.json();
 
                 document.getElementById('lblTotalBookingsCount').textContent = formatNumber(data.total || 0);
@@ -1882,7 +1878,9 @@
                         <td class="px-2.5 py-2 text-right text-slate-600 whitespace-nowrap text-[11px]">${formatVND(b.deposit)}</td>
                         <!-- 11. DT TIỆC -->
                         <td class="px-2.5 py-2 text-right font-mono font-bold text-emerald-700 whitespace-nowrap text-[11px]">${formatVND(b.banquet_rev !== undefined ? b.banquet_rev : b.total_amount)}</td>
-                        <!-- 12. TỔNG DT -->
+                        <!-- 12. DT PHÒNG -->
+                        <td class="px-2.5 py-2 text-right font-mono font-bold text-purple-700 whitespace-nowrap text-[11px]">${formatVND(b.room_rev || 0)}</td>
+                        <!-- 13. TỔNG DT -->
                         <td class="px-2.5 py-2 text-right font-mono font-black text-slate-900 whitespace-nowrap text-[11px] pr-3">${formatVND(b.total_rev !== undefined ? b.total_rev : b.total_amount)}</td>
                     `;
                     tbody.appendChild(tr);
@@ -2013,7 +2011,7 @@ async function openBookingDetailModal(bookingId) {
     resetBookingDetailState(bookingId);
 
     try {
-        const res = await fetch(`${API_BASE}/api/booking-detail/${encodeURIComponent(bookingId)}`);
+        const res = await fetch(`/api/booking-detail/${encodeURIComponent(bookingId)}`);
         if (!res.ok) throw new Error('Không thể tải chi tiết booking');
         const data = await res.json();
         currentBookingDetail = data;
@@ -2493,7 +2491,7 @@ function scrollBookingsTable(dir) {
         <div class="px-6 py-3 bg-white border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
             <div class="flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <span>Dữ liệu đồng bộ trực tiếp từ Cơ sở dữ liệu EMS Banquet</span>
+                <span>Dữ liệu đồng bộ trực tiếp từ SQL Server 2016 (EMS_KHAIVY)</span>
             </div>
             <button type="button" onclick="closeBookingDetailModal()" class="px-5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-bold transition">Đóng</button>
         </div>
@@ -2506,7 +2504,7 @@ const CURRENT_APP_VERSION = "2026.11.20.02";
 
 async function checkAppVersion() {
     try {
-        const res = await fetch(API_BASE + '/api/system/version?t=' + Date.now(), { cache: 'no-store' });
+        const res = await fetch('/api/system/version?t=' + Date.now(), { cache: 'no-store' });
         if (res.ok) {
             const data = await res.json();
             if (data && data.app_version && data.app_version !== CURRENT_APP_VERSION) {

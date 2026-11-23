@@ -2192,7 +2192,7 @@ def list_bookings(
                 ISNULL(lv.fcName, '') as SegmentName,
                 b.fcStatus_BkRoom,
                 ISNULL(guestCalc.ActualGuests, 0) as Pax,
-                b.fnDatCoc,
+                ISNULL(b.fnDatCoc, ISNULL(meo.fnDatCoc, 0)) as fnDatCoc,
                 ISNULL(NULLIF(meo.fcNguoiLap, ''), b.fcUser) as EffectiveSales,
                 b.fcUser as LockUser,
                 meo.fcNguoiLap as BEOUser,
@@ -2204,7 +2204,7 @@ def list_bookings(
             LEFT JOIN stBookFunctionRoom bfr ON b.fcBookID = bfr.fcBookID
             LEFT JOIN stPhong p ON bfr.fcFunctionRoom = p.fcMa
             LEFT JOIN (
-                SELECT fcBookID, MAX(fcMaster_EO) AS fcMaster_EO, MAX(fcNguoiLap) AS fcNguoiLap
+                SELECT fcBookID, MAX(fcMaster_EO) AS fcMaster_EO, MAX(fcNguoiLap) AS fcNguoiLap, MAX(fnDatCoc) AS fnDatCoc
                 FROM stMaster_EO
                 GROUP BY fcBookID
             ) meo ON b.fcBookID = meo.fcBookID
@@ -2375,7 +2375,7 @@ def export_bookings_excel(
                 ISNULL(lv.fcName, '') as SegmentName,
                 b.fcStatus_BkRoom,
                 ISNULL(guestCalc.ActualGuests, 0) as Pax,
-                b.fnDatCoc,
+                ISNULL(b.fnDatCoc, ISNULL(meo.fnDatCoc, 0)) as fnDatCoc,
                 ISNULL(NULLIF(meo.fcNguoiLap, ''), b.fcUser) as EffectiveSales,
                 b.fcUser as LockUser,
                 meo.fcNguoiLap as BEOUser,
@@ -2387,7 +2387,7 @@ def export_bookings_excel(
             LEFT JOIN stBookFunctionRoom bfr ON b.fcBookID = bfr.fcBookID
             LEFT JOIN stPhong p ON bfr.fcFunctionRoom = p.fcMa
             LEFT JOIN (
-                SELECT fcBookID, MAX(fcMaster_EO) AS fcMaster_EO, MAX(fcNguoiLap) AS fcNguoiLap
+                SELECT fcBookID, MAX(fcMaster_EO) AS fcMaster_EO, MAX(fcNguoiLap) AS fcNguoiLap, MAX(fnDatCoc) AS fnDatCoc
                 FROM stMaster_EO
                 GROUP BY fcBookID
             ) meo ON b.fcBookID = meo.fcBookID
@@ -4464,6 +4464,13 @@ def save_beo(book_id: str, req: SaveBEORequest):
                 req.end_user or "", req.book_code or "", req.bill_to or "",
                 req.payment_method or "", req.deposit or 0, req.payment_notes or "", req.contact_person or "", guest_id
             ])
+
+        # Synchronize deposit to stBooking if provided
+        if req.deposit is not None:
+            try:
+                cur.execute("UPDATE stBooking SET fnDatCoc = ? WHERE fcBookID = ?", [req.deposit or 0, book_id])
+            except Exception:
+                pass
 
         # Determine all distinct event dates for multi-day support
         cur.execute("SELECT DISTINCT CONVERT(varchar(10), fdDate, 120) FROM stBookFunctionRoom WHERE fcBookID = ? ORDER BY 1", [book_id])
