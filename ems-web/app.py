@@ -3634,6 +3634,7 @@ def get_system_branding():
     hotel_subtitle = "Hệ Thống Quản Lý Tiệc Cưới & Sự Kiện"
     hotel_address = ""
     hotel_phone = ""
+    logo_url = ""
     cfg_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config.json")
     if os.path.exists(cfg_file):
         try:
@@ -3643,13 +3644,15 @@ def get_system_branding():
                 hotel_subtitle = cfg.get("hotel_subtitle", hotel_subtitle)
                 hotel_address = cfg.get("hotel_address", hotel_address)
                 hotel_phone = cfg.get("hotel_phone", hotel_phone)
+                logo_url = cfg.get("logo_url", "")
         except Exception:
             pass
     return {
         "hotel_name": hotel_name,
         "hotel_subtitle": hotel_subtitle,
         "hotel_address": hotel_address,
-        "hotel_phone": hotel_phone
+        "hotel_phone": hotel_phone,
+        "logo_url": logo_url
     }
 
 class BrandingUpdateRequest(BaseModel):
@@ -3657,6 +3660,7 @@ class BrandingUpdateRequest(BaseModel):
     hotel_subtitle: Optional[str] = ""
     hotel_address: Optional[str] = ""
     hotel_phone: Optional[str] = ""
+    logo_url: Optional[str] = ""
 
 @app.post("/api/system/branding")
 def update_system_branding(req: BrandingUpdateRequest):
@@ -3675,6 +3679,8 @@ def update_system_branding(req: BrandingUpdateRequest):
         cfg["hotel_address"] = req.hotel_address.strip()
     if req.hotel_phone is not None:
         cfg["hotel_phone"] = req.hotel_phone.strip()
+    if req.logo_url is not None:
+        cfg["logo_url"] = req.logo_url.strip()
     try:
         with open(cfg_file, "w", encoding="utf-8") as f:
             json.dump(cfg, f, ensure_ascii=False, indent=2)
@@ -3687,7 +3693,8 @@ def update_system_branding(req: BrandingUpdateRequest):
             "hotel_name": cfg["hotel_name"],
             "hotel_subtitle": cfg.get("hotel_subtitle", ""),
             "hotel_address": cfg.get("hotel_address", ""),
-            "hotel_phone": cfg.get("hotel_phone", "")
+            "hotel_phone": cfg.get("hotel_phone", ""),
+            "logo_url": cfg.get("logo_url", "")
         }
     }
 
