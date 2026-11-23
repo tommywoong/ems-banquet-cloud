@@ -1924,7 +1924,8 @@ def get_scheduler(
                 bfr.fnQuantity,
                 bfr.fnMenuPrice,
                 b.fcNote,
-                meo.fcMaster_EO
+                meo.fcMaster_EO,
+                bfr.fnCodeID
             FROM stBookFunctionRoom bfr
             INNER JOIN stBooking b ON bfr.fcBookID = b.fcBookID
             LEFT JOIN stKhachHang k ON b.fcGuestID = k.fcMa
@@ -1981,6 +1982,7 @@ def get_scheduler(
                 "menu_price": float(r[12] or 0),
                 "notes": r[13].strip() if r[13] else "",
                 "master_eo": r[14].strip() if r[14] else None,
+                "code_id": r[15].strip() if len(r) > 15 and r[15] else "",
                 "shift": shift
             })
             
@@ -2107,6 +2109,7 @@ class UpdateBookingRequest(BaseModel):
     current_user: Optional[str] = ""
     current_user_full: Optional[str] = ""
     action_note: Optional[str] = ""
+    fn_code_id: Optional[str] = None
 
 @app.get("/api/bookings/list")
 def list_bookings(
@@ -2871,10 +2874,11 @@ def update_booking(
         # 0. Query previous state to detect room/date move and log comprehensive changes
         cur.execute("""
             SELECT b.fcTitle, b.fcStatus_BkRoom, b.fnSoLuongDK, b.fnDatCoc, b.fcContactPerson,
-                   r.fcFunctionRoom, r.fdDate, r.fdTimeIn, r.fdTimeOut
+                   r.fcFunctionRoom, r.fdDate, r.fdTimeIn, r.fdTimeOut, r.fnCodeID
             FROM stBooking b
             LEFT JOIN stBookFunctionRoom r ON b.fcBookID = r.fcBookID
             WHERE b.fcBookID = ?
+            ORDER BY r.fdDate, r.fnCodeID
         """, [book_id])
         old_rows = cur.fetchall()
         old_title = old_rows[0][0] if old_rows and old_rows[0][0] else ""
@@ -2895,14 +2899,42 @@ def update_booking(
             WHERE fcBookID = ?
         """, [req.title, req.status or 'T', req.pax, req.deposit or 0, req.guest_name, formatted_note, book_id])
         
-        # 2. Update stBookFunctionRoom
+        # 2. Update stBookFunctionRoom with Multi-Room & Multi-Day Safety
         dt_in_str = f"{req.event_date} {req.time_in}:00"
         dt_out_str = f"{req.event_date} {req.time_out}:00"
-        cur.execute("""
-            UPDATE stBookFunctionRoom
-            SET fcFunctionRoom = ?, fdDate = ?, fdTimeIn = ?, fdTimeOut = ?, fnQuantity = ?, fnMenuPrice = ?
-            WHERE fcBookID = ?
-        """, [req.room, req.event_date, dt_in_str, dt_out_str, req.pax, req.menu_price or 0, book_id])
+
+        if len(old_rows) <= 1:
+            # Single-room booking: safe to update directly by fcBookID
+            cur.execute("""
+                UPDATE stBookFunctionRoom
+                SET fcFunctionRoom = ?, fdDate = ?, fdTimeIn = ?, fdTimeOut = ?, fnQuantity = ?, fnMenuPrice = ?
+                WHERE fcBookID = ?
+            """, [req.room, req.event_date, dt_in_str, dt_out_str, req.pax, req.menu_price or 0, book_id])
+        else:
+            # Multi-room / Multi-day booking: protect other rooms/dates from being overwritten
+            target_code_id = (req.fn_code_id or "").strip()
+            if not target_code_id:
+                # Find matching row by event_date & room
+                for r in old_rows:
+                    r_date_val = str(r[6]).split()[0] if r[6] else ""
+                    if r_date_val == req.event_date and (r[5] or "").strip() == req.room:
+                        target_code_id = r[9]
+                        break
+                if not target_code_id:
+                    for r in old_rows:
+                        r_date_val = str(r[6]).split()[0] if r[6] else ""
+                        if r_date_val == req.event_date:
+                            target_code_id = r[9]
+                            break
+                if not target_code_id and old_rows:
+                    target_code_id = old_rows[0][9]
+
+            if target_code_id:
+                cur.execute("""
+                    UPDATE stBookFunctionRoom
+                    SET fcFunctionRoom = ?, fdDate = ?, fdTimeIn = ?, fdTimeOut = ?, fnQuantity = ?, fnMenuPrice = ?
+                    WHERE fcBookID = ? AND fnCodeID = ?
+                """, [req.room, req.event_date, dt_in_str, dt_out_str, req.pax, req.menu_price or 0, book_id, target_code_id])
         
         # 3. Update customer details if linked
         cur.execute("SELECT fcGuestID FROM stBooking WHERE fcBookID = ?", [book_id])

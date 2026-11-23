@@ -3184,7 +3184,7 @@
                      data-bookid="${b.book_id}"
                      ondragstart="handleDragStart(event, '${b.book_id}', '${b.room}', '${b.event_date}', '${b.time_in}', '${b.time_out}', '${safeTitle}', '${b.pax}')"
                      ondragend="handleDragEnd(event)"
-                     onclick="event.stopPropagation(); openEditBookingModal('${b.book_id}')" 
+                     onclick="event.stopPropagation(); openEditBookingModal('${b.book_id}', '${b.code_id || ''}')" 
                      class="booking-badge p-2 mb-1 rounded-lg border ${colorClass} cursor-grab active:cursor-grabbing text-left transition select-none hover:shadow-md">
                     <div class="flex items-center justify-between text-[10px] font-mono mb-1">
                         <div class="flex items-center gap-1">
@@ -3247,7 +3247,7 @@
             return bks.map(b => {
                 let colorClass = b.status_code === 'D' ? 'bg-emerald-50 border-emerald-300 text-emerald-950' : 'bg-amber-50 border-amber-300 text-amber-950';
                 return `
-                    <div onclick="event.stopPropagation(); openEditBookingModal('${b.book_id}')" class="booking-badge p-2 mb-1 rounded-lg border ${colorClass} cursor-pointer">
+                    <div onclick="event.stopPropagation(); openEditBookingModal('${b.book_id}', '${b.code_id || ''}')" class="booking-badge p-2 mb-1 rounded-lg border ${colorClass} cursor-pointer">
                         <div class="flex items-center justify-between text-[10px] font-mono mb-0.5">
                             <span class="font-bold">${b.time_in} - ${b.time_out}</span>
                             <span class="font-bold uppercase">${b.status_code === 'D' ? 'Definite' : 'Tentative'}</span>
@@ -3286,15 +3286,27 @@
         // -------------------------------------------------------------
         // EDIT / DETAIL BOOKING MODAL (CHỈNH SỬA, KHÓA CHỐT, HỦY TIỆC)
         // -------------------------------------------------------------
-        async function openEditBookingModal(bookId) {
+        let currentActiveBookingCodeId = null;
+
+        async function openEditBookingModal(bookId, codeId) {
             currentActiveBookingId = bookId;
+            currentActiveBookingCodeId = codeId || null;
             try {
                 const res = await fetch(`/api/bookings/${bookId}`);
                 const b = await res.json();
 
+                let activeRoom = b.room_booking;
+                if (codeId && b.rooms && b.rooms.length > 0) {
+                    const found = b.rooms.find(r => r.code_id === codeId);
+                    if (found) activeRoom = found;
+                }
+                if (!currentActiveBookingCodeId && activeRoom && activeRoom.code_id) {
+                    currentActiveBookingCodeId = activeRoom.code_id;
+                }
+
                 document.getElementById('ebBookIdBadge').textContent = b.book_id;
                 document.getElementById('ebTitle').value = b.title;
-                document.getElementById('ebRoom').value = b.room_booking ? b.room_booking.room : '';
+                document.getElementById('ebRoom').value = activeRoom ? activeRoom.room : '';
 
                 // Show Multi-Rooms details if booking has multiple rooms
                 const multiNotice = document.getElementById('ebMultiRoomsNotice');
@@ -3304,15 +3316,18 @@
                         multiNotice.innerHTML = `
                             <div class="flex items-center gap-1.5 font-bold text-indigo-900 text-xs">
                                 <i data-lucide="layers" class="w-4 h-4 text-indigo-600"></i>
-                                <span>ĐƠN TIỆC ĐA SẢNH (${b.rooms.length} SẢNH TỔ CHỨC):</span>
+                                <span>ĐƠN TIỆC ĐA SẢNH / ĐA NGÀY (${b.rooms.length} SỰ KIỆN):</span>
                             </div>
                             <div class="flex flex-wrap gap-2 pt-1">
-                                ${b.rooms.map(r => `
-                                    <span class="px-2.5 py-1 bg-white border border-indigo-300 rounded-lg text-xs font-bold text-indigo-800 shadow-2xs flex items-center gap-1">
-                                        <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
-                                        <span>${r.room_name} (${r.time_in}-${r.time_out}) &bull; ${r.quantity} khách</span>
+                                ${b.rooms.map(r => {
+                                    const isCurrent = (r.code_id === currentActiveBookingCodeId);
+                                    return `
+                                    <span class="px-2.5 py-1 ${isCurrent ? 'bg-indigo-600 text-white border-indigo-700 ring-2 ring-indigo-300' : 'bg-white text-indigo-800 border-indigo-300'} border rounded-lg text-xs font-bold shadow-2xs flex items-center gap-1">
+                                        <span class="w-2 h-2 rounded-full ${isCurrent ? 'bg-white' : 'bg-indigo-600'}"></span>
+                                        <span>${r.room_name} (${r.event_date} ${r.time_in}-${r.time_out}) &bull; ${r.quantity} khách</span>
                                     </span>
-                                `).join('')}
+                                    `;
+                                }).join('')}
                             </div>
                         `;
                     } else {
@@ -3320,10 +3335,10 @@
                         multiNotice.innerHTML = '';
                     }
                 }
-                document.getElementById('ebEventDate').value = b.room_booking.event_date;
-                document.getElementById('ebTimeIn').value = b.room_booking.time_in;
-                document.getElementById('ebTimeOut').value = b.room_booking.time_out;
-                document.getElementById('ebPax').value = b.pax;
+                document.getElementById('ebEventDate').value = activeRoom ? activeRoom.event_date : '';
+                document.getElementById('ebTimeIn').value = activeRoom ? activeRoom.time_in : '';
+                document.getElementById('ebTimeOut').value = activeRoom ? activeRoom.time_out : '';
+                document.getElementById('ebPax').value = (activeRoom && activeRoom.quantity) ? activeRoom.quantity : b.pax;
                 document.getElementById('ebDeposit').value = b.deposit;
                 document.getElementById('ebStatus').value = b.status;
                 document.getElementById('ebNotes').value = b.notes;
@@ -3447,6 +3462,7 @@
                 time_in: document.getElementById('ebTimeIn').value,
                 time_out: document.getElementById('ebTimeOut').value,
                 room: document.getElementById('ebRoom').value,
+                fn_code_id: currentActiveBookingCodeId,
                 pax: parseInt(document.getElementById('ebPax').value) || 0,
                 deposit: parseFloat(document.getElementById('ebDeposit').value) || 0,
                 status: document.getElementById('ebStatus').value,
@@ -4262,6 +4278,7 @@ Người giữ sảnh: ${currentUser.full_name} (${currentUser.username})`);
                 time_in: document.getElementById('ebTimeIn').value,
                 time_out: document.getElementById('ebTimeOut').value,
                 room: document.getElementById('ebRoom').value,
+                fn_code_id: currentActiveBookingCodeId,
                 pax: parseInt(document.getElementById('ebPax').value) || 0,
                 deposit: parseFloat(document.getElementById('ebDeposit').value) || 0,
                 status: document.getElementById('ebStatus').value,
