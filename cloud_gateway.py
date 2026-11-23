@@ -33,6 +33,14 @@ def redirect_to_analytics_slash(request):
     return RedirectResponse(url="/analytics/", status_code=307)
 
 
+def redirect_to_ai_slash(request):
+    return RedirectResponse(url="/ai/", status_code=307)
+
+
+def redirect_to_setup_slash(request):
+    return RedirectResponse(url="/setup/", status_code=307)
+
+
 def _mount_sub_apps():
     """Mounts Analytics, AI Lab, and Setup Wizard as sub-applications under /analytics, /ai, /setup."""
     sub_configs = [
@@ -40,7 +48,9 @@ def _mount_sub_apps():
         ("/ai", BUNDLE_ROOT / "ems-ai" / "app.py", "ems_ai_sub"),
         ("/setup", BUNDLE_ROOT / "setup_wizard" / "wizard_app.py", "ems_wizard_sub"),
     ]
-    # Thêm redirect /analytics -> /analytics/
+    # Thêm redirects an toàn cho sub-apps
+    main_app.routes.insert(0, Route("/setup", redirect_to_setup_slash))
+    main_app.routes.insert(0, Route("/ai", redirect_to_ai_slash))
     main_app.routes.insert(0, Route("/analytics", redirect_to_analytics_slash))
 
     for prefix, file_path, mod_name in sub_configs:

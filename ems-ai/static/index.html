@@ -318,6 +318,7 @@
   </div>
 
   <script>
+    const API_BASE = window.location.pathname.startsWith('/ai') ? '/ai' : '';
     let authToken = localStorage.getItem('ems_ai_token') || '';
     let currentPath = '';
     let originalContent = '';
@@ -330,7 +331,7 @@
     async function verifyMaster() {
       const pwd = document.getElementById('masterPassInput').value;
       try {
-        const res = await fetch('/api/auth', {
+        const res = await fetch(`${API_BASE}/api/auth`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({password: pwd})
@@ -349,7 +350,7 @@
 
     async function loadFiles() {
       try {
-        const res = await fetch('/api/files', {
+        const res = await fetch(`${API_BASE}/api/files`, {
           headers: {'X-Master-Pass': authToken}
         });
         const data = await res.json();
@@ -376,7 +377,7 @@
       document.getElementById('currentFileLabel').innerText = path;
 
       try {
-        const res = await fetch(`/api/file?path=${encodeURIComponent(path)}`, {
+        const res = await fetch(`${API_BASE}/api/file?path=${encodeURIComponent(path)}`, {
           headers: {'X-Master-Pass': authToken}
         });
         const data = await res.json();
@@ -394,7 +395,7 @@
       if (!currentPath) return alert("Vui lòng chọn file trước!");
       const content = document.getElementById('codeEditor').value;
       try {
-        const res = await fetch('/api/diff', {
+        const res = await fetch(`${API_BASE}/api/diff`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -441,7 +442,7 @@
       }
 
       try {
-        const res = await fetch('/api/apply', {
+        const res = await fetch(`${API_BASE}/api/apply`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -467,7 +468,7 @@
 
     async function loadSnapshots() {
       try {
-        const res = await fetch('/api/snapshots', {
+        const res = await fetch(`${API_BASE}/api/snapshots`, {
           headers: {'X-Master-Pass': authToken}
         });
         const data = await res.json();
@@ -499,7 +500,7 @@
     async function rollbackSnapshot(id) {
       if (!confirm(`Khôi phục file từ bản snapshot ${id}?`)) return;
       try {
-        const res = await fetch('/api/rollback', {
+        const res = await fetch(`${API_BASE}/api/rollback`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

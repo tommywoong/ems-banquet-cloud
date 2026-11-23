@@ -127,13 +127,13 @@ def index():
 
 if __name__ == "__main__":
     import uvicorn
-    # Resolve dynamic port from config.json or environment
-    ai_port = 5092
+    # Resolve dynamic port from config.json or environment (Default: 8092 for Production/Dev)
+    ai_port = 8092
     if CONFIG_FILE.exists():
         try:
             with open(CONFIG_FILE, "r", encoding="utf-8") as _f:
                 _data = json.load(_f)
-                ai_port = int(_data.get("port_ai", 5092))
+                ai_port = int(_data.get("port_ai", 8092))
         except Exception:
             pass
     if "PORT" in os.environ:
