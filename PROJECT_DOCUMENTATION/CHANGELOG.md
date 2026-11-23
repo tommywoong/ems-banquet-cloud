@@ -1,3 +1,53 @@
+## [2026-11-23 14:00] - KHẮC PHỤC TRIỆT ĐỂ LỖI 500 VÀ ĐIỀU HƯỚNG CỔNG TRÊN NHÁNH CLOUD ONLINE (RENDER / SQLITE MIRROR)
+- **Phạm vi tác động**: Toàn hệ thống Cloud (`ems-web`, `ems-analytics`, `cloud_gateway`, `db_adapter`, `EMS_Banquet_Portable_Bundle`, GitHub `tommywoong/ems-banquet-cloud` commit `23b3102`). Máy chủ On-premise `10.17.10.12` được đồng bộ đảm bảo tương thích 100%.
+- **Nguyên nhân gốc đã xác định & Khắc phục hoàn toàn**:
+  1. **Lỗi 500 do cú pháp T-SQL `OUTER APPLY` trên SQLite**:
+     - *Nguyên nhân*: Các hàm thống kê trong `ems-analytics/app.py` và tra cứu trong `ems-web/app.py` sử dụng cú pháp đặc thù T-SQL `OUTER APPLY`. SQLite trên Render không hỗ trợ tính năng này dẫn tới `sqlite3.OperationalError: near "(": syntax error`.
+     - *Khắc phục*: Tái cấu trúc toàn bộ câu truy vấn sang chuẩn ANSI SQL `LEFT JOIN` gom nhóm (`eo_rev`, `bc_rev`), tương thích 100% cả SQL Server 2016 lẫn SQLite, giữ nguyên vẹn mọi tính toán doanh thu phòng (`RoomRev`), doanh thu tiệc (`BanquetRev`), số khách và tiền cọc BEO.
+  2. **Lỗi 500 trong `get_scheduler` do đối tượng ngày giờ**:
+     - *Nguyên nhân*: Khi chạy SQLite, cột giờ `fdTimeIn`/`fdTimeOut` trả về chuỗi `str` thay vì `datetime.datetime`, dẫn đến `AttributeError: 'str' object has no attribute 'strftime'`.
+     - *Khắc phục*: Bổ sung kiểm tra an toàn `hasattr(r[3], "strftime")` và fallback trích xuất chuỗi `HH:MM`.
+  3. **Lỗi 500 trong `get_beo_bookings_list` do ép kiểu số**:
+     - *Nguyên nhân*: Giá trị số khách trong SQLite là chuỗi dạng float `"200.00"`, gọi `int("200.00")` bị văng `ValueError`.
+     - *Khắc phục*: Chuyển sang `int(float(r[5] or 0))`.
+  4. **Lỗi Connection Timed Out khi truy cập cổng `:8088` trên Render Cloud**:
+     - *Nguyên nhân*: Nền tảng Render chỉ mở 1 cổng HTTPS duy nhất (`ems-banquet-cloud.onrender.com`). Giao diện Web gọi cứng `:8088` dẫn đến lỗi time-out.
+     - *Khắc phục*:
+       - Bổ sung hàm nhận diện môi trường thông minh `openAnalyticsApp()` và `openBanquetWebApp()`: nếu ở mạng nội bộ `10.17.10.12` hoặc `localhost` thì mở cổng `:8088`/`:8090`, nếu ở Cloud (Render/Domain ngoài) thì tự động điều hướng sang đường dẫn `/analytics/` và `/` trên cùng domain.
+       - Tích hợp hàm UDF giả lập an toàn `varchar`, `nvarchar`, `CONVERT` trong SQLite `db_adapter.py`.
+- **Kiểm thử thực tế**:
+  - Test toàn diện cả 12 API cốt lõi qua `cloud_gateway.main_app` trên môi trường SQLite/Google Sheets: 100% PASS (200 OK).
+  - Test hồi quy trên máy chủ nội bộ `10.17.10.12` SQL Server: 100% PASS (200 OK).
+- **Đã push lên GitHub Render**: Branch `main`, commit `23b3102`.
+
+## [2026-11-23 12:35] - HỖ TRỢ ĐẶT CÙNG SẢNH ĐA NGÀY (MULTI-DAY SAME-ROOM) VÀ ĐA SẢNH LINH HOẠT TRÊN GIAO DIỆN WEB
+- **Phạm vi tác động**: Giao diện tạo đơn tiệc mới (`ems-web/static/index.html`), Backend tiếp nhận booking (`ems-web/app.py`), Máy chủ Production `10.17.10.12:8090`, `EMS_Banquet_Portable_Bundle`, GitHub `tommywoong/ems-banquet-cloud`. CSDL SQL Server gốc `EMS_KHAIVY` được bảo toàn nguyên vẹn 100%.
+- **Nghiệp vụ thực tế theo chuẩn Cana Desktop**:
+  * Cana Desktop và CSDL `EMS_KHAIVY` vốn quản lý các lượt khóa sảnh tại bảng con `stBookFunctionRoom` với trường `fdDate` độc lập cho từng buổi/sảnh. Đã có 112 đơn tiệc thực tế trong lịch sử đặt cùng một sảnh xuyên suốt nhiều ngày liên tiếp (ví dụ: `NTTL24_1000000001` đặt cùng Sảnh 05 qua 20 ngày; `NLMT26_1000000036` đặt 3 sảnh qua 6 ngày).
+  * Trước đây trên giao diện Web 8090: Modal tạo đơn chỉ có 1 ô ngày chung `#nbDate`, các sảnh phụ không có ô chọn ngày riêng và hàm `checkConflictAuto` cấm chọn trùng mã sảnh, khiến Sales không thể lock cùng 1 sảnh cho các ngày tiếp theo trong cùng 1 đoàn.
+- **Các cải tiến kỹ thuật đã thực hiện**:
+  1. **Bổ sung ô Ngày Sự Kiện độc lập cho từng dòng Sảnh**:
+     * Sảnh 1 (Sảnh chính): Có ô chọn Ngày Tổ Chức riêng (tự động đồng bộ với Ngày bắt đầu sự kiện `#nbEventDate`).
+     * Các Sảnh phụ / Ngày tiếp theo (`extra-room-entry`): Mỗi dòng có ô chọn Ngày Tổ Chức riêng (`.extra-room-date`).
+  2. **Tiện ích 1-Click "+ Đặt cùng sảnh này cho ngày hôm sau (D+1)"**:
+     * Bổ sung nút bấm thông minh ngay trên tiêu đề của từng dòng sảnh: `+ Đặt cùng sảnh này cho ngày hôm sau (D+1)`.
+     * Khi click, hệ thống tự động nhân bản dòng sảnh đó, cộng thêm 1 ngày (`nextDate = addDaysToDateString(curDate, 1)`), giữ nguyên khung giờ, số khách và đơn giá menu, giúp Sales thao tác siêu tốc.
+  3. **Nâng cấp Thuật toán Kiểm tra Trùng lịch (`checkConflictAuto`)**:
+     * Kiểm tra xung đột nội bộ: Chỉ báo lỗi trùng khi cùng một sảnh, CÙNG MỘT NGÀY và giao nhau về khung giờ (`time_in < other.time_out && time_out > other.time_in`). Cho phép hoàn toàn việc chọn cùng một sảnh nhưng khác ngày hoặc khác ca!
+     * Kiểm tra xung đột với CSDL: Gửi query `/api/bookings/check-conflict` với tham số `date` tương ứng của từng dòng sảnh riêng biệt.
+  4. **Nâng cấp Backend (`POST /api/bookings`)**:
+     * Đọc trường `date` trong từng object của mảng `rooms` gửi lên: `r_date = str(r_item.get("date") or event_d).strip()`.
+     * Lưu chính xác `r_date` vào cột `fdDate` của bảng `stBookFunctionRoom` cho từng lượt khóa phòng.
+- **Kiểm thử thực tế & Bằng chứng xác nhận**:
+  * Kiểm thử Playwright tạo đơn tiệc test `NTTL26_1000000002` với Sảnh Diamond (04) khóa 2 ngày liên tiếp (28/12/2026 và 29/12/2026):
+    * Kiểm tra CSDL `stBookFunctionRoom`: Tồn tại 2 bản ghi riêng biệt cho Room 04: Ngày 28/12/2026 (08:00-17:00, 120 pax) và Ngày 29/12/2026 (08:00-17:00, 120 pax) -> 100% PASS!
+    * Dọn dẹp dữ liệu test: Đã xóa hoàn toàn đơn tiệc test và khách hàng test khỏi SQL Server ngay sau khi xác nhận thành công.
+  * Chụp ảnh màn hình bằng chứng:
+    * [verified_modal_multiday_same_room.png](file:///C:/Users/THIETKE/.gemini/antigravity/brain/31d29f9b-771e-4162-b382-634be45d35df/verified_modal_multiday_same_room.png): Modal tạo đơn tiệc hiển thị 2 lượt sảnh Diamond cho ngày 28/12 và 29/12 với thông báo xanh "Có thể khóa sảnh an toàn!".
+- **Đồng bộ hệ thống**:
+  * Đã đồng bộ sang máy chủ `10.17.10.12` qua `sync_and_restart.py`, tạo bản snapshot sao lưu `EMS_SNAPSHOT_20261123_123403.zip`.
+  * Đã cập nhật file nén [EMS_Banquet_Portable_Bundle.zip](file:///d:/DATTIEC/EMS_Banquet_Portable_Bundle.zip) và commit Git (`a8bc638`).
+
 ## [2026-11-23 12:15] - ĐỒNG BỘ HIỂN THỊ TIỀN CỌC BEO VÀ THAY ĐỔI THẺ DOANH THU PHÒNG TRÊN TRANG THỐNG KÊ (PORT 8088)
 - **Phạm vi tác động**: Toàn hệ thống (`ems-web`, `ems-analytics`, Production `10.17.10.12`, `EMS_Banquet_Portable_Bundle`, GitHub `tommywoong/ems-banquet-cloud` và Render Cloud). CSDL SQL Server gốc `EMS_KHAIVY` được bảo toàn nguyên vẹn 100%.
 - **Khắc phục triệt để lỗi hiển thị Tiền Cọc Đơn Tiệc (Ví dụ: Công Ty Sika `LVH26_1000000047`)**:
