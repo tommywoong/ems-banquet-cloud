@@ -392,7 +392,8 @@ def get_summary(
             ISNULL(SUM(TongDoanhThu), 0) AS TongDoanhThu,
             ISNULL(SUM(DoanhThuPhong), 0) AS TongDoanhThuPhong,
             ISNULL(SUM(DoanhThuTiec), 0) AS TongDoanhThuTiec,
-            SUM(CASE WHEN DoanhThuPhong > 0 THEN 1 ELSE 0 END) AS SoBookingCoPhong
+            SUM(CASE WHEN DoanhThuPhong > 0 THEN 1 ELSE 0 END) AS SoBookingCoPhong,
+            SUM(CASE WHEN DoanhThuTiec > 0 THEN 1 ELSE 0 END) AS SoBookingCoTiec
         FROM FilteredBookings;
         """
         
@@ -410,12 +411,14 @@ def get_summary(
         tong_dt_phong = float(row[8] or 0)
         tong_dt_tiec = float(row[9] or 0)
         so_booking_co_phong = int(row[10] or 0)
+        so_booking_co_tiec = int(row[11] or 0)
         
         avg_rev = (tong_doanh_thu / tong_booking) if tong_booking > 0 else 0
         avg_guests = (tong_khach / tong_booking) if tong_booking > 0 else 0
         win_rate = min(chot / tong_booking * 100, 100.0) if tong_booking > 0 else 0
         cancel_rate = min(huy / tong_booking * 100, 100.0) if tong_booking > 0 else 0
         room_rev_pct = round((tong_dt_phong / tong_doanh_thu * 100), 1) if tong_doanh_thu > 0 else 0
+        banquet_rev_pct = round((tong_dt_tiec / tong_doanh_thu * 100), 1) if tong_doanh_thu > 0 else 0
         
         cur.close()
         cn.close()
@@ -433,6 +436,8 @@ def get_summary(
             "total_banquet_revenue": tong_dt_tiec,
             "room_bookings_count": so_booking_co_phong,
             "room_revenue_pct": room_rev_pct,
+            "banquet_bookings_count": so_booking_co_tiec,
+            "banquet_revenue_pct": banquet_rev_pct,
             "avg_revenue_per_booking": avg_rev,
             "avg_guests_per_booking": avg_guests,
             "win_rate": round(win_rate, 1),

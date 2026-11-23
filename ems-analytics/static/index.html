@@ -376,20 +376,20 @@
                 <div class="absolute bottom-0 left-0 right-0 h-1 bg-indigo-500"></div>
             </div>
 
-            <!-- Doanh Thu Phòng -->
+            <!-- Doanh Thu Tiệc -->
             <div class="stat-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Doanh Thu Phòng</span>
-                    <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
-                        <i data-lucide="bed-double" class="w-4 h-4"></i>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Doanh Thu Tiệc</span>
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <i data-lucide="utensils" class="w-4 h-4"></i>
                     </div>
                 </div>
-                <div id="kpiTotalRoomRevenue" class="text-xl font-bold text-slate-900">0 ₫</div>
+                <div id="kpiTotalBanquetRevenue" class="text-xl font-bold text-slate-900">0 ₫</div>
                 <p class="text-xs text-slate-500 mt-1 flex items-center justify-between">
-                    <span>Đơn có phòng: <strong id="kpiRoomBookings" class="text-purple-600">0</strong></span>
-                    <span>Tỷ trọng: <strong id="kpiRoomRevPct" class="text-purple-600">0%</strong></span>
+                    <span>Đơn có tiệc: <strong id="kpiBanquetBookings" class="text-amber-600">0</strong></span>
+                    <span>Tỷ trọng: <strong id="kpiBanquetRevPct" class="text-amber-600">0%</strong></span>
                 </p>
-                <div class="absolute bottom-0 left-0 right-0 h-1 bg-purple-500"></div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-amber-500"></div>
             </div>
         </section>
 
@@ -1386,9 +1386,15 @@
                 document.getElementById('kpiWinRate').textContent = d.win_rate + '%';
                 document.getElementById('kpiTotalGuests').textContent = formatNumber(d.total_guests);
                 document.getElementById('kpiAvgGuests').textContent = Math.round(d.avg_guests_per_booking) + ' khách/tiệc';
-                document.getElementById('kpiTotalRoomRevenue').textContent = formatVND(d.total_room_revenue || 0);
-                document.getElementById('kpiRoomBookings').textContent = formatNumber(d.room_bookings_count || 0) + ' đơn';
-                document.getElementById('kpiRoomRevPct').textContent = (d.room_revenue_pct || 0) + '%';
+                
+                const banquetRevEl = document.getElementById('kpiTotalBanquetRevenue') || document.getElementById('kpiTotalRoomRevenue');
+                if (banquetRevEl) banquetRevEl.textContent = formatVND(d.total_banquet_revenue || 0);
+
+                const banquetBkEl = document.getElementById('kpiBanquetBookings') || document.getElementById('kpiRoomBookings');
+                if (banquetBkEl) banquetBkEl.textContent = formatNumber(d.banquet_bookings_count || 0) + ' đơn';
+
+                const banquetPctEl = document.getElementById('kpiBanquetRevPct') || document.getElementById('kpiRoomRevPct');
+                if (banquetPctEl) banquetPctEl.textContent = (d.banquet_revenue_pct || 0) + '%';
             } catch (err) {
                 console.error(err);
             }
