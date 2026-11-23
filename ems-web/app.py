@@ -195,42 +195,13 @@ def get_db():
     try:
         from db_adapter import get_hybrid_db_connection
         return get_hybrid_db_connection(CONN_STR)
-    except Exception as e:
-        print(f"[get_db fallback] {e}")
+    except Exception:
         return pyodbc.connect(CONN_STR)
 
 def gen_timestamp_id():
     """Generates yyyyMMddHHmmssfff format used extensively in EMS."""
     now = datetime.datetime.now()
     return now.strftime("%Y%m%d%H%M%S") + f"{now.microsecond // 1000:03d}"
-
-def safe_time_str(val, default=""):
-    if not val:
-        return default
-    if hasattr(val, "strftime"):
-        return val.strftime("%H:%M")
-    s = str(val).strip()
-    if len(s) >= 16 and " " in s:
-        return s[11:16]
-    if ":" in s:
-        return s[:5]
-    return default
-
-def safe_date_str(val, default=""):
-    if not val:
-        return default
-    if hasattr(val, "strftime"):
-        return val.strftime("%Y-%m-%d")
-    s = str(val).strip()
-    return s[:10] if len(s) >= 10 else s
-
-def safe_int(val, default=0):
-    if val is None or str(val).strip() == "":
-        return default
-    try:
-        return int(float(str(val).strip()))
-    except:
-        return default
 
 # ==========================================
 # 0. AUTHENTICATION & USERS (frmLogin)
@@ -328,16 +299,11 @@ def login(req: LoginRequest):
         row = cur.fetchone()
         
         if not row:
-            if u_upper in ["ADMINEMS", "ADMIN"]:
-                # Auto-provision admin fallback for Cloud / Google Sheets deployment
-                row = (u_upper, "System Administrator", "IT / Quản Trị Hệ Thống", "Quản Trị Viên", "G017", "ADMIN SUPPORT", "admin123")
-                stored_pwd = "admin123"
-            else:
-                cur.close()
-                cn.close()
-                raise HTTPException(status_code=401, detail=f"Tài khoản '{username}' không tồn tại trong hệ thống EMS!")
-        else:
-            stored_pwd = row[6]
+            cur.close()
+            cn.close()
+            raise HTTPException(status_code=401, detail=f"Tài khoản '{username}' không tồn tại trong hệ thống EMS!")
+            
+        stored_pwd = row[6]
         
         # Determine if this user requires strict password verification & check if locked
         # 1. adminems always requires strict password check
@@ -373,9 +339,7 @@ def login(req: LoginRequest):
                     valid = True
         else:
             # Strict mode: must verify password against SQL Server PWDCOMPARE
-            if pwd in ["admin123", "Admin@EMS2026", "123456", "admin"]:
-                valid = True
-            elif pwd and stored_pwd:
+            if pwd and stored_pwd:
                 cur.execute("SELECT PWDCOMPARE(?, ?)", [pwd, stored_pwd])
                 res = cur.fetchone()
                 if res and res[0] == 1:
@@ -593,7 +557,7 @@ def get_all_users_for_admin():
                 "position": r[3].strip() if r[3] else "",
                 "group_code": r[4].strip(),
                 "group_name": r[5].strip(),
-                "updated_at": r[6].strftime("%d/%m/%Y %H:%M") if hasattr(r[6], "strftime") else (str(r[6])[:19] if r[6] else ""),
+                "updated_at": r[6].strftime("%d/%m/%Y %H:%M") if r[6] else "",
                 "has_password": bool(r[7]),
                 "require_password": is_strict,
                 "is_active": is_act,
@@ -1122,6 +1086,7 @@ class CustomerCreateRequest(BaseModel):
     email: Optional[str] = ""
     note: Optional[str] = ""
     current_user: Optional[str] = "Admin"
+    current_user_full: Optional[str] = ""
 
 class CustomerUpdateRequest(BaseModel):
     name: str
@@ -1132,6 +1097,7 @@ class CustomerUpdateRequest(BaseModel):
     email: Optional[str] = ""
     note: Optional[str] = ""
     current_user: Optional[str] = "Admin"
+    current_user_full: Optional[str] = ""
 
 @app.get("/api/master/customers")
 def search_customers(q: Optional[str] = "", group: Optional[str] = "", limit: int = 1000, offset: int = 0):
@@ -1261,8 +1227,12 @@ def create_customer(req: CustomerCreateRequest):
         cn.close()
         
         # Log audit
-        log_audit("Tạo khách hàng mới", user_name=req.current_user or "Admin",
-                  details=f"Mã: {cust_id}, Tên: {req.name}, Phân khúc: {grp}, SĐT: {req.phone}, MST: {req.tax_code}")
+        log_audit(
+            action_type="CREATE_CUSTOMER",
+            user_name=req.current_user or "Admin",
+            user_full_name=req.current_user_full or "",
+            details=f"Tạo mới khách hàng '{req.name}', Mã: {cust_id}, Phân khúc: {grp}, SĐT: {req.phone}, MST: {req.tax_code}"
+        )
         
         return {
             "status": "success",
@@ -1325,8 +1295,12 @@ def update_customer(cust_id: str, req: CustomerUpdateRequest):
         cn.close()
         
         # Log audit
-        log_audit("Cập nhật khách hàng", user_name=req.current_user or "Admin",
-                  details=f"Mã: {cust_id}, Tên mới: {req.name}, Phân khúc: {grp}, SĐT: {req.phone}, MST: {req.tax_code}")
+        log_audit(
+            action_type="UPDATE_CUSTOMER",
+            user_name=req.current_user or "Admin",
+            user_full_name=req.current_user_full or "",
+            details=f"Cập nhật thông tin khách hàng '{req.name}', Mã: {cust_id}, Phân khúc: {grp}, SĐT: {req.phone}, MST: {req.tax_code}"
+        )
         
         return {
             "status": "success",
@@ -1961,8 +1935,8 @@ def get_scheduler(
         
         bookings = []
         for r in cur.fetchall():
-            time_in_str = safe_time_str(r[3], "08:00")
-            time_out_str = safe_time_str(r[4], "22:00")
+            time_in_str = r[3].strftime("%H:%M") if r[3] else "08:00"
+            time_out_str = r[4].strftime("%H:%M") if r[4] else "22:00"
             
             in_hour = int(time_in_str.split(":")[0]) if ":" in time_in_str else 8
             if in_hour < 14:
@@ -1976,15 +1950,15 @@ def get_scheduler(
             bookings.append({
                 "room": r[0].strip(),
                 "book_id": r[1].strip(),
-                "event_date": safe_date_str(r[2]),
+                "event_date": r[2],
                 "time_in": time_in_str,
                 "time_out": time_out_str,
-                "title": r[5].strip() if r[5] else (r[6].strip() if r[6] else "Tiệc Sự Kiện"),
+                "title": r[5].strip() if r[5] else (r[6].strip() if r[6] else "Tiệc MerPerle"),
                 "guest_name": r[6].strip() if r[6] else "",
                 "phone": r[7].strip() if r[7] else "",
                 "status_code": status_code,
                 "sales_user": r[9].strip() if r[9] else "",
-                "pax": safe_int(r[10] or r[11] or 0),
+                "pax": int(r[10] or r[11] or 0),
                 "menu_price": float(r[12] or 0),
                 "notes": r[13].strip() if r[13] else "",
                 "master_eo": r[14].strip() if r[14] else None,
@@ -2111,6 +2085,9 @@ class UpdateBookingRequest(BaseModel):
     guest_email: Optional[str] = ""
     guest_address: Optional[str] = ""
     notes: Optional[str] = ""
+    current_user: Optional[str] = ""
+    current_user_full: Optional[str] = ""
+    action_note: Optional[str] = ""
 
 @app.get("/api/bookings/list")
 def list_bookings(
@@ -2214,16 +2191,13 @@ def list_bookings(
                 ISNULL(p.fcTen, bfr.fcFunctionRoom) as RoomName,
                 ISNULL(lv.fcName, '') as SegmentName,
                 b.fcStatus_BkRoom,
-                CASE 
-                    WHEN ISNULL(b.fnSoLuongDK, 0) > 0 THEN b.fnSoLuongDK 
-                    ELSE ISNULL(bfr.fnQuantity, 0) 
-                END as Pax,
+                ISNULL(guestCalc.ActualGuests, 0) as Pax,
                 b.fnDatCoc,
                 ISNULL(NULLIF(meo.fcNguoiLap, ''), b.fcUser) as EffectiveSales,
                 b.fcUser as LockUser,
                 meo.fcNguoiLap as BEOUser,
-                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.BanquetAmount, ISNULL(bc_rev.BanquetAmount, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) END as BanquetRevenue,
-                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.TongTien, ISNULL(bc_rev.TongTien, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) END as TotalRevenue,
+                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE rev.BanquetRevenue END as BanquetRevenue,
+                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE rev.TotalRevenue END as TotalRevenue,
                 meo.fcMaster_EO,
                 b.fcNote
             FROM stBooking b
@@ -2236,22 +2210,50 @@ def list_bookings(
             ) meo ON b.fcBookID = meo.fcBookID
             LEFT JOIN stKhachHang k ON b.fcGuestID = k.fcMa
             LEFT JOIN stLinhVuc lv ON k.fcLinhVuc = lv.fcCode
-            LEFT JOIN (
-                SELECT fcMaster_EO,
-                       SUM(fnAmount) AS TongTien,
-                       SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR d.fcDoanhThu_Type <> '56' THEN d.fnAmount ELSE 0 END) AS BanquetAmount
-                FROM stSKLK_DoanhThu d
-                LEFT JOIN stDoanhThu_Loai dt ON d.fcDoanhThu_Type = dt.fcCode
-                GROUP BY fcMaster_EO
-            ) eo_rev ON meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND meo.fcMaster_EO = eo_rev.fcMaster_EO
-            LEFT JOIN (
-                SELECT fcBookID,
-                       SUM(fnAmount) AS TongTien,
-                       SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR c.fcDoanhThu_Loai <> '56' THEN c.fnAmount ELSE 0 END) AS BanquetAmount
-                FROM stBooking_Charges c
-                LEFT JOIN stDoanhThu_Loai dt ON c.fcDoanhThu_Loai = dt.fcCode
-                GROUP BY fcBookID
-            ) bc_rev ON b.fcBookID = bc_rev.fcBookID
+            OUTER APPLY (
+                SELECT CASE 
+                    WHEN ISNULL(b.fnSoLuongDK, 0) > 0 THEN b.fnSoLuongDK
+                    ELSE COALESCE(
+                        NULLIF(bfr.fnQuantity, 0),
+                        NULLIF(rs.MaxRsQty, 0),
+                        NULLIF(d.MaxDtQty, 0),
+                        0
+                    )
+                END AS ActualGuests
+                FROM (SELECT 1 AS _d) _d
+                OUTER APPLY (
+                    SELECT MAX(rs2.fnQuantity) as MaxRsQty
+                    FROM stRoom_Setup rs2
+                    WHERE rs2.fcMaster_EO = meo.fcMaster_EO
+                ) rs
+                OUTER APPLY (
+                    SELECT MAX(d2.fnQuantity) as MaxDtQty
+                    FROM stSKLK_DoanhThu d2
+                    WHERE d2.fcMaster_EO = meo.fcMaster_EO AND d2.fcDoanhThu_Type <> '22' AND d2.fnQuantity > 1
+                ) d
+            ) guestCalc
+            OUTER APPLY (
+                SELECT 
+                    ISNULL(eo.TongTien, ISNULL(bc.TongTien, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) AS TotalRevenue,
+                    ISNULL(eo.BanquetAmount, ISNULL(bc.BanquetAmount, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) AS BanquetRevenue
+                FROM (SELECT 1 AS _dm) _dm
+                OUTER APPLY (
+                    SELECT 
+                        SUM(d.fnAmount) AS TongTien,
+                        SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR d.fcDoanhThu_Type <> '56' THEN d.fnAmount ELSE 0 END) AS BanquetAmount
+                    FROM stSKLK_DoanhThu d
+                    LEFT JOIN stDoanhThu_Loai dt ON d.fcDoanhThu_Type = dt.fcCode
+                    WHERE meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND d.fcMaster_EO = meo.fcMaster_EO
+                ) eo
+                OUTER APPLY (
+                    SELECT 
+                        SUM(c.fnAmount) AS TongTien,
+                        SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR c.fcDoanhThu_Loai <> '56' THEN c.fnAmount ELSE 0 END) AS BanquetAmount
+                    FROM stBooking_Charges c
+                    LEFT JOIN stDoanhThu_Loai dt ON c.fcDoanhThu_Loai = dt.fcCode
+                    WHERE c.fcBookID = b.fcBookID
+                ) bc
+            ) rev
             WHERE {where_sql}
             ORDER BY bfr.fdDate DESC, b.fcBookID DESC
             OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY
@@ -2263,15 +2265,15 @@ def list_bookings(
                 "book_id": r[0].strip(),
                 "event_date": r[1] or "",
                 "booking_date": r[2] or "",
-                "time_in": safe_time_str(r[3]),
-                "time_out": safe_time_str(r[4]),
+                "time_in": r[3].strftime("%H:%M") if r[3] else "",
+                "time_out": r[4].strftime("%H:%M") if r[4] else "",
                 "title": r[5].strip() if r[5] else (r[6].strip() if r[6] else "Tiệc MerPerle"),
                 "guest_name": r[6].strip() if r[6] else "",
                 "phone": r[7].strip() if r[7] else "",
                 "room": r[8].strip() if r[8] else "",
                 "segment": r[9].strip() if r[9] else "",
                 "status_code": r[10].strip() if r[10] else "T",
-                "pax": safe_int(r[11]),
+                "pax": int(r[11] or 0),
                 "deposit": float(r[12] or 0),
                 "sales_user": r[13].strip() if r[13] else "",
                 "lock_user": r[14].strip() if r[14] else "",
@@ -2294,16 +2296,6 @@ def list_bookings(
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-def load_branding_config():
-    cfg_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config.json")
-    if os.path.exists(cfg_file):
-        try:
-            with open(cfg_file, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            pass
-    return {}
 
 @app.get("/api/bookings/export")
 def export_bookings_excel(
@@ -2382,16 +2374,13 @@ def export_bookings_excel(
                 ISNULL(p.fcTen, bfr.fcFunctionRoom) as RoomName,
                 ISNULL(lv.fcName, '') as SegmentName,
                 b.fcStatus_BkRoom,
-                CASE 
-                    WHEN ISNULL(b.fnSoLuongDK, 0) > 0 THEN b.fnSoLuongDK 
-                    ELSE ISNULL(bfr.fnQuantity, 0) 
-                END as Pax,
+                ISNULL(guestCalc.ActualGuests, 0) as Pax,
                 b.fnDatCoc,
                 ISNULL(NULLIF(meo.fcNguoiLap, ''), b.fcUser) as EffectiveSales,
                 b.fcUser as LockUser,
                 meo.fcNguoiLap as BEOUser,
-                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.BanquetAmount, ISNULL(bc_rev.BanquetAmount, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) END as BanquetRevenue,
-                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.TongTien, ISNULL(bc_rev.TongTien, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) END as TotalRevenue,
+                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE rev.BanquetRevenue END as BanquetRevenue,
+                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE rev.TotalRevenue END as TotalRevenue,
                 meo.fcMaster_EO,
                 b.fcNote
             FROM stBooking b
@@ -2404,22 +2393,50 @@ def export_bookings_excel(
             ) meo ON b.fcBookID = meo.fcBookID
             LEFT JOIN stKhachHang k ON b.fcGuestID = k.fcMa
             LEFT JOIN stLinhVuc lv ON k.fcLinhVuc = lv.fcCode
-            LEFT JOIN (
-                SELECT fcMaster_EO,
-                       SUM(fnAmount) AS TongTien,
-                       SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR d.fcDoanhThu_Type <> '56' THEN d.fnAmount ELSE 0 END) AS BanquetAmount
-                FROM stSKLK_DoanhThu d
-                LEFT JOIN stDoanhThu_Loai dt ON d.fcDoanhThu_Type = dt.fcCode
-                GROUP BY fcMaster_EO
-            ) eo_rev ON meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND meo.fcMaster_EO = eo_rev.fcMaster_EO
-            LEFT JOIN (
-                SELECT fcBookID,
-                       SUM(fnAmount) AS TongTien,
-                       SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR c.fcDoanhThu_Loai <> '56' THEN c.fnAmount ELSE 0 END) AS BanquetAmount
-                FROM stBooking_Charges c
-                LEFT JOIN stDoanhThu_Loai dt ON c.fcDoanhThu_Loai = dt.fcCode
-                GROUP BY fcBookID
-            ) bc_rev ON b.fcBookID = bc_rev.fcBookID
+            OUTER APPLY (
+                SELECT CASE 
+                    WHEN ISNULL(b.fnSoLuongDK, 0) > 0 THEN b.fnSoLuongDK
+                    ELSE COALESCE(
+                        NULLIF(bfr.fnQuantity, 0),
+                        NULLIF(rs.MaxRsQty, 0),
+                        NULLIF(d.MaxDtQty, 0),
+                        0
+                    )
+                END AS ActualGuests
+                FROM (SELECT 1 AS _d) _d
+                OUTER APPLY (
+                    SELECT MAX(rs2.fnQuantity) as MaxRsQty
+                    FROM stRoom_Setup rs2
+                    WHERE rs2.fcMaster_EO = meo.fcMaster_EO
+                ) rs
+                OUTER APPLY (
+                    SELECT MAX(d2.fnQuantity) as MaxDtQty
+                    FROM stSKLK_DoanhThu d2
+                    WHERE d2.fcMaster_EO = meo.fcMaster_EO AND d2.fcDoanhThu_Type <> '22' AND d2.fnQuantity > 1
+                ) d
+            ) guestCalc
+            OUTER APPLY (
+                SELECT 
+                    ISNULL(eo.TongTien, ISNULL(bc.TongTien, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) AS TotalRevenue,
+                    ISNULL(eo.BanquetAmount, ISNULL(bc.BanquetAmount, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) AS BanquetRevenue
+                FROM (SELECT 1 AS _dm) _dm
+                OUTER APPLY (
+                    SELECT 
+                        SUM(d.fnAmount) AS TongTien,
+                        SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR d.fcDoanhThu_Type <> '56' THEN d.fnAmount ELSE 0 END) AS BanquetAmount
+                    FROM stSKLK_DoanhThu d
+                    LEFT JOIN stDoanhThu_Loai dt ON d.fcDoanhThu_Type = dt.fcCode
+                    WHERE meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND d.fcMaster_EO = meo.fcMaster_EO
+                ) eo
+                OUTER APPLY (
+                    SELECT 
+                        SUM(c.fnAmount) AS TongTien,
+                        SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR c.fcDoanhThu_Loai <> '56' THEN c.fnAmount ELSE 0 END) AS BanquetAmount
+                    FROM stBooking_Charges c
+                    LEFT JOIN stDoanhThu_Loai dt ON c.fcDoanhThu_Loai = dt.fcCode
+                    WHERE c.fcBookID = b.fcBookID
+                ) bc
+            ) rev
             WHERE {where_sql}
             ORDER BY bfr.fdDate DESC, b.fcBookID DESC
         """, params)
@@ -2446,7 +2463,7 @@ def export_bookings_excel(
             if st_code == 'D': cnt_d += 1
             elif st_code == 'T': cnt_t += 1
             elif st_code == 'C': cnt_c += 1
-            tot_pax += safe_int(r[11])
+            tot_pax += int(r[11] or 0)
             tot_deposit += float(r[12] or 0)
             tot_bq_rev += float(r[16] or 0)
             tot_full_rev += float(r[17] or 0)
@@ -2467,176 +2484,150 @@ def export_bookings_excel(
         filter_desc = " • ".join(filter_parts)
 
         output = io.BytesIO()
-        try:
-            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                workbook = writer.book
-                ws = workbook.add_worksheet('DanhSach_DonTiec')
-                ws.set_paper(9) # A4
-                ws.set_landscape()
-                ws.hide_gridlines(0)
-    
-                # ================= STYLES CHUẨN EXECUTIVE MERPERLE =================
-                fmt_title = workbook.add_format({'bold': True, 'font_size': 15, 'font_name': 'Calibri', 'font_color': '#0F172A', 'valign': 'vcenter'})
-                fmt_subtitle = workbook.add_format({'italic': True, 'font_size': 9.5, 'font_name': 'Calibri', 'font_color': '#475569', 'valign': 'vcenter'})
-                fmt_meta_r = workbook.add_format({'font_size': 9, 'font_name': 'Calibri', 'font_color': '#64748B', 'align': 'right', 'valign': 'vcenter'})
-                fmt_filter_box = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'font_color': '#1E293B', 'bg_color': '#F8FAFC', 'border': 1, 'border_color': '#CBD5E1', 'valign': 'vcenter'})
-    
-                # 4 Thẻ KPI Formats
-                fmt_kpi_head = workbook.add_format({'bold': True, 'font_size': 8.5, 'font_name': 'Calibri', 'font_color': '#475569', 'bg_color': '#F1F5F9', 'align': 'center', 'valign': 'vcenter', 'top': 1, 'left': 1, 'right': 1, 'border_color': '#CBD5E1'})
-                fmt_kpi_val_curr = workbook.add_format({'bold': True, 'font_size': 13, 'font_name': 'Calibri', 'font_color': '#047857', 'num_format': '#,##0 "đ"', 'bg_color': '#FFFFFF', 'align': 'center', 'valign': 'vcenter', 'left': 1, 'right': 1, 'border_color': '#CBD5E1'})
-                fmt_kpi_val_int = workbook.add_format({'bold': True, 'font_size': 13, 'font_name': 'Calibri', 'font_color': '#1D4ED8', 'num_format': '#,##0', 'bg_color': '#FFFFFF', 'align': 'center', 'valign': 'vcenter', 'left': 1, 'right': 1, 'border_color': '#CBD5E1'})
-                fmt_kpi_sub = workbook.add_format({'font_size': 8.5, 'font_name': 'Calibri', 'font_color': '#64748B', 'bg_color': '#F8FAFC', 'align': 'center', 'valign': 'vcenter', 'bottom': 1, 'left': 1, 'right': 1, 'border_color': '#CBD5E1'})
-    
-                # Table Headers & Cells
-                fmt_th = workbook.add_format({'bold': True, 'font_size': 9.5, 'font_name': 'Calibri', 'font_color': '#FFFFFF', 'bg_color': '#1E293B', 'align': 'center', 'valign': 'vcenter', 'text_wrap': True, 'border': 1, 'border_color': '#334155'})
-                fmt_td_l_w = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'valign': 'vcenter', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#FFFFFF'})
-                fmt_td_l_z = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'valign': 'vcenter', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#F8FAFC'})
-                fmt_td_c_w = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'center', 'valign': 'vcenter', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#FFFFFF'})
-                fmt_td_c_z = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'center', 'valign': 'vcenter', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#F8FAFC'})
-                fmt_td_n_w = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#FFFFFF'})
-                fmt_td_n_z = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#F8FAFC'})
-                fmt_td_m_w = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0 "đ"', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#FFFFFF'})
-                fmt_td_m_z = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0 "đ"', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#F8FAFC'})
-    
-                # Total Row Formats
-                fmt_tot_l = workbook.add_format({'bold': True, 'font_size': 10, 'font_name': 'Calibri', 'align': 'center', 'valign': 'vcenter', 'bg_color': '#E2E8F0', 'border': 1, 'border_color': '#94A3B8'})
-                fmt_tot_n = workbook.add_format({'bold': True, 'font_size': 10, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0', 'bg_color': '#E2E8F0', 'border': 1, 'border_color': '#94A3B8', 'bottom': 6})
-                fmt_tot_m = workbook.add_format({'bold': True, 'font_size': 10.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0 "đ"', 'bg_color': '#E2E8F0', 'border': 1, 'border_color': '#94A3B8', 'bottom': 6})
-    
-                # Header MerPerle
-                brand_h = load_branding_config().get('hotel_name', 'TRUNG TÂM HỘI NGHỊ TIỆC CƯỚI & SỰ KIỆN').upper()
-                ws.merge_range('A1:J1', brand_h, fmt_title)
-                ws.merge_range('K1:Q1', f'Ngày xuất: {now_str}', fmt_meta_r)
-                ws.merge_range('A2:J2', 'Hệ Thống Quản Lý Sự Kiện & Tiệc Cưới EMS • Bảng Kê Chi Tiết Đơn Đặt Tiệc', fmt_subtitle)
-                ws.merge_range('K2:Q2', 'Tiêu chuẩn: BGĐ & Phòng Kinh Doanh Banquet', fmt_meta_r)
-                ws.merge_range('A4:Q4', f'  Bộ lọc áp dụng: {filter_desc}', fmt_filter_box)
-    
-                # 4 Thẻ KPI Dashboard (A6:Q8)
-                ws.merge_range('A6:D6', 'TỔNG DOANH THU', fmt_kpi_head)
-                ws.merge_range('A7:D7', tot_full_rev, fmt_kpi_val_curr)
-                ws.merge_range('A8:D8', f'TB/tiệc: {avg_rev:,} đ', fmt_kpi_sub)
-    
-                ws.merge_range('E6:H6', 'SỐ LƯỢNG BOOKING', fmt_kpi_head)
-                ws.merge_range('E7:H7', tot_count, fmt_kpi_val_int)
-                ws.merge_range('E8:H8', f'Chốt: {cnt_d}  •  Tỷ lệ: {win_rate}%', fmt_kpi_sub)
-    
-                ws.merge_range('I6:L6', 'LƯỢNG KHÁCH (PAX)', fmt_kpi_head)
-                ws.merge_range('I7:L7', tot_pax, fmt_kpi_val_int)
-                ws.merge_range('I8:L8', f'Quy mô TB: {avg_pax:,} khách/tiệc', fmt_kpi_sub)
-    
-                ws.merge_range('M6:Q6', 'ĐẶT CỌC & HỦY ĐƠN', fmt_kpi_head)
-                ws.merge_range('M7:Q7', tot_deposit, fmt_kpi_val_curr)
-                ws.merge_range('M8:Q8', f'Đã hủy: {cnt_c}  •  Tỷ lệ: {canc_rate}%', fmt_kpi_sub)
-    
-                # Bảng danh sách tiệc
-                headers = [
-                    'MÃ BOOKING', 'NGÀY TIỆC', 'KHUNG GIỜ', 'NGÀY ĐẶT',
-                    'KHÁCH HÀNG / ĐƠN VỊ', 'SỐ ĐIỆN THOẠI', 'SẢNH TIỆC', 'PHÂN KHÚC',
-                    'TRẠNG THÁI', 'NGƯỜI LÀM BEO (SALES)', 'NGƯỜI KHÓA', 'HẠN KHÓA (CUTOFF)',
-                    'KHÁCH (PAX)', 'TIỀN CỌC (VNĐ)', 'DT TIỆC - BANQUET', 'TỔNG DOANH THU', 'GHI CHÚ'
-                ]
-                ws.set_row(10, 24)
-                for col_i, h_txt in enumerate(headers):
-                    ws.write(10, col_i, h_txt, fmt_th)
-    
-                row_i = 11
-                for r in rows:
-                    is_z = (row_i % 2 == 1)
-                    t_l = fmt_td_l_z if is_z else fmt_td_l_w
-                    t_c = fmt_td_c_z if is_z else fmt_td_c_w
-                    t_n = fmt_td_n_z if is_z else fmt_td_n_w
-                    t_m = fmt_td_m_z if is_z else fmt_td_m_w
-    
-                    b_id = r[0].strip() if r[0] else ""
-                    ev_d = r[1] or ""
-                    time_str = f"{safe_time_str(r[3])} - {safe_time_str(r[4])}" if (r[3] and r[4]) else safe_time_str(r[3])
-                    bk_d = r[2] or ""
-                    g_name = r[6].strip() if r[6] else (r[5].strip() if r[5] else "")
-                    phone = r[7].strip() if r[7] else ""
-                    room_name = r[8].strip() if r[8] else ""
-                    seg_name = r[9].strip() if r[9] else ""
-                    st_code = r[10].strip() if r[10] else "T"
-                    st_name = "Đã chốt (Definite)" if st_code == 'D' else ("Giữ chỗ (Tentative)" if st_code == 'T' else ("Đã hủy (Cancelled)" if st_code == 'C' else st_code))
-                    pax_val = safe_int(r[11])
-                    coc_val = float(r[12] or 0)
-                    sales_u = r[13].strip() if r[13] else ""
-                    lock_u = r[14].strip() if r[14] else ""
-                    cutoff_d = cutoff_map.get(b_id, "")
-                    bq_val = float(r[16] or 0)
-                    tot_val = float(r[17] or 0)
-                    note_str = r[19].strip() if r[19] else ""
-    
-                    ws.write(row_i, 0, b_id, t_c)
-                    ws.write(row_i, 1, ev_d, t_c)
-                    ws.write(row_i, 2, time_str, t_c)
-                    ws.write(row_i, 3, bk_d, t_c)
-                    ws.write(row_i, 4, g_name, t_l)
-                    ws.write(row_i, 5, phone, t_c)
-                    ws.write(row_i, 6, room_name, t_l)
-                    ws.write(row_i, 7, seg_name, t_l)
-                    ws.write(row_i, 8, st_name, t_c)
-                    ws.write(row_i, 9, sales_u, t_l)
-                    ws.write(row_i, 10, lock_u, t_c)
-                    ws.write(row_i, 11, cutoff_d, t_c)
-                    ws.write(row_i, 12, pax_val, t_n)
-                    ws.write(row_i, 13, coc_val, t_m)
-                    ws.write(row_i, 14, bq_val, t_m)
-                    ws.write(row_i, 15, tot_val, t_m)
-                    ws.write(row_i, 16, note_str, t_l)
-                    ws.set_row(row_i, 20)
-                    row_i += 1
-    
-                # Dòng TỔNG CỘNG
-                ws.merge_range(row_i, 0, row_i, 11, f'TỔNG CỘNG ({tot_count} ĐƠN TIỆC)', fmt_tot_l)
-                ws.write(row_i, 12, tot_pax, fmt_tot_n)
-                ws.write(row_i, 13, tot_deposit, fmt_tot_m)
-                ws.write(row_i, 14, tot_bq_rev, fmt_tot_m)
-                ws.write(row_i, 15, tot_full_rev, fmt_tot_m)
-                ws.write(row_i, 16, '', fmt_tot_l)
-                ws.set_row(row_i, 22)
-    
-                # Căn chỉnh độ rộng cột tối ưu
-                ws.set_column('A:A', 22) # Mã booking
-                ws.set_column('B:B', 13) # Ngày tiệc
-                ws.set_column('C:C', 14) # Giờ
-                ws.set_column('D:D', 13) # Ngày đặt
-                ws.set_column('E:E', 32) # Khách hàng
-                ws.set_column('F:F', 15) # SĐT
-                ws.set_column('G:G', 18) # Sảnh
-                ws.set_column('H:H', 20) # Phân khúc
-                ws.set_column('I:I', 16) # Trạng thái
-                ws.set_column('J:J', 20) # Sales
-                ws.set_column('K:K', 14) # Lock
-                ws.set_column('L:L', 15) # Cutoff
-                ws.set_column('M:M', 13) # Pax
-                ws.set_column('N:N', 18) # Cọc
-                ws.set_column('O:P', 20) # Doanh thu
-                ws.set_column('Q:Q', 28) # Ghi chú
-                
-        except Exception as ex_excel:
-            import logging
-            logging.warning(f"[Excel Export] Fallback to openpyxl: {ex_excel}")
-            output = io.BytesIO()
-            df_fallback = pd.DataFrame([{
-                "MÃ BOOKING": r[0].strip() if r[0] else "",
-                "NGÀY TIỆC": safe_date_str(r[1]),
-                "GIỜ TIỆC": safe_time_str(r[2]),
-                "NGÀY ĐẶT": safe_date_str(r[3]),
-                "KHÁCH HÀNG": r[4].strip() if r[4] else "",
-                "SỐ ĐIỆN THOẠI": r[5].strip() if r[5] else "",
-                "SẢNH TIỆC": r[6].strip() if r[6] else "",
-                "PHÂN KHÚC": r[7].strip() if r[7] else "",
-                "TRẠNG THÁI": r[8].strip() if r[8] else "",
-                "SALES": r[13].strip() if r[13] else "",
-                "PAX": safe_int(r[11]),
-                "TIỀN CỌC": float(r[12] or 0),
-                "DOANH THU BEO": float(r[16] or 0),
-                "TỔNG DOANH THU": float(r[17] or 0),
-                "GHI CHÚ": r[19].strip() if r[19] else ""
-            } for r in rows])
-            with pd.ExcelWriter(output, engine='openpyxl') as writer:
-                df_fallback.to_excel(writer, index=False, sheet_name='DanhSach_DonTiec')
+        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+            workbook = writer.book
+            ws = workbook.add_worksheet('DanhSach_DonTiec')
+            ws.set_paper(9) # A4
+            ws.set_landscape()
+            ws.hide_gridlines(0)
 
+            # ================= STYLES CHUẨN EXECUTIVE MERPERLE =================
+            fmt_title = workbook.add_format({'bold': True, 'font_size': 15, 'font_name': 'Calibri', 'font_color': '#0F172A', 'valign': 'vcenter'})
+            fmt_subtitle = workbook.add_format({'italic': True, 'font_size': 9.5, 'font_name': 'Calibri', 'font_color': '#475569', 'valign': 'vcenter'})
+            fmt_meta_r = workbook.add_format({'font_size': 9, 'font_name': 'Calibri', 'font_color': '#64748B', 'align': 'right', 'valign': 'vcenter'})
+            fmt_filter_box = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'font_color': '#1E293B', 'bg_color': '#F8FAFC', 'border': 1, 'border_color': '#CBD5E1', 'valign': 'vcenter'})
+
+            # 4 Thẻ KPI Formats
+            fmt_kpi_head = workbook.add_format({'bold': True, 'font_size': 8.5, 'font_name': 'Calibri', 'font_color': '#475569', 'bg_color': '#F1F5F9', 'align': 'center', 'valign': 'vcenter', 'top': 1, 'left': 1, 'right': 1, 'border_color': '#CBD5E1'})
+            fmt_kpi_val_curr = workbook.add_format({'bold': True, 'font_size': 13, 'font_name': 'Calibri', 'font_color': '#047857', 'num_format': '#,##0 "đ"', 'bg_color': '#FFFFFF', 'align': 'center', 'valign': 'vcenter', 'left': 1, 'right': 1, 'border_color': '#CBD5E1'})
+            fmt_kpi_val_int = workbook.add_format({'bold': True, 'font_size': 13, 'font_name': 'Calibri', 'font_color': '#1D4ED8', 'num_format': '#,##0', 'bg_color': '#FFFFFF', 'align': 'center', 'valign': 'vcenter', 'left': 1, 'right': 1, 'border_color': '#CBD5E1'})
+            fmt_kpi_sub = workbook.add_format({'font_size': 8.5, 'font_name': 'Calibri', 'font_color': '#64748B', 'bg_color': '#F8FAFC', 'align': 'center', 'valign': 'vcenter', 'bottom': 1, 'left': 1, 'right': 1, 'border_color': '#CBD5E1'})
+
+            # Table Headers & Cells
+            fmt_th = workbook.add_format({'bold': True, 'font_size': 9.5, 'font_name': 'Calibri', 'font_color': '#FFFFFF', 'bg_color': '#1E293B', 'align': 'center', 'valign': 'vcenter', 'text_wrap': True, 'border': 1, 'border_color': '#334155'})
+            fmt_td_l_w = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'valign': 'vcenter', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#FFFFFF'})
+            fmt_td_l_z = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'valign': 'vcenter', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#F8FAFC'})
+            fmt_td_c_w = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'center', 'valign': 'vcenter', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#FFFFFF'})
+            fmt_td_c_z = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'center', 'valign': 'vcenter', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#F8FAFC'})
+            fmt_td_n_w = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#FFFFFF'})
+            fmt_td_n_z = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#F8FAFC'})
+            fmt_td_m_w = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0 "đ"', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#FFFFFF'})
+            fmt_td_m_z = workbook.add_format({'font_size': 9.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0 "đ"', 'border': 1, 'border_color': '#E2E8F0', 'bg_color': '#F8FAFC'})
+
+            # Total Row Formats
+            fmt_tot_l = workbook.add_format({'bold': True, 'font_size': 10, 'font_name': 'Calibri', 'align': 'center', 'valign': 'vcenter', 'bg_color': '#E2E8F0', 'border': 1, 'border_color': '#94A3B8'})
+            fmt_tot_n = workbook.add_format({'bold': True, 'font_size': 10, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0', 'bg_color': '#E2E8F0', 'border': 1, 'border_color': '#94A3B8', 'bottom': 6})
+            fmt_tot_m = workbook.add_format({'bold': True, 'font_size': 10.5, 'font_name': 'Calibri', 'align': 'right', 'valign': 'vcenter', 'num_format': '#,##0 "đ"', 'bg_color': '#E2E8F0', 'border': 1, 'border_color': '#94A3B8', 'bottom': 6})
+
+            # Header MerPerle
+            ws.merge_range('A1:J1', 'TRUNG TÂM HỘI NGHỊ TIỆC CƯỚI & KHÁCH SẠN MERPERLE', fmt_title)
+            ws.merge_range('K1:Q1', f'Ngày xuất: {now_str}', fmt_meta_r)
+            ws.merge_range('A2:J2', 'Hệ Thống Quản Lý Sự Kiện & Tiệc Cưới EMS • Bảng Kê Chi Tiết Đơn Đặt Tiệc', fmt_subtitle)
+            ws.merge_range('K2:Q2', 'Tiêu chuẩn: BGĐ & Phòng Kinh Doanh Banquet', fmt_meta_r)
+            ws.merge_range('A4:Q4', f'  Bộ lọc áp dụng: {filter_desc}', fmt_filter_box)
+
+            # 4 Thẻ KPI Dashboard (A6:Q8)
+            ws.merge_range('A6:D6', 'TỔNG DOANH THU', fmt_kpi_head)
+            ws.merge_range('A7:D7', tot_full_rev, fmt_kpi_val_curr)
+            ws.merge_range('A8:D8', f'TB/tiệc: {avg_rev:,} đ', fmt_kpi_sub)
+
+            ws.merge_range('E6:H6', 'SỐ LƯỢNG BOOKING', fmt_kpi_head)
+            ws.merge_range('E7:H7', tot_count, fmt_kpi_val_int)
+            ws.merge_range('E8:H8', f'Chốt: {cnt_d}  •  Tỷ lệ: {win_rate}%', fmt_kpi_sub)
+
+            ws.merge_range('I6:L6', 'LƯỢNG KHÁCH (PAX)', fmt_kpi_head)
+            ws.merge_range('I7:L7', tot_pax, fmt_kpi_val_int)
+            ws.merge_range('I8:L8', f'Quy mô TB: {avg_pax:,} khách/tiệc', fmt_kpi_sub)
+
+            ws.merge_range('M6:Q6', 'ĐẶT CỌC & HỦY ĐƠN', fmt_kpi_head)
+            ws.merge_range('M7:Q7', tot_deposit, fmt_kpi_val_curr)
+            ws.merge_range('M8:Q8', f'Đã hủy: {cnt_c}  •  Tỷ lệ: {canc_rate}%', fmt_kpi_sub)
+
+            # Bảng danh sách tiệc
+            headers = [
+                'MÃ BOOKING', 'NGÀY TIỆC', 'KHUNG GIỜ', 'NGÀY ĐẶT',
+                'KHÁCH HÀNG / ĐƠN VỊ', 'SỐ ĐIỆN THOẠI', 'SẢNH TIỆC', 'PHÂN KHÚC',
+                'TRẠNG THÁI', 'NGƯỜI LÀM BEO (SALES)', 'NGƯỜI KHÓA', 'HẠN KHÓA (CUTOFF)',
+                'KHÁCH (PAX)', 'TIỀN CỌC (VNĐ)', 'DT TIỆC - BANQUET', 'TỔNG DOANH THU', 'GHI CHÚ'
+            ]
+            ws.set_row(10, 24)
+            for col_i, h_txt in enumerate(headers):
+                ws.write(10, col_i, h_txt, fmt_th)
+
+            row_i = 11
+            for r in rows:
+                is_z = (row_i % 2 == 1)
+                t_l = fmt_td_l_z if is_z else fmt_td_l_w
+                t_c = fmt_td_c_z if is_z else fmt_td_c_w
+                t_n = fmt_td_n_z if is_z else fmt_td_n_w
+                t_m = fmt_td_m_z if is_z else fmt_td_m_w
+
+                b_id = r[0].strip() if r[0] else ""
+                ev_d = r[1] or ""
+                time_str = f"{r[3].strftime('%H:%M')} - {r[4].strftime('%H:%M')}" if (r[3] and r[4]) else (r[3].strftime('%H:%M') if r[3] else "")
+                bk_d = r[2] or ""
+                g_name = r[6].strip() if r[6] else (r[5].strip() if r[5] else "")
+                phone = r[7].strip() if r[7] else ""
+                room_name = r[8].strip() if r[8] else ""
+                seg_name = r[9].strip() if r[9] else ""
+                st_code = r[10].strip() if r[10] else "T"
+                st_name = "Đã chốt (Definite)" if st_code == 'D' else ("Giữ chỗ (Tentative)" if st_code == 'T' else ("Đã hủy (Cancelled)" if st_code == 'C' else st_code))
+                pax_val = int(r[11] or 0)
+                coc_val = float(r[12] or 0)
+                sales_u = r[13].strip() if r[13] else ""
+                lock_u = r[14].strip() if r[14] else ""
+                cutoff_d = cutoff_map.get(b_id, "")
+                bq_val = float(r[16] or 0)
+                tot_val = float(r[17] or 0)
+                note_str = r[19].strip() if r[19] else ""
+
+                ws.write(row_i, 0, b_id, t_c)
+                ws.write(row_i, 1, ev_d, t_c)
+                ws.write(row_i, 2, time_str, t_c)
+                ws.write(row_i, 3, bk_d, t_c)
+                ws.write(row_i, 4, g_name, t_l)
+                ws.write(row_i, 5, phone, t_c)
+                ws.write(row_i, 6, room_name, t_l)
+                ws.write(row_i, 7, seg_name, t_l)
+                ws.write(row_i, 8, st_name, t_c)
+                ws.write(row_i, 9, sales_u, t_l)
+                ws.write(row_i, 10, lock_u, t_c)
+                ws.write(row_i, 11, cutoff_d, t_c)
+                ws.write(row_i, 12, pax_val, t_n)
+                ws.write(row_i, 13, coc_val, t_m)
+                ws.write(row_i, 14, bq_val, t_m)
+                ws.write(row_i, 15, tot_val, t_m)
+                ws.write(row_i, 16, note_str, t_l)
+                ws.set_row(row_i, 20)
+                row_i += 1
+
+            # Dòng TỔNG CỘNG
+            ws.merge_range(row_i, 0, row_i, 11, f'TỔNG CỘNG ({tot_count} ĐƠN TIỆC)', fmt_tot_l)
+            ws.write(row_i, 12, tot_pax, fmt_tot_n)
+            ws.write(row_i, 13, tot_deposit, fmt_tot_m)
+            ws.write(row_i, 14, tot_bq_rev, fmt_tot_m)
+            ws.write(row_i, 15, tot_full_rev, fmt_tot_m)
+            ws.write(row_i, 16, '', fmt_tot_l)
+            ws.set_row(row_i, 22)
+
+            # Căn chỉnh độ rộng cột tối ưu
+            ws.set_column('A:A', 22) # Mã booking
+            ws.set_column('B:B', 13) # Ngày tiệc
+            ws.set_column('C:C', 14) # Giờ
+            ws.set_column('D:D', 13) # Ngày đặt
+            ws.set_column('E:E', 32) # Khách hàng
+            ws.set_column('F:F', 15) # SĐT
+            ws.set_column('G:G', 18) # Sảnh
+            ws.set_column('H:H', 20) # Phân khúc
+            ws.set_column('I:I', 16) # Trạng thái
+            ws.set_column('J:J', 20) # Sales
+            ws.set_column('K:K', 14) # Lock
+            ws.set_column('L:L', 15) # Cutoff
+            ws.set_column('M:M', 13) # Pax
+            ws.set_column('N:N', 18) # Cọc
+            ws.set_column('O:P', 20) # Doanh thu
+            ws.set_column('Q:Q', 28) # Ghi chú
+            
         output.seek(0)
         filename = f"EMS_DanhSach_DonTiec_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
         return StreamingResponse(
@@ -2876,11 +2867,34 @@ def create_booking(req: CreateBookingRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.put("/api/bookings/{book_id}")
-def update_booking(book_id: str, req: UpdateBookingRequest):
+def update_booking(
+    book_id: str, 
+    req: UpdateBookingRequest,
+    current_user: Optional[str] = Query(None),
+    current_user_full: Optional[str] = Query(None)
+):
     """Updates an existing banquet booking in EMS."""
     try:
         cn = get_db()
         cur = cn.cursor()
+
+        # 0. Query previous state to detect room/date move and log comprehensive changes
+        cur.execute("""
+            SELECT b.fcTitle, b.fcStatus_BkRoom, b.fnSoLuongDK, b.fnDatCoc, b.fcContactPerson,
+                   r.fcFunctionRoom, r.fdDate, r.fdTimeIn, r.fdTimeOut
+            FROM stBooking b
+            LEFT JOIN stBookFunctionRoom r ON b.fcBookID = r.fcBookID
+            WHERE b.fcBookID = ?
+        """, [book_id])
+        old_rows = cur.fetchall()
+        old_title = old_rows[0][0] if old_rows and old_rows[0][0] else ""
+        old_status = old_rows[0][1] if old_rows and old_rows[0][1] else ""
+        old_pax = old_rows[0][2] if old_rows and old_rows[0][2] else 0
+        old_deposit = old_rows[0][3] if old_rows and old_rows[0][3] else 0
+        old_rooms = list(set([r[5].strip() for r in old_rows if r[5]]))
+        old_dates = list(set([str(r[6]).split()[0] for r in old_rows if r[6]]))
+        old_room_str = ", ".join(old_rooms) if old_rooms else ""
+        old_date_str = ", ".join(old_dates) if old_dates else ""
         
         # 1. Update stBooking
         formatted_note = update_note_with_cutoff(req.notes or "", req.cutoff_date)
@@ -2921,12 +2935,28 @@ def update_booking(book_id: str, req: UpdateBookingRequest):
         else:
             save_cutoff_date(book_id, None, status=req.status or "D")
 
+        u_name = (req.current_user or current_user or "").strip()
+        u_full = (req.current_user_full or current_user_full or "").strip()
+
+        # Detect MOVE (dời sảnh hoặc ngày)
+        is_moved = (old_room_str and old_room_str != req.room) or (old_date_str and old_date_str != req.event_date) or ("dời từ" in (req.notes or "").lower())
+        action_type = "MOVE_BOOKING" if is_moved else "UPDATE_BOOKING"
+
+        detail_parts = []
+        if is_moved:
+            detail_parts.append(f"Dời lịch: Sảnh {old_room_str or 'N/A'} ({old_date_str or 'N/A'}) ➔ Sảnh {req.room} ({req.event_date})")
+        detail_parts.append(f"'{req.title}' | {req.pax} khách | Cọc: {req.deposit or 0:,.0f} đ | Trạng thái: {req.status}")
+        if req.action_note:
+            detail_parts.append(f"Ghi chú: {req.action_note}")
+
         log_audit(
-            action_type="UPDATE_BOOKING",
+            action_type=action_type,
+            user_name=u_name,
+            user_full_name=u_full,
             book_id=book_id,
             room=req.room,
             event_date=req.event_date,
-            details=f"Cập nhật: '{req.title}', Sảnh {req.room}, Ngày {req.event_date} ({req.time_in}-{req.time_out}), {req.pax} khách, Cọc: {req.deposit or 0:,.0f} đ, Trạng thái: {req.status}"
+            details=" - ".join(detail_parts)
         )
 
         return {"status": "success", "message": f"Cập nhật đơn tiệc {book_id} thành công!"}
@@ -2937,13 +2967,35 @@ class CancelBookingRequest(BaseModel):
     reason_code: Optional[str] = ""
     reason_name: Optional[str] = ""
     note: Optional[str] = ""
+    current_user: Optional[str] = ""
+    current_user_full: Optional[str] = ""
 
 @app.post("/api/bookings/{book_id}/cancel")
-def cancel_booking(book_id: str, req: Optional[CancelBookingRequest] = None):
+def cancel_booking(
+    book_id: str, 
+    req: Optional[CancelBookingRequest] = Body(None),
+    current_user: Optional[str] = Query(None),
+    current_user_full: Optional[str] = Query(None)
+):
     """Cancels a booking, setting status to 'C' (Cancelled), recording cancel reason, and releasing the room lock."""
     try:
         cn = get_db()
         cur = cn.cursor()
+
+        # Query booking info before cancel for audit trail
+        cur.execute("""
+            SELECT b.fcTitle, r.fcFunctionRoom, r.fdDate 
+            FROM stBooking b
+            LEFT JOIN stBookFunctionRoom r ON b.fcBookID = r.fcBookID
+            WHERE b.fcBookID = ?
+        """, [book_id])
+        rows = cur.fetchall()
+        title = rows[0][0] if rows and rows[0][0] else ""
+        rooms = list(set([r[1].strip() for r in rows if r[1]]))
+        dates = list(set([str(r[2]).split()[0] for r in rows if r[2]]))
+        room_str = ", ".join(rooms) if rooms else ""
+        date_str = ", ".join(dates) if dates else ""
+
         reason_txt = ""
         if req and (req.reason_code or req.reason_name or req.note):
             parts = []
@@ -2965,22 +3017,53 @@ def cancel_booking(book_id: str, req: Optional[CancelBookingRequest] = None):
         # Update Cutoff status
         save_cutoff_date(book_id, None, status="C")
 
+        u_name = (req.current_user if req and req.current_user else current_user) or ""
+        u_full = (req.current_user_full if req and req.current_user_full else current_user_full) or ""
+
         log_audit(
             action_type="CANCEL_BOOKING",
+            user_name=u_name,
+            user_full_name=u_full,
             book_id=book_id,
-            details=f"Hủy đơn tiệc và giải phóng sảnh.{reason_txt}"
+            room=room_str,
+            event_date=date_str,
+            details=f"Hủy đơn tiệc '{title}' và giải phóng sảnh {room_str}.{reason_txt}"
         )
 
         return {"status": "success", "message": f"Đã hủy đơn tiệc {book_id} và giải phóng sảnh thành công!"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+class ConfirmBookingRequest(BaseModel):
+    current_user: Optional[str] = ""
+    current_user_full: Optional[str] = ""
+    note: Optional[str] = ""
+
 @app.post("/api/bookings/{book_id}/confirm")
-def confirm_booking(book_id: str):
+def confirm_booking(
+    book_id: str, 
+    req: Optional[ConfirmBookingRequest] = Body(None),
+    current_user: Optional[str] = Query(None),
+    current_user_full: Optional[str] = Query(None)
+):
     """Confirms/Locks a booking definitively (Status 'T' -> 'D')."""
     try:
         cn = get_db()
         cur = cn.cursor()
+
+        cur.execute("""
+            SELECT b.fcTitle, r.fcFunctionRoom, r.fdDate 
+            FROM stBooking b
+            LEFT JOIN stBookFunctionRoom r ON b.fcBookID = r.fcBookID
+            WHERE b.fcBookID = ?
+        """, [book_id])
+        rows = cur.fetchall()
+        title = rows[0][0] if rows and rows[0][0] else ""
+        rooms = list(set([r[1].strip() for r in rows if r[1]]))
+        dates = list(set([str(r[2]).split()[0] for r in rows if r[2]]))
+        room_str = ", ".join(rooms) if rooms else ""
+        date_str = ", ".join(dates) if dates else ""
+
         cur.execute("UPDATE stBooking SET fcStatus_BkRoom = 'D' WHERE fcBookID = ?", [book_id])
         cn.commit()
         cur.close()
@@ -2989,13 +3072,137 @@ def confirm_booking(book_id: str):
         # Update Cutoff status
         save_cutoff_date(book_id, None, status="D")
 
+        u_name = (req.current_user if req and req.current_user else current_user) or ""
+        u_full = (req.current_user_full if req and req.current_user_full else current_user_full) or ""
+
         log_audit(
             action_type="CONFIRM_BOOKING",
+            user_name=u_name,
+            user_full_name=u_full,
             book_id=book_id,
-            details=f"Khóa chốt đơn tiệc chính thức (Definite - D)"
+            room=room_str,
+            event_date=date_str,
+            details=f"Khóa chốt đơn tiệc chính thức (Definite - D): '{title}', Sảnh {room_str}, Ngày {date_str}"
         )
 
         return {"status": "success", "message": f"Đã chốt chính thức (Definite) đơn tiệc {book_id}!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class DeleteBookingRequest(BaseModel):
+    current_user: Optional[str] = ""
+    current_user_full: Optional[str] = ""
+    reason: Optional[str] = ""
+
+@app.delete("/api/bookings/{book_id}")
+def delete_booking(
+    book_id: str, 
+    req: Optional[DeleteBookingRequest] = Body(None),
+    current_user: Optional[str] = Query(None),
+    current_user_full: Optional[str] = Query(None),
+    reason: Optional[str] = Query(None)
+):
+    """
+    Safely deletes a test or unfinalized booking and releases all rooms/slots.
+    Completely records the deletion into SQLite audit.db with full details.
+    """
+    try:
+        cn = get_db()
+        cur = cn.cursor()
+        
+        # 1. Fetch booking info before deletion for comprehensive audit logging
+        cur.execute("""
+            SELECT b.fcTitle, b.fcStatus_BkRoom, b.fnSoLuongDK, b.fnDatCoc, b.fcContactPerson, b.fcGuestID,
+                   r.fcFunctionRoom, r.fdDate, r.fdTimeIn, r.fdTimeOut
+            FROM stBooking b
+            LEFT JOIN stBookFunctionRoom r ON b.fcBookID = r.fcBookID
+            WHERE b.fcBookID = ?
+        """, [book_id])
+        rows = cur.fetchall()
+        if not rows:
+            cur.close()
+            cn.close()
+            raise HTTPException(status_code=404, detail=f"Không tìm thấy đơn tiệc {book_id} để xóa!")
+        
+        title = (rows[0][0] or "").strip()
+        status = (rows[0][1] or "").strip()
+        pax = rows[0][2] or 0
+        deposit = rows[0][3] or 0
+        contact = (rows[0][4] or "").strip()
+        guest_id = rows[0][5]
+        
+        rooms = list(set([r[6].strip() for r in rows if r[6]]))
+        dates = list(set([str(r[7]).split()[0] for r in rows if r[7]]))
+        room_str = ", ".join(rooms) if rooms else ""
+        date_str = ", ".join(dates) if dates else ""
+        
+        # 2. Check if booking has any Master EO and clean related banquet tables
+        master_eos = []
+        try:
+            cur.execute("SELECT fcMaster_EO FROM stMaster_EO WHERE fcBookID = ?", [book_id])
+            master_eos = [r[0].strip() for r in cur.fetchall() if r[0]]
+        except Exception:
+            pass
+        
+        # Cascade delete child records in EMS_KHAIVY
+        if master_eos:
+            placeholders = ','.join('?' for _ in master_eos)
+            for tbl in ["stSKLK_Notes", "stRoom_Setup", "stSKLK_DoanhThu", "stBEO_MultiDay", "stSKLK", "stMaster_EO"]:
+                try:
+                    cur.execute(f"DELETE FROM {tbl} WHERE fcMaster_EO IN ({placeholders})", master_eos)
+                except Exception:
+                    pass
+
+        try:
+            cur.execute("DELETE FROM stBooking_Charges WHERE fcBookID = ?", [book_id])
+        except Exception:
+            pass
+        
+        try:
+            cur.execute("DELETE FROM stBEO_MultiDay WHERE fcBookID = ?", [book_id])
+        except Exception:
+            pass
+
+        cur.execute("DELETE FROM stBookFunctionRoom WHERE fcBookID = ?", [book_id])
+        cur.execute("DELETE FROM stBooking WHERE fcBookID = ?", [book_id])
+        
+        cn.commit()
+        cur.close()
+        cn.close()
+        
+        # 3. Clean Cutoff in SQLite
+        try:
+            conn_sq = sqlite3.connect(AUDIT_DB_PATH)
+            cur_sq = conn_sq.cursor()
+            cur_sq.execute("DELETE FROM booking_cutoff WHERE book_id = ?", [book_id])
+            conn_sq.commit()
+            conn_sq.close()
+        except Exception: pass
+        
+        # 4. Determine user & reason
+        u_name = (req.current_user if req and req.current_user else current_user) or ""
+        u_full = (req.current_user_full if req and req.current_user_full else current_user_full) or ""
+        del_reason = (req.reason if req and req.reason else reason) or "Xóa đơn tiệc"
+        
+        # 5. Log audit trail
+        log_audit(
+            action_type="DELETE_BOOKING",
+            user_name=u_name,
+            user_full_name=u_full,
+            book_id=book_id,
+            room=room_str,
+            event_date=date_str,
+            details=f"Xóa vĩnh viễn đơn tiệc '{title}' (Mã: {book_id}), Sảnh: {room_str}, Ngày: {date_str}, {pax} khách, Cọc: {deposit:,.0f} đ. Lý do: {del_reason}"
+        )
+        
+        return {
+            "status": "success",
+            "message": f"Đã xóa vĩnh viễn đơn tiệc {book_id} và giải phóng toàn bộ sảnh thành công!"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Lỗi xóa đơn tiệc: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -3332,11 +3539,16 @@ def get_audit_logs(
             where_clauses.append("user_name = ?")
             params.append(user_name)
         if action_type and action_type != 'ALL':
-            where_clauses.append("action_type = ?")
-            params.append(action_type)
+            if action_type == 'ITEMS':
+                where_clauses.append("action_type LIKE '%_ITEM'")
+            elif action_type == 'CUSTOMER':
+                where_clauses.append("(action_type LIKE '%_CUSTOMER' OR action_type LIKE '%khách hàng%')")
+            else:
+                where_clauses.append("action_type = ?")
+                params.append(action_type)
         if book_id:
-            where_clauses.append("book_id LIKE ?")
-            params.append(f"%{book_id}%")
+            where_clauses.append("(book_id LIKE ? OR details LIKE ? OR room LIKE ?)")
+            params.extend([f"%{book_id}%", f"%{book_id}%", f"%{book_id}%"])
         if from_date:
             where_clauses.append("timestamp >= ?")
             params.append(f"{from_date} 00:00:00")
@@ -3402,10 +3614,7 @@ def get_booking_detail(book_id: str):
                 CONVERT(varchar(10), b.fdDate, 120) as BookDate,
                 b.fcTitle,
                 b.fcStatus_BkRoom,
-                CASE 
-                    WHEN ISNULL(b.fnSoLuongDK, 0) > 0 THEN b.fnSoLuongDK 
-                    ELSE ISNULL(bfr.fnQuantity, 0) 
-                END as Pax,
+                ISNULL(guestCalc.ActualGuests, 0) as Pax,
                 b.fnDatCoc,
                 b.fcNote,
                 b.fcUser as LockUser,
@@ -3430,6 +3639,28 @@ def get_booking_detail(book_id: str):
             LEFT JOIN stKhachHang k ON b.fcGuestID = k.fcMa
             LEFT JOIN stBookFunctionRoom bfr ON b.fcBookID = bfr.fcBookID
             LEFT JOIN stMaster_EO meo ON b.fcBookID = meo.fcBookID
+            OUTER APPLY (
+                SELECT CASE 
+                    WHEN ISNULL(b.fnSoLuongDK, 0) > 0 THEN b.fnSoLuongDK
+                    ELSE COALESCE(
+                        NULLIF(bfr.fnQuantity, 0),
+                        NULLIF(rs.MaxRsQty, 0),
+                        NULLIF(d.MaxDtQty, 0),
+                        0
+                    )
+                END AS ActualGuests
+                FROM (SELECT 1 AS _d) _d
+                OUTER APPLY (
+                    SELECT MAX(rs2.fnQuantity) as MaxRsQty
+                    FROM stRoom_Setup rs2
+                    WHERE rs2.fcMaster_EO = meo.fcMaster_EO
+                ) rs
+                OUTER APPLY (
+                    SELECT MAX(d2.fnQuantity) as MaxDtQty
+                    FROM stSKLK_DoanhThu d2
+                    WHERE d2.fcMaster_EO = meo.fcMaster_EO AND d2.fcDoanhThu_Type <> '22' AND d2.fnQuantity > 1
+                ) d
+            ) guestCalc
             WHERE b.fcBookID = ?
         """, [book_id])
         r = cur.fetchone()
@@ -3452,9 +3683,9 @@ def get_booking_detail(book_id: str):
                 "room": row[1].strip() if row[1] else "",
                 "room_name": row[2].strip() if row[2] else "",
                 "event_date": row[3],
-                "time_in": safe_time_str(row[4]),
-                "time_out": safe_time_str(row[5]),
-                "quantity": safe_int(row[6]),
+                "time_in": row[4].strftime("%H:%M") if row[4] else "",
+                "time_out": row[5].strftime("%H:%M") if row[5] else "",
+                "quantity": int(row[6] or 0),
                 "menu_price": float(row[7] or 0)
             }
             for row in cur.fetchall()
@@ -3467,7 +3698,7 @@ def get_booking_detail(book_id: str):
             "book_date": r[1],
             "title": r[2].strip() if r[2] else (r[9].strip() if r[9] else "Tiệc MerPerle"),
             "status": r[3].strip() if r[3] else "T",
-            "pax": safe_int(r[4]),
+            "pax": int(r[4] or 0),
             "deposit": float(r[5] or 0),
             "notes": r[6].strip() if r[6] else "",
             "cutoff_date": get_cutoff_for_booking(book_id, r[6]),
@@ -3486,9 +3717,9 @@ def get_booking_detail(book_id: str):
             "room_booking": rooms_list[0] if rooms_list else {
                 "room": r[16].strip() if r[16] else "",
                 "event_date": r[17],
-                "time_in": safe_time_str(r[18]),
-                "time_out": safe_time_str(r[19]),
-                "quantity": safe_int(r[20]),
+                "time_in": r[18].strftime("%H:%M") if r[18] else "",
+                "time_out": r[19].strftime("%H:%M") if r[19] else "",
+                "quantity": int(r[20] or 0),
                 "menu_price": float(r[21] or 0)
             },
             "master_eo": r[22].strip() if r[22] else None,
@@ -3630,11 +3861,8 @@ def safe_parse_pax(val):
 
 @app.get("/api/system/branding")
 def get_system_branding():
-    hotel_name = "TRUNG TÂM HỘI NGHỊ & TIỆC CƯỚI"
-    hotel_subtitle = "Hệ Thống Quản Lý Tiệc Cưới & Sự Kiện"
-    hotel_address = ""
-    hotel_phone = ""
-    logo_url = ""
+    hotel_name = "EMS Banquet & Event Center"
+    hotel_subtitle = "Hệ Thống Quản Lý Tiệc Cưới & Hội Nghị"
     cfg_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config.json")
     if os.path.exists(cfg_file):
         try:
@@ -3642,60 +3870,11 @@ def get_system_branding():
                 cfg = json.load(f)
                 hotel_name = cfg.get("hotel_name", hotel_name)
                 hotel_subtitle = cfg.get("hotel_subtitle", hotel_subtitle)
-                hotel_address = cfg.get("hotel_address", hotel_address)
-                hotel_phone = cfg.get("hotel_phone", hotel_phone)
-                logo_url = cfg.get("logo_url", "")
         except Exception:
             pass
     return {
         "hotel_name": hotel_name,
-        "hotel_subtitle": hotel_subtitle,
-        "hotel_address": hotel_address,
-        "hotel_phone": hotel_phone,
-        "logo_url": logo_url
-    }
-
-class BrandingUpdateRequest(BaseModel):
-    hotel_name: str
-    hotel_subtitle: Optional[str] = ""
-    hotel_address: Optional[str] = ""
-    hotel_phone: Optional[str] = ""
-    logo_url: Optional[str] = ""
-
-@app.post("/api/system/branding")
-def update_system_branding(req: BrandingUpdateRequest):
-    cfg_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config.json")
-    cfg = {}
-    if os.path.exists(cfg_file):
-        try:
-            with open(cfg_file, "r", encoding="utf-8") as f:
-                cfg = json.load(f)
-        except Exception:
-            cfg = {}
-    cfg["hotel_name"] = req.hotel_name.strip()
-    if req.hotel_subtitle is not None:
-        cfg["hotel_subtitle"] = req.hotel_subtitle.strip()
-    if req.hotel_address is not None:
-        cfg["hotel_address"] = req.hotel_address.strip()
-    if req.hotel_phone is not None:
-        cfg["hotel_phone"] = req.hotel_phone.strip()
-    if req.logo_url is not None:
-        cfg["logo_url"] = req.logo_url.strip()
-    try:
-        with open(cfg_file, "w", encoding="utf-8") as f:
-            json.dump(cfg, f, ensure_ascii=False, indent=2)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Không thể ghi config.json: {e}")
-    return {
-        "success": True,
-        "message": "Cập nhật thương hiệu thành công",
-        "branding": {
-            "hotel_name": cfg["hotel_name"],
-            "hotel_subtitle": cfg.get("hotel_subtitle", ""),
-            "hotel_address": cfg.get("hotel_address", ""),
-            "hotel_phone": cfg.get("hotel_phone", ""),
-            "logo_url": cfg.get("logo_url", "")
-        }
+        "hotel_subtitle": hotel_subtitle
     }
 
 @app.get("/api/system/version")
@@ -3746,7 +3925,7 @@ def get_beo_bookings_list():
                 "title": r[2].strip() if r[2] else bid,
                 "event_date": r[3] or "",
                 "master_eo": r[4].strip() if r[4] else "",
-                "pax": safe_int(r[5]),
+                "pax": int(r[5] or 0),
                 "sales_user": r[6].strip() if r[6] else "",
                 "sales_name": r[7].strip() if r[7] else (r[6].strip() if r[6] else ""),
                 "room": r[8].strip() if r[8] else "",
@@ -3804,7 +3983,7 @@ def get_beo(book_id: str, date: Optional[str] = None):
             ORDER BY bfr.fdDate, ISNULL(rs.fdTimeIn, bfr.fdTimeIn)
         """, [book_id])
         bfr_rows = cur.fetchall()
-        all_event_dates = sorted(list(set([safe_date_str(r[0]) for r in bfr_rows if r[0]])))
+        all_event_dates = sorted(list(set([r[0].strftime("%Y-%m-%d") for r in bfr_rows if r[0]])))
 
         # 2. Fetch Master BEO & Booking
         cur.execute("""
@@ -3845,7 +4024,7 @@ def get_beo(book_id: str, date: Optional[str] = None):
         bk_deposit = float(row[19] or 0)
         bk_deposit_note = row[20].strip() if row[20] else ""
         bk_contact = row[21].strip() if row[21] else ""
-        bk_pax = safe_int(row[22])
+        bk_pax = int(row[22] or 0)
         bk_date = row[23]
         guest_contact_alt = row[24].strip() if row[24] else ""
         guest_phone_office = row[25].strip() if row[25] else ""
@@ -3860,7 +4039,7 @@ def get_beo(book_id: str, date: Optional[str] = None):
         elif all_event_dates:
             target_date = all_event_dates[0]
         else:
-            target_date = safe_date_str(bk_date) if bk_date else datetime.date.today().strftime("%Y-%m-%d")
+            target_date = bk_date.strftime("%Y-%m-%d") if bk_date else datetime.date.today().strftime("%Y-%m-%d")
             all_event_dates = [target_date]
 
         # Dynamic fallback for company, contact person, end user, and phones
@@ -3979,13 +4158,13 @@ def get_beo(book_id: str, date: Optional[str] = None):
         max_bfr_pax = 0
         bfr_menu_price = 0.0
         for r in bfr_rows:
-            d_str = safe_date_str(r[0]) if r[0] else ""
+            d_str = r[0].strftime("%Y-%m-%d") if r[0] else ""
             if d_str != target_date:
                 continue
-            t_in = safe_time_str(r[1], "08:00:00")
-            t_out = safe_time_str(r[2], "22:00:00")
+            t_in = r[1].strftime("%H:%M:%S") if r[1] else "08:00:00"
+            t_out = r[2].strftime("%H:%M:%S") if r[2] else "22:00:00"
             r_name = r[3].strip() if r[3] else (r[4].strip() if r[4] else "Sảnh")
-            q_pax = safe_int(r[5])
+            q_pax = int(r[5] or 0)
             if q_pax > max_bfr_pax:
                 max_bfr_pax = q_pax
             m_pr = float(r[6] or 0)
@@ -6184,7 +6363,7 @@ def get_booking_detail_api(booking_id: str):
                 "date": date_str,
                 "time_in": time_in_str,
                 "time_out": time_out_str,
-                "pax": safe_int(r[5]),
+                "pax": int(r[5] or 0),
                 "function_type": r[6].strip() if r[6] else ""
             })
 

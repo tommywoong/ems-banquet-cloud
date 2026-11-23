@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EMS Banquet Web - Hệ Thống Quản Lý Tiệc Cưới & Hội Nghị</title>
+    <title>EMS Web - Hệ Thống Quản Lý Tiệc Cưới & Hội Nghị MerPerle</title>
     <!-- Anti-Cache Meta Tags (Strict Cross-Browser Compatibility: Chrome, Edge, CocCoc, Firefox, Safari) -->
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
@@ -140,8 +140,8 @@
                 <i data-lucide="hotel" class="w-5 h-5"></i>
             </div>
             <div>
-                <h1 id="sidebarHotelTitle" class="text-sm font-bold text-white tracking-wide truncate max-w-[150px]">EMS Banquet Web</h1>
-                <p id="sidebarHotelSubtitle" class="text-[11px] text-blue-400 font-medium truncate max-w-[150px]">Hệ Thống Quản Lý Tiệc Cưới & Sự Kiện</p>
+                <h1 class="text-sm font-bold text-white tracking-wide">EMS Banquet Web</h1>
+                <p class="text-[11px] text-blue-400 font-medium">MerPerle / Khải Vy Hotel</p>
             </div>
         </div>
 
@@ -212,11 +212,11 @@
                 <span class="text-slate-400">Trạng thái:</span>
                 <span class="text-emerald-400 font-semibold flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    Hệ Thống Trực Tuyến
+                    Port 8090 Online
                 </span>
             </div>
-            <a href="#" onclick="openAnalyticsDashboard(); return false;" class="block text-center py-1.5 px-3 bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white rounded text-xs font-semibold transition border border-blue-500/30">
-                📊 Phân Tích & Báo Cáo Doanh Thu &rarr;
+            <a href="#" onclick="window.open('http://' + window.location.hostname + ':8088', '_blank'); return false;" target="_blank" class="block text-center py-1.5 px-3 bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white rounded text-xs font-semibold transition border border-blue-500/30">
+                Mở EMS Analytics (Port 8088) &rarr;
             </a>
         </div>
     </aside>
@@ -245,9 +245,6 @@
                     </div>
                     <button onclick="openChangePasswordModal()" title="Đổi mật khẩu cá nhân" class="ml-1 p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition cursor-pointer">
                         <i data-lucide="key-round" class="w-4 h-4"></i>
-                    </button>
-                    <button onclick="openBrandingModal()" title="Cài đặt tên khách sạn & thương hiệu" class="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition cursor-pointer">
-                        <i data-lucide="settings" class="w-4 h-4"></i>
                     </button>
                     <a href="/m" title="Chuyển sang giao diện Điện thoại (Mobile)" class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition cursor-pointer">
                         <i data-lucide="smartphone" class="w-4 h-4"></i>
@@ -632,10 +629,10 @@
                     <div class="flex items-center justify-between border-b border-slate-100 pb-4">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-blue-100 text-blue-800">CHUẨN QUẢN TRỊ KHÁCH SẠN</span>
+                                <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-blue-100 text-blue-800">CHUẨN MERPERLE DALAT</span>
                                 <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">PHIẾU ĐẶT SỰ KIỆN (BANQUET EVENT ORDER - BEO)</h3>
                             </div>
-                            <p class="text-xs text-slate-500 mt-0.5">Biểu mẫu chuẩn 1-to-1 theo tiêu chuẩn trung tâm tiệc & sự kiện. Doanh thu bảo lưu cho người lập BEO.</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Biểu mẫu chuẩn 1-to-1 theo tiêu chuẩn khách sạn MerPerle DaLat Hotel. Doanh thu bảo lưu cho người lập BEO.</p>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
                             <!-- BỘ CHỌN DÀN TRANG BEO (1 TRANG / 2 TRANG / AUTO) -->
@@ -655,7 +652,7 @@
 
                             <button onclick="printCurrentBEO()" class="px-4 py-2 bg-slate-900 hover:bg-black text-white rounded-lg text-xs font-bold flex items-center gap-2 shadow-sm transition cursor-pointer">
                                 <i data-lucide="printer" class="w-4 h-4"></i>
-                                <span>In Phiếu BEO (Chuẩn A4)</span>
+                                <span>In Phiếu BEO (Chuẩn MerPerle A4)</span>
                             </button>
                             <button id="btnSaveBEO" onclick="saveBEO()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-2 shadow-sm transition">
                                 <i data-lucide="check-circle" class="w-4 h-4"></i>
@@ -1251,7 +1248,7 @@
                 <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
                     <div>
                         <h3 class="text-sm font-bold text-slate-800">DANH MỤC THỰC ĐƠN & SET MENU (79 THỰC ĐƠN)</h3>
-                        <p class="text-xs text-slate-500">Bảng dữ liệu stSetMenu chuẩn của trung tâm hội nghị tiệc cưới.</p>
+                        <p class="text-xs text-slate-500">Bảng dữ liệu stSetMenu chuẩn của trung tâm hội nghị tiệc cưới MerPerle.</p>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
@@ -1339,9 +1336,14 @@
                                     <option value="LOGIN">Đăng nhập (LOGIN)</option>
                                     <option value="CREATE_BOOKING">Tạo đơn tiệc (CREATE)</option>
                                     <option value="UPDATE_BOOKING">Sửa đơn tiệc (UPDATE)</option>
+                                    <option value="MOVE_BOOKING">Dời sảnh / ngày (MOVE)</option>
+                                    <option value="CONFIRM_BOOKING">Khóa chốt (CONFIRM)</option>
                                     <option value="CANCEL_BOOKING">Hủy đơn tiệc (CANCEL)</option>
-                                    <option value="CONFIRM_BOOKING">Chốt tiệc (CONFIRM)</option>
+                                    <option value="DELETE_BOOKING">Xóa vĩnh viễn tiệc (DELETE)</option>
                                     <option value="SAVE_BEO">Lập BEO (SAVE_BEO)</option>
+                                    <option value="EXTEND_CUTOFF">Gia hạn Cutoff</option>
+                                    <option value="ITEMS">Danh mục Master (A-T)</option>
+                                    <option value="CUSTOMER">Khách hàng CRM</option>
                                 </select>
                             </div>
 
@@ -1703,7 +1705,7 @@
                         <form onsubmit="handleSaveCutoffConfig(event)" class="space-y-3 text-xs">
                             <div>
                                 <label class="block font-bold text-slate-700 mb-1">Danh Sách Email Nhận Cảnh Báo</label>
-                                <textarea id="cfgCutoffEmails" rows="3" placeholder="sales@hotel.vn, quanly@hotel.vn..." class="w-full p-2 border border-slate-300 rounded-lg text-xs leading-relaxed font-mono focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                                <textarea id="cfgCutoffEmails" rows="3" placeholder="sales@merperle.vn, quanly@merperle.vn..." class="w-full p-2 border border-slate-300 rounded-lg text-xs leading-relaxed font-mono focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
                                 <p class="text-[10px] text-slate-400 mt-0.5">Nhập các địa chỉ email nhân viên hoặc quản lý, ngăn cách bởi dấu phẩy (,).</p>
                             </div>
 
@@ -1939,8 +1941,12 @@
                             <span>Khóa Chốt (Definite)</span>
                         </button>
                         <button type="button" onclick="quickCancelCurrentBooking()" class="px-3 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 rounded-lg font-bold flex items-center gap-1 transition">
-                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            <i data-lucide="ban" class="w-3.5 h-3.5"></i>
                             <span>Hủy Tiệc & Nhả Sảnh</span>
+                        </button>
+                        <button type="button" onclick="confirmDeleteCurrentBooking()" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold flex items-center gap-1 transition shadow-sm" title="Xóa vĩnh viễn đơn tiệc test / rác">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            <span>Xóa Đơn Tiệc</span>
                         </button>
                         <button type="button" id="btnModalOpenBeo" onclick="openBeoFromEditModal()" class="px-3 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 rounded-lg font-bold flex items-center gap-1 transition">
                             <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
@@ -2214,10 +2220,10 @@
                 <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-tr from-blue-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/30">
                     <i data-lucide="hotel" class="w-8 h-8 text-white"></i>
                 </div>
-                <h3 id="loginModalHotelTitle" class="text-base font-bold tracking-wide">TRUNG TÂM HỘI NGHỊ & TIỆC CƯỚI</h3>
-                <p id="loginModalHotelSubtitle" class="text-xs text-blue-300 font-medium mt-0.5">Hệ Thống Quản Lý Tiệc Cưới & Hội Nghị</p>
-                <div id="loginModalAuthBadge" class="mt-2 inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-200 border border-blue-400/30">
-                    Đăng Nhập Hệ Thống (frmLogin)
+                <h3 class="text-base font-bold tracking-wide">MERPERLE / KHẢI VY EMS</h3>
+                <p class="text-xs text-blue-300 font-medium mt-0.5">Hệ Thống Quản Lý Tiệc Cưới & Hội Nghị</p>
+                <div class="mt-2 inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-200 border border-blue-400/30">
+                    Xác Thực SQL Server stUser (frmLogin)
                 </div>
                 <button type="button" id="btnCloseLoginModal" onclick="if(currentUser) document.getElementById('loginModal').classList.add('hidden')" class="absolute top-3 right-3 p-1.5 text-white/70 hover:text-white rounded-lg hover:bg-white/10 transition">
                     <i data-lucide="x" class="w-4 h-4"></i>
@@ -2424,64 +2430,8 @@
         let debounceTimer = null;
         let debounceCustTimer = null;
 
-        window.systemBranding = {
-            hotel_name: 'TRUNG TÂM HỘI NGHỊ & TIỆC CƯỚI',
-            hotel_subtitle: 'Hệ Thống Quản Lý Tiệc Cưới & Sự Kiện',
-            hotel_address: '',
-            hotel_phone: '',
-            logo_url: ''
-        };
-
-        function getHotelDisplayName() {
-            return (window.systemBranding && window.systemBranding.hotel_name) ? window.systemBranding.hotel_name : 'TRUNG TÂM HỘI NGHỊ & TIỆC CƯỚI';
-        }
-
-        function getHotelLogoHtml(extraStyle = '') {
-            const logo = window.systemBranding && window.systemBranding.logo_url;
-            if (logo && logo.trim()) {
-                return `<img src="${logo.trim()}" style="height: 44px; width: auto; max-width: 140px; object-fit: contain; ${extraStyle}" alt="Hotel Logo" />`;
-            }
-            return '';
-        }
-
-        function openAnalyticsDashboard() {
-            if (window.location.port === '8090') {
-                window.open('http://' + window.location.hostname + ':8088', '_blank');
-            } else {
-                window.open('/analytics/', '_blank');
-            }
-        }
-
-        async function loadSystemBranding() {
-            try {
-                const res = await fetch('/api/system/branding');
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.hotel_name) {
-                        window.systemBranding.hotel_name = data.hotel_name;
-                        const el = document.getElementById('loginModalHotelTitle');
-                        if (el) el.textContent = data.hotel_name;
-                        const sideTitle = document.getElementById('sidebarHotelTitle');
-                        if (sideTitle) sideTitle.textContent = data.hotel_name;
-                        document.title = data.hotel_name + " - EMS Banquet Web";
-                    }
-                    if (data.hotel_subtitle) {
-                        window.systemBranding.hotel_subtitle = data.hotel_subtitle;
-                        const sub = document.getElementById('loginModalHotelSubtitle');
-                        if (sub) sub.textContent = data.hotel_subtitle;
-                        const sideSub = document.getElementById('sidebarHotelSubtitle');
-                        if (sideSub) sideSub.textContent = data.hotel_subtitle;
-                    }
-                    if (data.hotel_address) window.systemBranding.hotel_address = data.hotel_address;
-                    if (data.hotel_phone) window.systemBranding.hotel_phone = data.hotel_phone;
-                    if (data.logo_url !== undefined) window.systemBranding.logo_url = data.logo_url;
-                }
-            } catch(e) {}
-        }
-
         document.addEventListener('DOMContentLoaded', async () => {
             lucide.createIcons();
-            loadSystemBranding();
             
             // Check auth: require explicit login
             const savedUser = sessionStorage.getItem('ems_user') || localStorage.getItem('ems_user');
@@ -3084,6 +3034,9 @@
                 const detailRes = await fetch(`/api/bookings/${b.bookId}`);
                 const detailData = await detailRes.json();
 
+                const cUser = (typeof currentUser !== 'undefined' && currentUser && currentUser.username) ? currentUser.username : (localStorage.getItem('ems_username') || '');
+                const cUserFull = (typeof currentUser !== 'undefined' && currentUser && currentUser.full_name) ? currentUser.full_name : '';
+
                 const updatePayload = {
                     title: detailData.title,
                     event_date: targetDate,
@@ -3097,7 +3050,10 @@
                     guest_phone: detailData.customer ? detailData.customer.phone : '',
                     guest_email: detailData.customer ? detailData.customer.email : '',
                     guest_address: detailData.customer ? detailData.customer.address : '',
-                    notes: detailData.notes + ` [Đã dời từ sảnh ${b.room} ngày ${b.eventDate}]`
+                    notes: detailData.notes + ` [Đã dời từ sảnh ${b.room} ngày ${b.eventDate}]`,
+                    current_user: cUser,
+                    current_user_full: cUserFull,
+                    action_note: `Kéo thả điều chuyển từ Sảnh ${b.room} (${b.eventDate}) sang Sảnh ${targetRoom} (${targetDate})`
                 };
 
                 const updateRes = await fetch(`/api/bookings/${b.bookId}`, {
@@ -3467,6 +3423,9 @@
             e.preventDefault();
             if (!currentActiveBookingId) return;
 
+            const cUser = (typeof currentUser !== 'undefined' && currentUser && currentUser.username) ? currentUser.username : (localStorage.getItem('ems_username') || '');
+            const cUserFull = (typeof currentUser !== 'undefined' && currentUser && currentUser.full_name) ? currentUser.full_name : '';
+
             const payload = {
                 title: document.getElementById('ebTitle').value.trim(),
                 event_date: document.getElementById('ebEventDate').value,
@@ -3481,7 +3440,9 @@
                 guest_phone: document.getElementById('ebGuestPhone').value.trim(),
                 guest_email: document.getElementById('ebGuestEmail').value.trim(),
                 guest_address: document.getElementById('ebGuestAddress').value.trim(),
-                notes: document.getElementById('ebNotes').value
+                notes: document.getElementById('ebNotes').value,
+                current_user: cUser,
+                current_user_full: cUserFull
             };
 
             try {
@@ -3496,13 +3457,13 @@
                     return;
                 }
 
-                alert(`CẬP NHẬT THÀNH CÔNG!
-Đơn tiệc: ${currentActiveBookingId}`);
+                alert(`CẬP NHẬT THÀNH CÔNG!\nĐơn tiệc: ${currentActiveBookingId}`);
                 closeModal('editBookingModal');
                 loadSchedulerData();
-            initScrollListeners();
-            loadCancelReasons();
+                initScrollListeners();
+                loadCancelReasons();
                 loadBookingsList();
+                if (typeof loadAuditLogs === 'function') loadAuditLogs();
             } catch (err) {
                 alert('Lỗi kết nối khi cập nhật đơn tiệc!');
             }
@@ -3512,36 +3473,34 @@
             if (!currentActiveBookingId) return;
             if (!confirm(`Xác nhận KHÓA CHỐT (Definite) đơn tiệc ${currentActiveBookingId}?`)) return;
 
+            const cUser = (typeof currentUser !== 'undefined' && currentUser && currentUser.username) ? currentUser.username : (localStorage.getItem('ems_username') || '');
+            const cUserFull = (typeof currentUser !== 'undefined' && currentUser && currentUser.full_name) ? currentUser.full_name : '';
+
             try {
-                const res = await fetch(`/api/bookings/${currentActiveBookingId}/confirm`, { method: 'POST' });
+                const res = await fetch(`/api/bookings/${currentActiveBookingId}/confirm`, { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        current_user: cUser,
+                        current_user_full: cUserFull
+                    })
+                });
                 const data = await res.json();
                 alert(data.message || 'Đã chốt chính thức đơn tiệc!');
                 document.getElementById('ebStatus').value = 'D';
                 loadSchedulerData();
-            initScrollListeners();
-            loadCancelReasons();
+                initScrollListeners();
+                loadCancelReasons();
                 loadBookingsList();
+                if (typeof loadAuditLogs === 'function') loadAuditLogs();
             } catch (err) {
                 alert('Lỗi chốt đơn tiệc!');
             }
         }
 
-        async function quickCancelCurrentBooking() {
+        function quickCancelCurrentBooking() {
             if (!currentActiveBookingId) return;
-            if (!confirm(`CẢNH BÁO: Bạn có chắc chắn muốn HỦY đơn tiệc ${currentActiveBookingId} và giải phóng sảnh?`)) return;
-
-            try {
-                const res = await fetch(`/api/bookings/${currentActiveBookingId}/cancel`, { method: 'POST' });
-                const data = await res.json();
-                alert(data.message || 'Đã hủy đơn tiệc!');
-                closeModal('editBookingModal');
-                loadSchedulerData();
-            initScrollListeners();
-            loadCancelReasons();
-                loadBookingsList();
-            } catch (err) {
-                alert('Lỗi hủy đơn tiệc!');
-            }
+            openCancelBookingModal(currentActiveBookingId, document.getElementById('ebTitle') ? document.getElementById('ebTitle').value : '');
         }
 
         function openBeoFromEditModal() {
@@ -4129,7 +4088,7 @@
             if (totalPax <= 0) totalPax = parseInt(document.getElementById('nbPax').value) || 100;
 
             const payload = {
-                title: document.getElementById('nbTitle').value.trim() || 'Tiệc Sự Kiện Mới',
+                title: document.getElementById('nbTitle').value.trim() || 'Tiệc MerPerle',
                 event_date: document.getElementById('nbEventDate').value,
                 time_in: rooms[0].time_in,
                 time_out: rooms[0].time_out,
@@ -4191,6 +4150,9 @@ Người giữ sảnh: ${currentUser.full_name} (${currentUser.username})`);
             e.preventDefault();
             if (!currentActiveBookingId) return;
 
+            const cUser = (typeof currentUser !== 'undefined' && currentUser && currentUser.username) ? currentUser.username : (localStorage.getItem('ems_username') || '');
+            const cUserFull = (typeof currentUser !== 'undefined' && currentUser && currentUser.full_name) ? currentUser.full_name : '';
+
             const payload = {
                 title: document.getElementById('ebTitle').value.trim(),
                 event_date: document.getElementById('ebEventDate').value,
@@ -4205,7 +4167,9 @@ Người giữ sảnh: ${currentUser.full_name} (${currentUser.username})`);
                 guest_phone: document.getElementById('ebGuestPhone').value.trim(),
                 guest_email: document.getElementById('ebGuestEmail').value.trim(),
                 guest_address: document.getElementById('ebGuestAddress').value.trim(),
-                notes: document.getElementById('ebNotes').value
+                notes: document.getElementById('ebNotes').value,
+                current_user: cUser,
+                current_user_full: cUserFull
             };
 
             try {
@@ -4220,13 +4184,13 @@ Người giữ sảnh: ${currentUser.full_name} (${currentUser.username})`);
                     return;
                 }
 
-                alert(`CẬP NHẬT THÀNH CÔNG!
-Đơn tiệc: ${currentActiveBookingId}`);
+                alert(`CẬP NHẬT THÀNH CÔNG!\nĐơn tiệc: ${currentActiveBookingId}`);
                 closeModal('editBookingModal');
                 loadSchedulerData();
-            initScrollListeners();
-            loadCancelReasons();
+                initScrollListeners();
+                loadCancelReasons();
                 loadBookingsList();
+                if (typeof loadAuditLogs === 'function') loadAuditLogs();
             } catch (err) {
                 alert('Lỗi kết nối khi cập nhật đơn tiệc!');
             }
@@ -4562,11 +4526,14 @@ Người giữ sảnh: ${currentUser.full_name} (${currentUser.username})`);
                         <!-- 13. THAO TÁC -->
                         <td class="px-2.5 py-2 text-center whitespace-nowrap pr-3">
                             <div class="flex items-center justify-center gap-1">
-                                <button onclick="openEditBookingModal('${b.book_id}')" class="px-2 py-1 bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 rounded text-xs font-semibold transition cursor-pointer">
+                                <button onclick="openEditBookingModal('${b.book_id}')" class="px-2 py-1 bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 rounded text-xs font-semibold transition cursor-pointer" title="Sửa thông tin đơn tiệc">
                                     Sửa
                                 </button>
-                                <button onclick="openBeoForBooking('${b.book_id}')" class="px-2 py-1 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded text-xs font-semibold transition cursor-pointer">
+                                <button onclick="openBeoForBooking('${b.book_id}')" class="px-2 py-1 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded text-xs font-semibold transition cursor-pointer" title="Soạn lệnh BEO">
                                     BEO
+                                </button>
+                                <button onclick="openDeleteBookingModal('${b.book_id}')" class="px-1.5 py-1 bg-rose-50 text-rose-700 hover:bg-rose-600 hover:text-white rounded text-xs font-semibold transition cursor-pointer" title="Xóa vĩnh viễn đơn tiệc test/nhầm lẫn">
+                                    Xóa
                                 </button>
                             </div>
                         </td>
@@ -5085,9 +5052,9 @@ Người giữ sảnh: ${currentUser.full_name} (${currentUser.username})`);
             const headerP1Html = `
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #111; padding-bottom: 3px; margin-bottom: 4px;">
                     <div style="width: 48%; display: flex; align-items: center; gap: 8px;">
-                        ${getHotelLogoHtml()}
+                        <img src="data:image/png;base64,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" onerror="this.src='/image1.png'" style="height: 44px; width: auto; object-fit: contain;" alt="Logo MerPerle" />
                         <div>
-                            <h2 style="margin: 0; font-size: 17px; font-weight: bold; color: #002060; font-family: 'Times New Roman', Times, serif; white-space: nowrap; line-height: 1.15;">${getHotelDisplayName()}</h2>
+                            <h2 style="margin: 0; font-size: 17px; font-weight: bold; color: #002060; font-family: 'Times New Roman', Times, serif; white-space: nowrap; line-height: 1.15;">MerPerle DaLat Hotel</h2>
                             <div style="font-size: 10.5px; color: #475569; font-style: italic;">Banquet Event Order</div>
                         </div>
                     </div>
@@ -5108,7 +5075,7 @@ Người giữ sảnh: ${currentUser.full_name} (${currentUser.username})`);
             const subHeaderFunc = (cur, tot) => `
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #111; padding-bottom: 2px; margin-bottom: 4px; font-family: 'Times New Roman', Times, serif;">
                     <div style="font-size: 12.5px; font-weight: bold; color: #002060;">
-                        ${getHotelDisplayName()} <span style="color: #475569; font-weight: normal; font-size: 11.5px;">| BANQUET EVENT ORDER (Trang ${cur}/${tot})</span>
+                        MerPerle DaLat Hotel <span style="color: #475569; font-weight: normal; font-size: 11.5px;">| BANQUET EVENT ORDER (Trang ${cur}/${tot})</span>
                     </div>
                     <div style="font-size: 11.5px; color: #222;">
                         <span>Số E.O: <b>${b.master_eo || ''}</b></span>
@@ -5815,9 +5782,9 @@ Người giữ sảnh: ${currentUser.full_name} (${currentUser.username})`);
                     <!-- HEADER: LOGO / THƯƠNG HIỆU & TIÊU ĐỀ BEO -->
                     <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; padding-bottom: 3px;">
                         <div style="width: 45%; display: flex; align-items: center; gap: 8px;">
-                            ${getHotelLogoHtml()}
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIUAAACOCAYAAAFoGvtpAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAIdUAACHVAQSctJ0AABpkSURBVHhe7V0JlCRJWZ7dVQ4VFli5ZNlZerq7IqJhAQeWmdmezs6I6sqImkXw4YCiosslhwKCeIIgoFwKynuAPsXn8bjxwAfI9UCE5VBARVHuU25BrlUQQd+fVX/WX19HXlXV1T1Nfu99nZn/GRmVXUdmxB9HjtSgP9z4Pzc0f4HymUEBUVaJMocy+RRyo+NHvjMqbwtykiRZOuydom0SendA+ymgswzC+9vePBv9ppAG/YmYIwYsRcy4Sob+OdABHdEG/QtgAAxU6RwDObig70HbNDPvRf0BBZzrefTH+Y3fTJK122EfnM7UzaV9mukfl/opyM6UW6lH2QGDHeqX5NtgPivl1Gwb9L8lydHr0LHz5q1SXwl6R5v5vGd2ZJQFKJNXIubk/ZFrx+RTSIbmdrS1YePztOVrodU14bz5GemAQRoHQ4dYQPQpUOaAdMH8eWkgzFQXEP0LbG5eckMMFCP6lQIDof6AQjZbbtGG5dteJSx3Qb10yqDpuTexOWCgJqdDfVQ2varPWsN6876qQKRzQb0f5QsDJh8fXyBE55fYLAbUA7wvA9OHp83UfQu7YJ552+ToDWK2C+khd2ZthbYcePPMJTdkHV/iTOnHetpau3YL1LWCG+qP0zaWEGVVOpLxp8fMwKA5s16WJEdvgPJS+0hvNQY522CexfvImDwmk41o3SAMVJbEBf2NKn1MxvJGQEcMIvbzf1lkkxgzw4WNd2Mw3MfrxmXrd8E4ewYX1IvnPssDB3zt2pxhW79Km/z1DPo98pi2SXL0ZiiLbeWJ4Jb302DeWaYvPgJQKY2sV18v01UdHxe3KbBRKDs3QD/dbDCfkDI8C+vNN1FHP+ukzdywmfoCBz85WFf94ehd9FR2aW/Vr1479b170/G2145sZJe7sPEVF9RX6NiYI9dyQX0Awi8WlJSJuj1FVdIq3UJAwfk/pw7Om/9aeGMwYOyMy2TyeC44py7i/brA/eHoosz3+ysXTmtnhEx6emf9VjE5HlfZtcbWQO3wfttg0t7u9O48rW2BWGKXmYezDkly+UbGiMVpDHamrfPqU3Tzgo9jdMF8uMxfylsBk8hgKC/TuWC+tfBGcECUVclZNxMwUF2yMjnrZgYGq0pG3ylQNnMD0BmDEu1Q/zEmQhuMEfvPiYIvpFgQlFcdl/naTD+N5aXAQGXB8NgN1JWoRxvUlQIdpKPN1PejPEayLbs+WF8LdGKmwVyVZvqbKJc+tE/frtCGuXr5ja6P+SqBAZBsY4N6I23d+GtfjBh7JmDQPLnf+Drvu6D+EfUYY2G4+MTF18VkS0lchr7Xn6Z/aZR3OPchL6jtnZUr2lxgbNvEJw3qXpV2/aF5xWR/+m33yNnRLWgXNu6WBvPmXXqx3dlZuUka9GdYTz7j3fxxbcy3gPwXw60L5h3S7vjxm39XxO+8WILSbdbLB2xMNaQqgATKYn4SKKNjG8xbpCyKWRthjLkW76de/Szq5TFvbTCflPoOBxP4ujFsUM+QxxJJ1rt0l/3QvEseo74SshF20Hv55CJSz3De/HssGDaC9quOaxFzTgbrygb9srJg9CiL5S7rPcT6ka315n/TTF3jgv61mN9SYXfWfphPoA3pJh3GOifBJ+SGGw9CXRu4MxsP5FjHr5x8ahx4cKNpoATqGNbrx+EVIGmDfiL6MI73Vy5kO9QdGFQ1kHWJX70YdVUg+yZxUb6voAa5oP8nJk9TfRTlDJeZj0xfEeZFaMO4om8uiZ043XGOyfcFeUcMzPN3ybz5spSxPEnM96A8hjToJ8V+Z9GjGTx5GoGKsqUjdpnS8YkTF18XZfKYYTN9jbwy3FDHHtmcj51CQwkxZqwtSwUmd0G9jZ5nSZm0SQbHVuXJ17EsDsEG/VnnzdulDG2WBhzFlAbzNTwZPKntTD8ddVUskolXHpkMzKq0Wci4oLZIg/oYNqyM6WA0RJ2Auiq28Ul97zW0pa/HRSOXCWxQFdv6XO5XixuRqKti0bhlI/HqYdiYKrIfymNsYxvzWwooIc7IwKcHZUyzXo9jVHHL6ds3sZOU7dlzYHKii3xy1LGJLelpdATKY5T5rb3VTVGPNnMDg8fYxr7KJsnW+lV6GaNpPrSfCxi4isItOtiPbeiLGcpZhzLUM1BXRek3FzBwEybJjfOv3dbrP0MdMRbXef1Al+mHoJztCXRHGXVNKM9nYcAkdbSZflOZnw36LfI4Znd6sHZ5TF7HpkOGFg4beo/AxsRItmXHPFqUab15GdqXEdtzIIGNlo1HmQ3qM/k2fz463TGFzbiDDg2cVw/ik6NBrHQfBE+aiH4dOnQ4UMgf0Jb9r+7V/zLd9se4eLwvKDth6/U1Ui91i0Asbkw2K2aKxQ7gfB7f3o8FRRnt22z6RjDb0Eem9eaf62LYoF9Jx9vBPJ3120Hn+3wM0/JymRvqR7qwkT86xDbJ463+moZ8X8U2FZ3B+xik7JhuuzHp2yYGRj9ElT6WI2YfkzGkzgb107RPHVIZUx5Yv2owODqkwfwH2hDoZ7Q8Rj9Elb5Mh7IyOwLqaD/NzBOmrfKOemphjE6FkTfRcYSFfjy7g2jDxvOkDv2wUTFKf4bUnzrVux7LabQO+jvfezLp6Asd6tiPxszH5B06zAm+z0D3O10wL6q6vPj2W9XwmhhSr39rdKnrLyRZb3uey9gF87ez+jZCfoLjKiJ8jFsbRpPAZWegHe5LkJyGAPE+T2Gj7zsuqCfQe5jLRmWUZAzSn9xZufVYtmso4cIhO8N6fbU8SZoKN2r8qNRK0844PTh2S5axPNYZbL+6OilPwtvUq/vHTjwmO3DYHuq72KH5JDVWkmRJ0HdF+0OFps9VJPHJ+zkNeWKpV7+I+jLYTD9U+qL+nMEiT2KRsZaKvWr0XsXdEzRpbNW4DdKhvUST+PuOqkZSUTrWb3vzE6hnpANzT7YrG2BSlWffUda4E4OLbzQ6Kf0N1NWBi59QDNSV5dtXlDXK+o2PxuRtkXdkZMRNWd59gRuaV8caU9fI2EA2vM8hURZv3EnNiwPuFfIT8PpqKduuqEhXdkKMKj3JU6/+WspsMK8ts18a7GA09xLlMZnzq7ePyctQZhuT51dFUO9G+dKQXw2RmpZ0z1DKbKYfQPNEpawJKBYOmE3T1WPYGWmmP4iypSKWPCaLjRF3mX4k2Uqm6Wj8lkQsXlPZUsCNR9mWX80HmUmZPKaf8tgByE2n1qUPxtgMah1lsfYsBbHEeEzzNq3v/ZDUN+fke8euuBFZrD1LASWlcoQoSzP9KCq61488Cth9stWUvi7ov9rK1MlkZ1QWdpd+2HsyypYCSspjruRzViT6tCH70Z0s1KENx5fHSwEnpYGt2Dik9GlKKqvU1A/btFRwUmxUjOzDT86aEHPVUbZpqcCGVHEWP7Z3Ybp2SR1lrqUAG1BFOQQadWVsa49+SwM2oI5t/drao99SgY2oYhufk+ml+axEG8zjUVfFqcYtG9iYMtIjPbJPBusedci2saXPUnCq3/u+WFJsVBmb2je1Y5qzkxIWBFn6fOHA5KC+APUxsjHKkWTD80rrmI7/jRhc1pHjLBSYPJbI+vXLUI9Mg/pqVTzi9o6+U51NEW84vXwH6ok0sUbazAUMLintaGAY6pFkl/rR/YMYm+QkOq9+W+ZGfSzmXEi9yZ82VzFJjnwH2/dF2e0YC7uIjvV807eM27BeDeqR0nZmcDmTOlpvHsM+qJuyG+i/qbKp0uX+osTS6YG5HPUxpkF/iH1mhvX6XzFwGakaJ/uhTrJMn3o1KNNJ31G7VOVVI5lCreWZQLfPMHAd2RflUo+yKrnU19nEKAe1zgUM3IRVvlS1ZDtTD0Z5mX1dvDqy79zAwE1Z5R+Tx2R1cZqQ/ReGflD3wyR1LHwjcnnsgnkC2rBd2VTLKlqvflC2fc/gso1PYfIykj1VMJluqP4NtIn58fDDJqTRd9jOpQIbFCPd33RD+MElvnPIJaWITeM6bz6C7dl38BCAMtKAUuf16/h4c3P1xmhDpFgoQ2LuAws77P0UNj7nQP0d76eD3lW05bkefIK7fCa6fEDpOQsb1PvxpCQ37WTKBOqSK9e/F+MdCvAJ4rjLZGe0WGS+H9SV6HeYkd/DoNG2qTcfogHlaNChQ4cOHTocYMjPc9Tt7Nz0JkJ3PurnAcfd8ut3pOM7ZUfzasZ2qJ6LtkvBKLl+VawjqjppXsTi0hQolM2KWPxKsHHeIbBQyrI7guUumP9GeVv0vf65WPxSyI6Qjs6rfBQ9yiXsUN9n1HD1u1JOa6lT2SWemZdm63fHGLG4Llvr5/EG5g8mMpXf+zi5s3KTKVunLnJu9fa0njsdW6+f6/xkPGdZR+zs3PS7Y7mLjvB+9fq0v+V6t5HyqNNYTkFpn+dsSj2V0icZ3zzFOHiMsjSYP62zl1O52Wa7vz5adC/SEbmt1x+Ux3RroDiYMiwa0nsNymJ2UkYV0lEmG0lTI1EnaQfqF6Se30ilTB67ofrD3C9TD0Y9doQLKr8RxMe5jTyPKWdukNevRBkfs4wKC1eWJxjb4TBiRsyeQUObSSfjcw4nJulzR0x7j4AdwfkwXmGDgbCBeMwyFzbeJmUxoJ9ELC6jSicxS0dMWwmgko6tV4+XxzEblBGs140LAJfFIHCphLqy1YvoCBd6o9VZUOmyyXIwhFiAftC/h7I06D+SxwS0kYjFlYjp8bhNR+Sy0YtcvA+xrEgWS8pGSNbhCmFN/ZroGTbrPaDMBv2lHuVUByemS4O5ZxGwQ4cOHTosCHY4qvLlvPl12m5la6fRhkGLCeA7PMJm+u9Rxs866Em2C/rj43zPRjuGDeo5KGPkcYajcrULhTuztoIfT9MW06jVR6ZI22DyFZ1onwao1cao0C+1I/jYDs2XWCb1uV8wH6YZOFiXpm1HSN/c1m/cuUq/Lx1BCw66oO+BetomO+rWNEiM/hVm7QiZKz/BYF4mOyIdDyxjfWG3rI5I/OqJNOu9ABsh92lLYxjccFQnl2XUEZt+9cZsT2jaETQtWnYEzQKWudluTzoiHepHTRKb9/CkVhdUvg5uOjh2PE8e1Oflqo8jmc5/Uud2mb6Ghvvl8mx6KSxe/ob2uc4c62Q82t42OXqD8X5+Q5nl1qsX8nHqNz7K/t/WsJn+5X4wX+QXYRGkF57iYq4OBw/nu6x6tLQbmg+noTfTj03yI3+MKZn6fIDvQh/9dGgJuhWELwzR+kmJwWWAHiRgG0bt6P0J2nbYA9igXoqdT7Po0W4/gUtMjC/U4tFAh0Xg7O5JdKnX+eO+eUC/hdxAXWm9+lUbzLPoMSX96u179RiSY93NWbAdWWdVznzqMAOwQ9sOxOV1mqtIy586r19tg3mO9eYv3VB9AG2QFBdz1WBXuQ006FAD2Xn4mLkKNuinYef3B+YqtJsH9ow5iznaTJ5yQU2tV4P6DgD6T4UOq31nsFnvidLHBh3QZi+RZDof7TLJr56KNjFIH6xF12EMOYrf+vXiCX0ZuAYmke6KoX4/kGbqRybnUP8Olwb1S8U5HKZK0IuA/K9BHULejNo8c8kNUV+G014NZJ78hfDmy2nQr3fBPL+gN2+nF1Ta0Q18a9dugTHLIKeuxVYyR7Q5/28LNO0QGgdYvEi+dxb1MfCLS+8qcpXjWWAHa8V0fbq1jfoY7M56YJ90oI6jXqJpPxx6NO0IWnahiR0hCTofgsPrc+0RilVkj/dXLkQlounF1LQ/Di1kB9ADHdQzig4Vhf5i4IWLqLQL6vYSTV9E5ycLPqGOcdllk+HTVXaHEncUK0+5YF6OegaPWY+V1pVw3nyuSSfasHsNlCasu1m25UaFoHmsfxno3YvssK6yhPWjJZHyvNmlu0oFH1rIDkcd47KySQcALtWFcga+wPPSZuofMAcj1wf1OyiX4DixlQMYMh/qDi34hKtKobNNOuidQh3D+YqxypEXdJGMTUc6YddukeuvXLkEdYwkGa27RUQdIw3mnXU2hwr584XxCW/trEdvNMUWPawi+hPa1OOdhbSeGOYkoF0V0ZexNVA7bGOHen9mSC4Tbjgacomdcqfx8oGzMA3qXjIWA+0WScxFsMF8Ce2aMLYmQ6GLrMly6BC7KLCTZuF0lhHQZlG0Xv8K5qL7IGjXlnY4WceqkIUNGtJ3uCE/L603L8SOmYeYa9ObvPrPool5CGgzD+/o1EW8X7a216FCkhy9DnbCosi1NCXQZl5SPT7MQV860W5R3B6O6gcfeuCJL5KYywbzFLSZhxjfBfVwtFkkMd+hxZZTJ/HkF8U0qKK8MANtZuV2ZD4S2iyamO/Qw43Xy1s0T8O9jTSoj6HNLJQxCahfJJuMJTnUkAsILIqQoniANSvpApYBbdh4HtosgjLHoUM/UrXe+d6Pop0E2s9DfL6A+raUsWixB9TPy6TioSABfrU9BfUHGniyMTqvPo1+jNsmF+ZT4BZBrq9E2OqvrKG+KWM1VxbF7Z21yl8XaI/c3LzZ1LzLAwVaSAcbXEeqr4RxGInXP4b2s1DGRF1Tyhj85HZe0lA8GVeCZqShfR0xxoEANrItMR6jrjx1HWkIP8dy4+prbei8Lt7VttytitFfs9KG8olBtCwY2rchxttXyM+7ebndjy/dZb36Oto2pZzjibo6yjagrg3LVtW5/PL5b48zY1W19g1Nl0JqxXEpQsQuu4Zkf+snQ/uacOI320VZNmLMZfqxaDsv01Hpg4MBG9SzsIGLIpZzzTHDt/80My9gd9SVkWrmkz1NI0RdHcuG7MvinosmjWXFfPsKbOBeENf9SyOr3VeR/VFexnGaXVP+6ijbSKDpAWizF8S8+w4aR4mN3Csmg2OrMjfVhkCbMpK9Mab2nYY+68kW5VXEycMuM29Am71ik8lH+wYqDL3Xo56YbtArClMTUB+j9fpxTWzJxvpRraU60gAh0YzW7yyzkgYi08Qjkfucwnm0Iiqe1KLovP5PTmTO1n/fIDuuSxUjD6pFOXI7U2c4rwtqHfWLZDpQ9+NchxqL/DlGlF/uDCzPJ5lmOn+rRTmzSpdzYJ7JedLMvHeXfg5ab97HsTsIUFU37Ky2TIejVbt5VQykDfqhtOYiymlSUerNm1Gexwz69eMmzv0R4TLzOVrIe/rMO7TCltf5hJu2pIuC/FO/+3sOyVEm56wynd/IV1eWs8rbcDvrPQTPp8MeIg06+l+NpFlkZC/vE9ANKec33sbHuNYnf6O3XuUzu+rogvkXbF+HA4LtrJel2XQ5AUleyJFI4zpRT6z62Uqx7aCXYt4O5x4ukLPXc3rtaEs1JNyZjXz5Il4Fo7gAgn4SBupwyLE96N2N6lBRsZKjydHroL5Dhw4dOnTo0KFDhw6LAv4GR6J9GdAPifb7BWxXEzpvXo1xvm2AnTHukNo6kDRkH/2IaHfQ0LC9UwXj02GvGMG1H0gGq6WjwNB2IRDBpzrCZebhaMugu4fcoKU0coFo2t7V1SPXlnb0ZBRt9gNpNlq2qq79c0EGTzNTlAiuSki6U2kvr+LWtJMPCtq0V9qVDcZdNvDuK+oXAgzOC6WhnJHLs+kV46vsES7ofyrsg/mi8/pqXsuc6IbxQmlklwaVr4SJ+dJgvkaDbmgtZTs0P0lyWtMDYxBi/jFU2VlRnypvs9dXu2DeIWWxNd2pZqas6lP4D/Ujee6r8/p1ZNsPOi89jTGaXhS7quwE805aEnEqb9lyFbHg0lGW37FePazKFnUScjxnMli/K+oJMs7WYKP04RPm5MG5XFuTSBcK+hHQV+qouAoWI6GlIwq9VyfKfBnpoHfvwjcrrwBsM/MutnPD0cpCrJvKD0vANrko6vR0wUqbU6cuut6UQdQZhtMnQd1XLqsoIe1iekIaRmvdVtkQ0mBe08RO2ohBMI3QpL0x0HA96UffOdCGIe3k8D0JXqa+bTvqLgqpS/rrm6hnSLtdcaLC0RV/FTrSel5ohzaoJ0zFGJovOW/e0IQYh1GXrwpN2hsD+mFbSxnMozEWYS8uCvoYgza+dVd7SijjlF4UhFQsqVA20UU2oiyO1NugPo76tqjLV4Um7Y2BF5ht61eGvbko1P2lLs2ObUh9Y8SCSzTVt7GjwSyolyAb66tLH9flK0PT9sYg/Wj0F+ol0sz8QFX8vbgoCDboqVrkqEeQjfWijPQV/ZVL2NlmvQdMWTfAxfCFhUil/9CO4XzvyWxH4xmkLv9mPq56X7VOB/5Or5rRjcB7D8RNt7aCdlXAb/VuYKaKsvDaqVQaUsoR9EVYxjk51Pmg4zrQstnSD/UMaZMG9Uap2wq92/AoNSnv0KFDhw4dOnTo0OHgg35illGWGZoFNNWfOI6VFxTZK2DbiZT77NkjF6B83J6lQPYBlj440HBn1lb4J5Ad6pdIXfHzKKjaBWljKOKOpwPOgn7QpVX5JGwwr+V8Sda7lOX0YkzaMXv1mFl/Boq+fRPqDiwqL4ps/e6sc5l5hdRZrz5a+Hl9TZqt313qCWUXhRvq35eLzOLsbbnILd2Rpap3xCsyXXqnz4ZJfYo2FwW1m2tk0a38NF09xjpqF/vmbRm3g+6SFv5BPbpYU9XrL+B8lCL3YbkoCLJTUMYLrEw6PV45V14UGI+Wucb4U3bN3ylqi5bIi0JOgmaZXPGIFsvL4/qNO6Md4fTg2C1RziWqaZY6y4rch+Wi2Dqji8q3zqt8Nnfuk00q+7ug71H4N7goCDTDK9cF9W653IK0YdksF0WTd4oiflnesbzsopB2Lmy8FIl2h+aimJz05NY2dpqU0UVBF4z1+j7T8tFFQYNSWJaEW99hJNsobn+zz1Se8UVBC6y4ofGcE9H2otgSF3YRQ7xTnDgxqpATuyhoNrxcrxVXRpa2Re5z5aKwwXyinOqNzql19CHIUVguqBeTjMsG2GDeQjWsd8cbfQ7bYB4hXqTP0AAZG/Sr8mNvvil/HVgxnqNqCUzMQ6SRULTmB8q5HYVvpn9+ksN8q5/1MqknUCy2kS84IQ1maqiC86ZY2RDzYu5F4P8BfSL+WW03k/wAAAAASUVORK5CYII=" onerror="this.src='/image1.png'" style="height: 44px; width: auto; object-fit: contain;" alt="Logo MerPerle" />
                             <div>
-                                <h2 style="margin: 0; font-size: 19px; font-weight: bold; color: #002060; font-family: 'Times New Roman', Times, serif; white-space: nowrap; line-height: 1.2;">${getHotelDisplayName()}</h2>
+                                <h2 style="margin: 0; font-size: 19px; font-weight: bold; color: #002060; font-family: 'Times New Roman', Times, serif; white-space: nowrap; line-height: 1.2;">MerPerle DaLat Hotel</h2>
                                 <div style="font-size: 11.5px; color: #475569; font-style: italic;">Banquet Event Order</div>
                             </div>
                         </div>
@@ -6931,7 +6898,7 @@ async function loadBeoData(bookId, targetDate = null) {
                         <!-- HEADER -->
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
                             <div style="width: 28%;">
-                                <h2 style="margin: 0; font-size: 13px; font-weight: bold; color: #1e3a8a;">${getHotelDisplayName()}</h2>
+                                <h2 style="margin: 0; font-size: 13px; font-weight: bold; color: #1e3a8a;">MerPerle DaLat Hotel</h2>
                             </div>
                             <div style="width: 40%; text-align: center;">
                                 <h1 style="margin: 0; font-size: 14.5px; font-weight: bold; color: #dc2626; letter-spacing: 0.5px;">${b.eo_title || 'PHIẾU ĐẶT SỰ KIỆN'}</h1>
@@ -7049,7 +7016,7 @@ async function loadBeoData(bookId, targetDate = null) {
                                         <div style="width: 85px; background-color: #E2E8F0; font-weight: bold; padding: 2px 3.5px; border-right: 1px solid #111; font-size: 8.5px;">
                                             NHÀ HÀNG
                                         </div>
-                                        <div style="padding: 2px 4px; font-size: 8.5px; flex: 1; white-space: pre-wrap;">${dNotes['001'] || 'Theo thực đơn và tiêu chuẩn phục vụ tiệc'}</div>
+                                        <div style="padding: 2px 4px; font-size: 8.5px; flex: 1; white-space: pre-wrap;">${dNotes['001'] || 'Theo thực đơn và tiêu chuẩn phục vụ MerPerle'}</div>
                                     </div>
                                     <div style="display: flex; border-bottom: 1px solid #111;">
                                         <div style="width: 85px; background-color: #E2E8F0; font-weight: bold; padding: 2px 3.5px; border-right: 1px solid #111; font-size: 8.5px;">
@@ -7150,7 +7117,7 @@ async function loadBeoData(bookId, targetDate = null) {
                     <div class="beo-page beo-page-multipage" style="width: 100%; max-width: 196mm; margin: 0 auto; padding: 3mm 4mm; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; font-size: 10px; color: #000; line-height: 1.25;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
                             <div style="width: 28%;">
-                                <h2 style="margin: 0; font-size: 13.5px; font-weight: bold; color: #1e3a8a;">${getHotelDisplayName()}</h2>
+                                <h2 style="margin: 0; font-size: 13.5px; font-weight: bold; color: #1e3a8a;">MerPerle DaLat Hotel</h2>
                             </div>
                             <div style="width: 40%; text-align: center;">
                                 <h1 style="margin: 0; font-size: 15px; font-weight: bold; color: #dc2626; letter-spacing: 0.5px;">PHIẾU ĐẶT SỰ KIỆN</h1>
@@ -7255,7 +7222,7 @@ async function loadBeoData(bookId, targetDate = null) {
                                         <div style="width: 90px; background-color: #E2E8F0; font-weight: bold; padding: 3px 4px; border-right: 1px solid #111; font-size: 9px;">
                                             NHÀ HÀNG
                                         </div>
-                                        <div style="padding: 3px 5px; font-size: 9px; flex: 1; white-space: pre-wrap;">${dNotes['001'] || 'Theo thực đơn và tiêu chuẩn phục vụ tiệc'}</div>
+                                        <div style="padding: 3px 5px; font-size: 9px; flex: 1; white-space: pre-wrap;">${dNotes['001'] || 'Theo thực đơn và tiêu chuẩn phục vụ MerPerle'}</div>
                                     </div>
                                     <div style="display: flex;">
                                         <div style="width: 90px; background-color: #E2E8F0; font-weight: bold; padding: 3px 4px; border-right: 1px solid #111; font-size: 9px;">
@@ -7322,7 +7289,7 @@ async function loadBeoData(bookId, targetDate = null) {
                     <div class="beo-page beo-page-multipage" style="width: 100%; max-width: 196mm; margin: 0 auto; padding: 3mm 4mm; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; font-size: 10px; color: #000; line-height: 1.25;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
                             <div style="width: 28%;">
-                                <h2 style="margin: 0; font-size: 13.5px; font-weight: bold; color: #1e3a8a;">${getHotelDisplayName()}</h2>
+                                <h2 style="margin: 0; font-size: 13.5px; font-weight: bold; color: #1e3a8a;">MerPerle DaLat Hotel</h2>
                             </div>
                             <div style="width: 40%; text-align: center;">
                                 <h1 style="margin: 0; font-size: 15px; font-weight: bold; color: #dc2626; letter-spacing: 0.5px;">PHIẾU ĐẶT SỰ KIỆN</h1>
@@ -7861,22 +7828,84 @@ async function loadBeoData(bookId, targetDate = null) {
             const reasonName = reasonObj ? reasonObj.name : '';
             const note = document.getElementById('txtCancelNote').value.trim();
 
+            const cUser = (typeof currentUser !== 'undefined' && currentUser && currentUser.username) ? currentUser.username : (localStorage.getItem('ems_username') || '');
+            const cUserFull = (typeof currentUser !== 'undefined' && currentUser && currentUser.full_name) ? currentUser.full_name : '';
+
             try {
                 const res = await fetch(`/api/bookings/${currentActiveBookingId}/cancel`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ reason_code: reasonCode, reason_name: reasonName, note: note })
+                    body: JSON.stringify({ 
+                        reason_code: reasonCode, 
+                        reason_name: reasonName, 
+                        note: note,
+                        current_user: cUser,
+                        current_user_full: cUserFull
+                    })
                 });
                 const data = await res.json();
                 alert(data.message || 'Đã hủy đơn tiệc!');
                 closeModal('cancelBookingModal');
                 closeModal('editBookingModal');
                 loadSchedulerData();
-            initScrollListeners();
-            loadCancelReasons();
+                initScrollListeners();
+                loadCancelReasons();
                 loadBookingsList();
+                if (typeof loadAuditLogs === 'function') loadAuditLogs();
             } catch (err) {
                 alert('Lỗi hủy đơn tiệc!');
+            }
+        }
+
+        // -------------------------------------------------------------
+        // DELETE BOOKING (XÓA VĨNH VIỄN ĐƠN TIỆC TEST / RÁC)
+        // -------------------------------------------------------------
+        function openDeleteBookingModal(bookId, title) {
+            currentActiveBookingId = bookId;
+            const lbl = document.getElementById('lblDeleteBookId');
+            if (lbl) lbl.textContent = `Mã đơn tiệc: ${bookId}${title ? ' - ' + title : ''}`;
+            const txt = document.getElementById('txtDeleteReason');
+            if (txt) txt.value = 'Xóa đơn tiệc test / nhầm lẫn';
+            const modal = document.getElementById('deleteBookingModal');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function confirmDeleteCurrentBooking() {
+            if (!currentActiveBookingId) return;
+            openDeleteBookingModal(currentActiveBookingId, document.getElementById('ebTitle') ? document.getElementById('ebTitle').value : '');
+        }
+
+        async function submitDeleteBooking() {
+            if (!currentActiveBookingId) return;
+            const reason = document.getElementById('txtDeleteReason') ? document.getElementById('txtDeleteReason').value.trim() : 'Xóa đơn tiệc';
+            const cUser = (typeof currentUser !== 'undefined' && currentUser && currentUser.username) ? currentUser.username : (localStorage.getItem('ems_username') || '');
+            const cUserFull = (typeof currentUser !== 'undefined' && currentUser && currentUser.full_name) ? currentUser.full_name : '';
+
+            try {
+                const res = await fetch(`/api/bookings/${currentActiveBookingId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        current_user: cUser,
+                        current_user_full: cUserFull,
+                        reason: reason
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    alert(data.detail || 'Lỗi khi xóa đơn tiệc!');
+                    return;
+                }
+                alert(data.message || 'Đã xóa vĩnh viễn đơn tiệc thành công!');
+                closeModal('deleteBookingModal');
+                closeModal('editBookingModal');
+                loadSchedulerData();
+                initScrollListeners();
+                loadCancelReasons();
+                loadBookingsList();
+                if (typeof loadAuditLogs === 'function') loadAuditLogs();
+            } catch (err) {
+                alert('Lỗi kết nối khi xóa đơn tiệc!');
             }
         }
 
@@ -7965,18 +7994,29 @@ async function loadBeoData(bookId, targetDate = null) {
 
                 data.forEach(log => {
                     let actionBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">Khác</span>';
-                    if (log.action_type === 'LOGIN') {
-                        actionBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700">Đăng Nhập</span>';
-                    } else if (log.action_type === 'CREATE_BOOKING') {
-                        actionBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700">Tạo Tiệc Mới</span>';
-                    } else if (log.action_type === 'UPDATE_BOOKING') {
-                        actionBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700">Chỉnh Sửa</span>';
-                    } else if (log.action_type === 'CANCEL_BOOKING') {
-                        actionBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700">Hủy Tiệc</span>';
-                    } else if (log.action_type === 'CONFIRM_BOOKING') {
-                        actionBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700">Khóa Chốt</span>';
-                    } else if (log.action_type === 'SAVE_BEO') {
-                        actionBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700">Lập BEO</span>';
+                    const act = (log.action_type || '').toUpperCase();
+                    if (act === 'LOGIN') {
+                        actionBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">Đăng Nhập</span>';
+                    } else if (act === 'CREATE_BOOKING') {
+                        actionBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200">Tạo Tiệc Mới</span>';
+                    } else if (act === 'UPDATE_BOOKING') {
+                        actionBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">Sửa Đơn Tiệc</span>';
+                    } else if (act === 'MOVE_BOOKING') {
+                        actionBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-violet-100 text-violet-700 border border-violet-200">Dời Sảnh/Ngày</span>';
+                    } else if (act === 'CANCEL_BOOKING') {
+                        actionBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700 border border-rose-200">Hủy Tiệc</span>';
+                    } else if (act === 'DELETE_BOOKING') {
+                        actionBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-red-600 text-white shadow-xs">Xóa Đơn Tiệc</span>';
+                    } else if (act === 'CONFIRM_BOOKING') {
+                        actionBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">Khóa Chốt</span>';
+                    } else if (act === 'SAVE_BEO') {
+                        actionBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200">Lập BEO</span>';
+                    } else if (act === 'EXTEND_CUTOFF') {
+                        actionBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-300">Gia Hạn Cutoff</span>';
+                    } else if (act.endsWith('_ITEM')) {
+                        actionBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-100 text-teal-800 border border-teal-200">${act === 'CREATE_ITEM' ? 'Tạo Item' : (act === 'DELETE_ITEM' ? 'Xóa Item' : 'Sửa Item')}</span>`;
+                    } else if (act.includes('CUSTOMER') || act.includes('KHÁCH HÀNG')) {
+                        actionBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800 border border-sky-200">${act.includes('MERGE') ? 'Gộp CRM' : (act.includes('CREATE') || act.includes('TẠO') ? 'Tạo CRM' : 'Sửa CRM')}</span>`;
                     }
 
                     const tr = document.createElement('tr');
@@ -7984,8 +8024,8 @@ async function loadBeoData(bookId, targetDate = null) {
                     tr.innerHTML = `
                         <td class="p-3 font-mono text-[11px] text-slate-600">${log.timestamp}</td>
                         <td class="p-3">
-                            <span class="font-bold text-slate-800">${log.user_full_name || log.user_name}</span>
-                            <span class="text-[10px] font-mono text-slate-400 block">${log.user_name}</span>
+                            <span class="font-bold text-slate-800">${log.user_full_name || log.user_name || 'Hệ Thống'}</span>
+                            <span class="text-[10px] font-mono text-slate-400 block">${log.user_name || '-'}</span>
                         </td>
                         <td class="p-3 text-center">${actionBadge}</td>
                         <td class="p-3 font-mono font-bold text-blue-600">${log.book_id || '-'}</td>
@@ -9509,8 +9549,42 @@ function scrollWebBookingsTable(dir) {
             <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
                 <button type="button" onclick="closeModal('cancelBookingModal')" class="px-3.5 py-1.5 border border-slate-200 text-slate-600 rounded-lg text-xs font-semibold hover:bg-slate-50">Đóng</button>
                 <button type="button" onclick="submitCancelBooking()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    <i data-lucide="ban" class="w-3.5 h-3.5"></i>
                     <span>Xác Nhận Hủy Tiệc</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE BOOKING MODAL (XÓA VĨNH VIỄN ĐƠN TIỆC TEST / RÁC) -->
+    <div id="deleteBookingModal" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl border border-red-200 max-w-md w-full p-6 space-y-4">
+            <div class="flex items-center gap-3 border-b border-red-100 pb-3">
+                <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center font-bold">
+                    <i data-lucide="alert-octagon" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-red-700">XÁC NHẬN XÓA VĨNH VIỄN ĐƠN TIỆC</h3>
+                    <p class="text-xs text-slate-500" id="lblDeleteBookId">Mã đơn: ...</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                    <p class="font-bold flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-4 h-4 text-red-600"></i> CẢNH BÁO BẢO MẬT & DỮ LIỆU:</p>
+                    <p class="mt-1 text-[11px] leading-relaxed">Hành động này sẽ <strong>xóa hoàn toàn</strong> đơn tiệc khỏi cơ sở dữ liệu, giải phóng sảnh và ghi vết vào Nhật ký kiểm toán (Audit Trail).</p>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Lý Do Xóa Đơn Tiệc *</label>
+                    <input type="text" id="txtDeleteReason" value="Xóa đơn tiệc test / nhầm lẫn" class="w-full p-2 border border-slate-300 rounded-lg font-semibold text-slate-800 focus:ring-2 focus:ring-red-500 text-xs" />
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <button type="button" onclick="closeModal('deleteBookingModal')" class="px-3.5 py-1.5 border border-slate-200 text-slate-600 rounded-lg text-xs font-semibold hover:bg-slate-50">Hủy Bỏ</button>
+                <button type="button" onclick="submitDeleteBooking()" class="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    <span>Xác Nhận Xóa Vĩnh Viễn</span>
                 </button>
             </div>
         </div>
@@ -10247,6 +10321,9 @@ function scrollWebBookingsTable(dir) {
                                 <button onclick="openCancelBookingModal('${b.book_id}', '${b.title}')" class="px-2 py-1 bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 rounded font-bold transition text-xs cursor-pointer shadow-2xs">
                                     Hủy sảnh
                                 </button>
+                                <button onclick="openDeleteBookingModal('${b.book_id}')" class="px-1.5 py-1 bg-red-50 hover:bg-red-600 hover:text-white text-red-700 rounded font-bold transition text-xs cursor-pointer shadow-2xs" title="Xóa vĩnh viễn đơn tiệc test/nhầm lẫn">
+                                    Xóa
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -10863,148 +10940,6 @@ function scrollWebBookingsTable(dir) {
             }
         }
 
-        function setBrandLogoPreview(url) {
-            const previewImg = document.getElementById('brandLogoPreviewImg');
-            const placeholder = document.getElementById('brandLogoPlaceholder');
-            const btnRemove = document.getElementById('btnRemoveBrandLogo');
-            if (!previewImg || !placeholder) return;
-            if (url && url.trim()) {
-                previewImg.src = url.trim();
-                previewImg.classList.remove('hidden');
-                placeholder.classList.add('hidden');
-                if (btnRemove) btnRemove.classList.remove('hidden');
-            } else {
-                previewImg.src = '';
-                previewImg.classList.add('hidden');
-                placeholder.classList.remove('hidden');
-                if (btnRemove) btnRemove.classList.add('hidden');
-            }
-        }
-
-        function handleBrandLogoFileUpload(input) {
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                if (file.size > 2 * 1024 * 1024) {
-                    alert('Kích thước ảnh logo không được vượt quá 2MB!');
-                    return;
-                }
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const dataUrl = e.target.result;
-                    const logoInput = document.getElementById('txtBrandLogoUrl');
-                    if (logoInput) logoInput.value = dataUrl;
-                    setBrandLogoPreview(dataUrl);
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function removeBrandLogo() {
-            const logoInput = document.getElementById('txtBrandLogoUrl');
-            if (logoInput) logoInput.value = '';
-            const fileInput = document.getElementById('brandLogoFileInput');
-            if (fileInput) fileInput.value = '';
-            setBrandLogoPreview('');
-        }
-
-        function updateBrandLogoPreviewFromUrl() {
-            const logoInput = document.getElementById('txtBrandLogoUrl');
-            const val = logoInput ? logoInput.value.trim() : '';
-            setBrandLogoPreview(val);
-        }
-
-        function openBrandingModal() {
-            document.getElementById('txtBrandHotelName').value = window.systemBranding.hotel_name || '';
-            document.getElementById('txtBrandHotelSubtitle').value = window.systemBranding.hotel_subtitle || '';
-            document.getElementById('txtBrandHotelPhone').value = window.systemBranding.hotel_phone || '';
-            document.getElementById('txtBrandHotelAddress').value = window.systemBranding.hotel_address || '';
-
-            const logoUrl = window.systemBranding.logo_url || '';
-            const logoInput = document.getElementById('txtBrandLogoUrl');
-            if (logoInput) logoInput.value = logoUrl;
-            setBrandLogoPreview(logoUrl);
-
-            document.getElementById('brandSuccessMsg').classList.add('hidden');
-            document.getElementById('brandErrorMsg').classList.add('hidden');
-            document.getElementById('modalBrandingConfig').classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        function closeBrandingModal() {
-            document.getElementById('modalBrandingConfig').classList.add('hidden');
-        }
-
-        async function submitBrandingConfig(e) {
-            e.preventDefault();
-            const errBox = document.getElementById('brandErrorMsg');
-            const succBox = document.getElementById('brandSuccessMsg');
-            errBox.classList.add('hidden');
-            succBox.classList.add('hidden');
-
-            const name = document.getElementById('txtBrandHotelName').value.trim();
-            const subtitle = document.getElementById('txtBrandHotelSubtitle').value.trim();
-            const phone = document.getElementById('txtBrandHotelPhone').value.trim();
-            const address = document.getElementById('txtBrandHotelAddress').value.trim();
-            const logoInput = document.getElementById('txtBrandLogoUrl');
-            const logoUrl = logoInput ? logoInput.value.trim() : '';
-
-            if (!name) {
-                errBox.textContent = 'Vui lòng nhập tên trung tâm tiệc cưới / khách sạn!';
-                errBox.classList.remove('hidden');
-                return;
-            }
-
-            const btn = document.getElementById('btnSubmitBranding');
-            btn.disabled = true;
-            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Đang lưu...';
-
-            try {
-                const res = await fetch('/api/system/branding', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        hotel_name: name,
-                        hotel_subtitle: subtitle,
-                        hotel_phone: phone,
-                        hotel_address: address,
-                        logo_url: logoUrl
-                    })
-                });
-                const data = await res.json();
-                if (!res.ok) {
-                    throw new Error(data.detail || 'Lưu thất bại');
-                }
-                window.systemBranding.hotel_name = name;
-                window.systemBranding.hotel_subtitle = subtitle;
-                window.systemBranding.hotel_phone = phone;
-                window.systemBranding.hotel_address = address;
-                window.systemBranding.logo_url = logoUrl;
-
-                const topTitle = document.getElementById('sidebarHotelTitle');
-                if (topTitle) topTitle.textContent = name;
-                const sideSub = document.getElementById('sidebarHotelSubtitle');
-                if (sideSub) sideSub.textContent = subtitle;
-                const modalTitle = document.getElementById('loginModalHotelTitle');
-                if (modalTitle) modalTitle.textContent = name;
-                const modalSub = document.getElementById('loginModalHotelSubtitle');
-                if (modalSub) modalSub.textContent = subtitle;
-                document.title = name + " - EMS Banquet Web";
-
-                succBox.textContent = 'Cập nhật thương hiệu thành công!';
-                succBox.classList.remove('hidden');
-                setTimeout(() => {
-                    closeBrandingModal();
-                }, 1000);
-            } catch (err) {
-                errBox.textContent = 'Lỗi: ' + (err.message || 'Không thể lưu cài đặt');
-                errBox.classList.remove('hidden');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> <span>Lưu Thương Hiệu</span>';
-                lucide.createIcons();
-            }
-        }
-
         function openChangePasswordModal() {
             if (!currentUser) {
                 openLoginModal();
@@ -11526,85 +11461,6 @@ setInterval(checkAppVersion, 180000);
                     <span>Lưu Phân Quyền Ngay</span>
                 </button>
             </div>
-        </div>
-    </div>
-
-    <!-- MODAL: CÀI ĐẶT THƯƠNG HIỆU & TÊN KHÁCH SẠN (WHITE-LABEL BRANDING) -->
-    <div id="modalBrandingConfig" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden transform transition-all">
-            <div class="px-5 py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-800 text-white flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-white">
-                        <i data-lucide="hotel" class="w-4 h-4 text-blue-200"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-bold">Cài Đặt Thương Hiệu Khách Sạn / Trung Tâm Tiệc</h3>
-                        <p class="text-[11px] text-blue-100">Đồng bộ tên riêng, slogan, địa chỉ & hotline trên toàn hệ thống</p>
-                    </div>
-                </div>
-                <button type="button" onclick="closeBrandingModal()" class="p-1.5 text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                </button>
-            </div>
-            
-            <form onsubmit="submitBrandingConfig(event)" class="p-5 space-y-4 text-xs">
-                <!-- LOGO THƯƠNG HIỆU -->
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Logo Thương Hiệu (Hiển thị góc trên Phiếu in BEO)</label>
-                    <div class="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                        <div id="brandLogoPreviewContainer" class="w-24 h-14 bg-white border border-dashed border-slate-300 rounded-lg flex items-center justify-center overflow-hidden shrink-0 shadow-2xs">
-                            <img id="brandLogoPreviewImg" src="" alt="Logo Preview" class="max-h-full max-w-full object-contain hidden" />
-                            <span id="brandLogoPlaceholder" class="text-[10px] text-slate-400 text-center px-1 font-medium">Chưa có logo</span>
-                        </div>
-                        <div class="flex-1 space-y-1.5">
-                            <div class="flex items-center gap-2">
-                                <label class="px-2.5 py-1 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-lg text-[11px] font-semibold cursor-pointer shadow-2xs inline-flex items-center gap-1 transition">
-                                    <i data-lucide="upload" class="w-3.5 h-3.5 text-blue-600"></i> Tải ảnh từ máy...
-                                    <input type="file" id="brandLogoFileInput" accept="image/*" class="hidden" onchange="handleBrandLogoFileUpload(this)" />
-                                </label>
-                                <button type="button" id="btnRemoveBrandLogo" onclick="removeBrandLogo()" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-lg text-[11px] font-semibold transition cursor-pointer hidden inline-flex items-center gap-1">
-                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Xóa logo
-                                </button>
-                            </div>
-                            <input type="text" id="txtBrandLogoUrl" placeholder="Hoặc dán link URL ảnh logo tại đây..." class="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-slate-700 text-[11px] focus:outline-none focus:ring-2 focus:ring-blue-500" oninput="updateBrandLogoPreviewFromUrl()" />
-                            <p class="text-[10px] text-slate-400">Định dạng hỗ trợ: PNG (khuyên dùng trong suốt), JPG, SVG. Nếu không có logo, BEO sẽ chỉ hiển thị tên khách sạn chữ in đậm A4.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Tên Trung Tâm Tiệc Cưới / Khách Sạn *</label>
-                    <input type="text" id="txtBrandHotelName" required placeholder="VD: TRUNG TÂM HỘI NGHỊ TIỆC CƯỚI MERPERLE..." class="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
-                    <p class="text-[10px] text-slate-400 mt-1">Xuất hiện trên tiêu đề trang, lệnh BEO, xuất Excel và màn hình đăng nhập.</p>
-                </div>
-
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Khẩu Hiệu / Slogan / Phụ Đề</label>
-                    <input type="text" id="txtBrandHotelSubtitle" placeholder="VD: Hệ Thống Quản Lý Tiệc Cưới & Hội Nghị Đẳng Cấp..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Hotline / Số Điện Thoại</label>
-                        <input type="text" id="txtBrandHotelPhone" placeholder="VD: 028 3838 3838" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Địa Chỉ Trung Tâm</label>
-                        <input type="text" id="txtBrandHotelAddress" placeholder="VD: 123 Nguyễn Văn Cừ, Q.5..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs">
-                    </div>
-                </div>
-
-                <div id="brandSuccessMsg" class="hidden p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg text-xs font-semibold"></div>
-                <div id="brandErrorMsg" class="hidden p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-lg text-xs font-semibold"></div>
-
-                <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-100">
-                    <button type="button" onclick="closeBrandingModal()" class="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-100 font-semibold transition cursor-pointer">Hủy</button>
-                    <button type="submit" id="btnSubmitBranding" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold shadow-md shadow-blue-500/20 transition cursor-pointer flex items-center gap-1.5">
-                        <i data-lucide="check" class="w-4 h-4"></i>
-                        <span>Lưu Thương Hiệu</span>
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
 
