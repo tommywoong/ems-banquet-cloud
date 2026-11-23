@@ -161,6 +161,10 @@ def _register_sqlite_tsql_functions(conn: sqlite3.Connection):
     conn.create_function("DATEPART", 2, _datepart)
     conn.create_function("LTRIM", 1, lambda x: str(x).lstrip() if x is not None else "")
     conn.create_function("RTRIM", 1, lambda x: str(x).rstrip() if x is not None else "")
+    conn.create_function("varchar", 1, lambda x: str(x))
+    conn.create_function("nvarchar", 1, lambda x: str(x))
+    conn.create_function("CONVERT", 2, lambda t, x: str(x)[:int(t)] if str(t).isdigit() else str(x))
+    conn.create_function("CONVERT", 3, lambda t, x, s: str(x)[:10] if str(s) in ("120", "23") else str(x))
     conn.create_function("PWDENCRYPT", 1, lambda p: f"PWDHASH:{p}" if p is not None else "")
     def _pwdcompare(plain, hashed):
         if not plain and not hashed:

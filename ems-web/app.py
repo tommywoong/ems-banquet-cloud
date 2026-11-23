@@ -1935,8 +1935,27 @@ def get_scheduler(
         
         bookings = []
         for r in cur.fetchall():
-            time_in_str = r[3].strftime("%H:%M") if r[3] else "08:00"
-            time_out_str = r[4].strftime("%H:%M") if r[4] else "22:00"
+            if hasattr(r[3], "strftime"):
+                time_in_str = r[3].strftime("%H:%M")
+            elif r[3]:
+                time_in_str = str(r[3]).strip()
+                if len(time_in_str) >= 16 and " " in time_in_str:
+                    time_in_str = time_in_str.split()[1][:5]
+                elif len(time_in_str) > 5:
+                    time_in_str = time_in_str[:5]
+            else:
+                time_in_str = "08:00"
+
+            if hasattr(r[4], "strftime"):
+                time_out_str = r[4].strftime("%H:%M")
+            elif r[4]:
+                time_out_str = str(r[4]).strip()
+                if len(time_out_str) >= 16 and " " in time_out_str:
+                    time_out_str = time_out_str.split()[1][:5]
+                elif len(time_out_str) > 5:
+                    time_out_str = time_out_str[:5]
+            else:
+                time_out_str = "22:00"
             
             in_hour = int(time_in_str.split(":")[0]) if ":" in time_in_str else 8
             if in_hour < 14:
@@ -2191,13 +2210,13 @@ def list_bookings(
                 ISNULL(p.fcTen, bfr.fcFunctionRoom) as RoomName,
                 ISNULL(lv.fcName, '') as SegmentName,
                 b.fcStatus_BkRoom,
-                ISNULL(guestCalc.ActualGuests, 0) as Pax,
+                CASE WHEN ISNULL(b.fnSoLuongDK, 0) > 0 THEN b.fnSoLuongDK ELSE ISNULL(bfr.fnQuantity, 0) END as Pax,
                 ISNULL(b.fnDatCoc, ISNULL(meo.fnDatCoc, 0)) as fnDatCoc,
                 ISNULL(NULLIF(meo.fcNguoiLap, ''), b.fcUser) as EffectiveSales,
                 b.fcUser as LockUser,
                 meo.fcNguoiLap as BEOUser,
-                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE rev.BanquetRevenue END as BanquetRevenue,
-                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE rev.TotalRevenue END as TotalRevenue,
+                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.BanquetRev, ISNULL(bc_rev.BanquetRev, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) END as BanquetRevenue,
+                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.TotalRev, ISNULL(bc_rev.TotalRev, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) END as TotalRevenue,
                 meo.fcMaster_EO,
                 b.fcNote
             FROM stBooking b
@@ -2210,50 +2229,22 @@ def list_bookings(
             ) meo ON b.fcBookID = meo.fcBookID
             LEFT JOIN stKhachHang k ON b.fcGuestID = k.fcMa
             LEFT JOIN stLinhVuc lv ON k.fcLinhVuc = lv.fcCode
-            OUTER APPLY (
-                SELECT CASE 
-                    WHEN ISNULL(b.fnSoLuongDK, 0) > 0 THEN b.fnSoLuongDK
-                    ELSE COALESCE(
-                        NULLIF(bfr.fnQuantity, 0),
-                        NULLIF(rs.MaxRsQty, 0),
-                        NULLIF(d.MaxDtQty, 0),
-                        0
-                    )
-                END AS ActualGuests
-                FROM (SELECT 1 AS _d) _d
-                OUTER APPLY (
-                    SELECT MAX(rs2.fnQuantity) as MaxRsQty
-                    FROM stRoom_Setup rs2
-                    WHERE rs2.fcMaster_EO = meo.fcMaster_EO
-                ) rs
-                OUTER APPLY (
-                    SELECT MAX(d2.fnQuantity) as MaxDtQty
-                    FROM stSKLK_DoanhThu d2
-                    WHERE d2.fcMaster_EO = meo.fcMaster_EO AND d2.fcDoanhThu_Type <> '22' AND d2.fnQuantity > 1
-                ) d
-            ) guestCalc
-            OUTER APPLY (
+            LEFT JOIN (
                 SELECT 
-                    ISNULL(eo.TongTien, ISNULL(bc.TongTien, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) AS TotalRevenue,
-                    ISNULL(eo.BanquetAmount, ISNULL(bc.BanquetAmount, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) AS BanquetRevenue
-                FROM (SELECT 1 AS _dm) _dm
-                OUTER APPLY (
-                    SELECT 
-                        SUM(d.fnAmount) AS TongTien,
-                        SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR d.fcDoanhThu_Type <> '56' THEN d.fnAmount ELSE 0 END) AS BanquetAmount
-                    FROM stSKLK_DoanhThu d
-                    LEFT JOIN stDoanhThu_Loai dt ON d.fcDoanhThu_Type = dt.fcCode
-                    WHERE meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND d.fcMaster_EO = meo.fcMaster_EO
-                ) eo
-                OUTER APPLY (
-                    SELECT 
-                        SUM(c.fnAmount) AS TongTien,
-                        SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR c.fcDoanhThu_Loai <> '56' THEN c.fnAmount ELSE 0 END) AS BanquetAmount
-                    FROM stBooking_Charges c
-                    LEFT JOIN stDoanhThu_Loai dt ON c.fcDoanhThu_Loai = dt.fcCode
-                    WHERE c.fcBookID = b.fcBookID
-                ) bc
-            ) rev
+                    fcMaster_EO, 
+                    SUM(fnAmount) AS TotalRev,
+                    SUM(CASE WHEN fcDoanhThu_Type <> '56' THEN fnAmount ELSE 0 END) AS BanquetRev
+                FROM stSKLK_DoanhThu
+                GROUP BY fcMaster_EO
+            ) eo_rev ON meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND meo.fcMaster_EO = eo_rev.fcMaster_EO
+            LEFT JOIN (
+                SELECT 
+                    fcBookID, 
+                    SUM(fnAmount) AS TotalRev,
+                    SUM(CASE WHEN fcDoanhThu_Loai <> '56' THEN fnAmount ELSE 0 END) AS BanquetRev
+                FROM stBooking_Charges
+                GROUP BY fcBookID
+            ) bc_rev ON b.fcBookID = bc_rev.fcBookID
             WHERE {where_sql}
             ORDER BY bfr.fdDate DESC, b.fcBookID DESC
             OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY
@@ -2261,19 +2252,35 @@ def list_bookings(
         
         items = []
         for r in cur.fetchall():
+            if hasattr(r[3], "strftime"):
+                t_in = r[3].strftime("%H:%M")
+            elif r[3]:
+                t_in = str(r[3]).strip()
+                t_in = t_in.split()[1][:5] if " " in t_in and len(t_in) >= 16 else (t_in[:5] if len(t_in) >= 5 else t_in)
+            else:
+                t_in = ""
+
+            if hasattr(r[4], "strftime"):
+                t_out = r[4].strftime("%H:%M")
+            elif r[4]:
+                t_out = str(r[4]).strip()
+                t_out = t_out.split()[1][:5] if " " in t_out and len(t_out) >= 16 else (t_out[:5] if len(t_out) >= 5 else t_out)
+            else:
+                t_out = ""
+
             items.append({
                 "book_id": r[0].strip(),
                 "event_date": r[1] or "",
                 "booking_date": r[2] or "",
-                "time_in": r[3].strftime("%H:%M") if r[3] else "",
-                "time_out": r[4].strftime("%H:%M") if r[4] else "",
+                "time_in": t_in,
+                "time_out": t_out,
                 "title": r[5].strip() if r[5] else (r[6].strip() if r[6] else "Tiệc MerPerle"),
                 "guest_name": r[6].strip() if r[6] else "",
                 "phone": r[7].strip() if r[7] else "",
                 "room": r[8].strip() if r[8] else "",
                 "segment": r[9].strip() if r[9] else "",
                 "status_code": r[10].strip() if r[10] else "T",
-                "pax": int(r[11] or 0),
+                "pax": int(float(r[11] or 0)),
                 "deposit": float(r[12] or 0),
                 "sales_user": r[13].strip() if r[13] else "",
                 "lock_user": r[14].strip() if r[14] else "",
@@ -2374,13 +2381,13 @@ def export_bookings_excel(
                 ISNULL(p.fcTen, bfr.fcFunctionRoom) as RoomName,
                 ISNULL(lv.fcName, '') as SegmentName,
                 b.fcStatus_BkRoom,
-                ISNULL(guestCalc.ActualGuests, 0) as Pax,
+                CASE WHEN ISNULL(b.fnSoLuongDK, 0) > 0 THEN b.fnSoLuongDK ELSE ISNULL(bfr.fnQuantity, 0) END as Pax,
                 ISNULL(b.fnDatCoc, ISNULL(meo.fnDatCoc, 0)) as fnDatCoc,
                 ISNULL(NULLIF(meo.fcNguoiLap, ''), b.fcUser) as EffectiveSales,
                 b.fcUser as LockUser,
                 meo.fcNguoiLap as BEOUser,
-                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE rev.BanquetRevenue END as BanquetRevenue,
-                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE rev.TotalRevenue END as TotalRevenue,
+                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.BanquetRev, ISNULL(bc_rev.BanquetRev, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) END as BanquetRevenue,
+                CASE WHEN b.fcStatus_BkRoom = 'C' THEN 0 ELSE ISNULL(eo_rev.TotalRev, ISNULL(bc_rev.TotalRev, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) END as TotalRevenue,
                 meo.fcMaster_EO,
                 b.fcNote
             FROM stBooking b
@@ -2393,50 +2400,22 @@ def export_bookings_excel(
             ) meo ON b.fcBookID = meo.fcBookID
             LEFT JOIN stKhachHang k ON b.fcGuestID = k.fcMa
             LEFT JOIN stLinhVuc lv ON k.fcLinhVuc = lv.fcCode
-            OUTER APPLY (
-                SELECT CASE 
-                    WHEN ISNULL(b.fnSoLuongDK, 0) > 0 THEN b.fnSoLuongDK
-                    ELSE COALESCE(
-                        NULLIF(bfr.fnQuantity, 0),
-                        NULLIF(rs.MaxRsQty, 0),
-                        NULLIF(d.MaxDtQty, 0),
-                        0
-                    )
-                END AS ActualGuests
-                FROM (SELECT 1 AS _d) _d
-                OUTER APPLY (
-                    SELECT MAX(rs2.fnQuantity) as MaxRsQty
-                    FROM stRoom_Setup rs2
-                    WHERE rs2.fcMaster_EO = meo.fcMaster_EO
-                ) rs
-                OUTER APPLY (
-                    SELECT MAX(d2.fnQuantity) as MaxDtQty
-                    FROM stSKLK_DoanhThu d2
-                    WHERE d2.fcMaster_EO = meo.fcMaster_EO AND d2.fcDoanhThu_Type <> '22' AND d2.fnQuantity > 1
-                ) d
-            ) guestCalc
-            OUTER APPLY (
+            LEFT JOIN (
                 SELECT 
-                    ISNULL(eo.TongTien, ISNULL(bc.TongTien, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) AS TotalRevenue,
-                    ISNULL(eo.BanquetAmount, ISNULL(bc.BanquetAmount, ISNULL(bfr.fnQuantity * bfr.fnMenuPrice, 0))) AS BanquetRevenue
-                FROM (SELECT 1 AS _dm) _dm
-                OUTER APPLY (
-                    SELECT 
-                        SUM(d.fnAmount) AS TongTien,
-                        SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR d.fcDoanhThu_Type <> '56' THEN d.fnAmount ELSE 0 END) AS BanquetAmount
-                    FROM stSKLK_DoanhThu d
-                    LEFT JOIN stDoanhThu_Loai dt ON d.fcDoanhThu_Type = dt.fcCode
-                    WHERE meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND d.fcMaster_EO = meo.fcMaster_EO
-                ) eo
-                OUTER APPLY (
-                    SELECT 
-                        SUM(c.fnAmount) AS TongTien,
-                        SUM(CASE WHEN dt.fcGroup IN ('01', '02', '03', '04', '06') OR c.fcDoanhThu_Loai <> '56' THEN c.fnAmount ELSE 0 END) AS BanquetAmount
-                    FROM stBooking_Charges c
-                    LEFT JOIN stDoanhThu_Loai dt ON c.fcDoanhThu_Loai = dt.fcCode
-                    WHERE c.fcBookID = b.fcBookID
-                ) bc
-            ) rev
+                    fcMaster_EO, 
+                    SUM(fnAmount) AS TotalRev,
+                    SUM(CASE WHEN fcDoanhThu_Type <> '56' THEN fnAmount ELSE 0 END) AS BanquetRev
+                FROM stSKLK_DoanhThu
+                GROUP BY fcMaster_EO
+            ) eo_rev ON meo.fcMaster_EO IS NOT NULL AND meo.fcMaster_EO <> '' AND meo.fcMaster_EO = eo_rev.fcMaster_EO
+            LEFT JOIN (
+                SELECT 
+                    fcBookID, 
+                    SUM(fnAmount) AS TotalRev,
+                    SUM(CASE WHEN fcDoanhThu_Loai <> '56' THEN fnAmount ELSE 0 END) AS BanquetRev
+                FROM stBooking_Charges
+                GROUP BY fcBookID
+            ) bc_rev ON b.fcBookID = bc_rev.fcBookID
             WHERE {where_sql}
             ORDER BY bfr.fdDate DESC, b.fcBookID DESC
         """, params)
@@ -2780,7 +2759,7 @@ def create_booking(req: CreateBookingRequest):
             channel
         ])
         
-        # 4. Insert stBookFunctionRoom (Multi-Room Booking Support)
+        # 4. Insert stBookFunctionRoom (Multi-Room & Multi-Day Booking Support)
         final_rooms = []
         if req.rooms and len(req.rooms) > 0:
             for r_item in req.rooms:
@@ -2792,9 +2771,18 @@ def create_booking(req: CreateBookingRequest):
                     if r_n.lower() in r_norm.lower() or r_c == r_norm:
                         r_norm = r_c
                         break
+                r_date = str(r_item.get("date") or event_d).strip()
+                if "/" in r_date:
+                    p = r_date.split("/")
+                    if len(p) == 3 and len(p[2]) == 4:
+                        if int(p[0]) > 12:
+                            r_date = f"{p[2]}-{int(p[1]):02d}-{int(p[0]):02d}"
+                        else:
+                            r_date = f"{p[2]}-{int(p[0]):02d}-{int(p[1]):02d}"
                 final_rooms.append({
                     "room": r_norm,
                     "room_raw": r_raw,
+                    "date": r_date,
                     "time_in": r_item.get("time_in") or req.time_in,
                     "time_out": r_item.get("time_out") or req.time_out,
                     "pax": int(r_item.get("pax") or req.pax or 50),
@@ -2805,6 +2793,7 @@ def create_booking(req: CreateBookingRequest):
             final_rooms.append({
                 "room": room_code,
                 "room_raw": req.room,
+                "date": event_d,
                 "time_in": req.time_in,
                 "time_out": req.time_out,
                 "pax": req.pax or 50,
@@ -2818,8 +2807,9 @@ def create_booking(req: CreateBookingRequest):
             r_code_id = gen_timestamp_id()
             t_in_str = r_entry["time_in"] if len(r_entry["time_in"]) == 5 else "08:00"
             t_out_str = r_entry["time_out"] if len(r_entry["time_out"]) == 5 else "22:00"
-            dt_in_str = f"{event_d} {t_in_str}:00"
-            dt_out_str = f"{event_d} {t_out_str}:00"
+            r_d = r_entry.get("date") or event_d
+            dt_in_str = f"{r_d} {t_in_str}:00"
+            dt_out_str = f"{r_d} {t_out_str}:00"
             
             cur.execute("""
                 INSERT INTO stBookFunctionRoom (
@@ -2831,7 +2821,7 @@ def create_booking(req: CreateBookingRequest):
                 r_code_id,
                 r_entry["room"],
                 "02",
-                event_d,
+                r_d,
                 dt_in_str,
                 dt_out_str,
                 r_entry["pax"],
@@ -3925,7 +3915,7 @@ def get_beo_bookings_list():
                 "title": r[2].strip() if r[2] else bid,
                 "event_date": r[3] or "",
                 "master_eo": r[4].strip() if r[4] else "",
-                "pax": int(r[5] or 0),
+                "pax": int(float(r[5] or 0)),
                 "sales_user": r[6].strip() if r[6] else "",
                 "sales_name": r[7].strip() if r[7] else (r[6].strip() if r[6] else ""),
                 "room": r[8].strip() if r[8] else "",
