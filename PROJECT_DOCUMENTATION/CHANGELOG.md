@@ -1,4 +1,31 @@
-## [2026-11-23 11:25] - NÂNG CẤP PHÂN HỆ AI CỔNG 8092: TÍCH HỢP ĐA NHÀ CUNG CẤP AI (GEMINI, ANTIGRAVITY, DEEPSEEK, OPENAI, CLAUDE, OLLAMA OFFLINE) & BỘ QUY TẮC BẮT BUỘC AGENTS.MD
+## [2026-11-23 12:15] - ĐỒNG BỘ HIỂN THỊ TIỀN CỌC BEO VÀ THAY ĐỔI THẺ DOANH THU PHÒNG TRÊN TRANG THỐNG KÊ (PORT 8088)
+- **Phạm vi tác động**: Toàn hệ thống (`ems-web`, `ems-analytics`, Production `10.17.10.12`, `EMS_Banquet_Portable_Bundle`, GitHub `tommywoong/ems-banquet-cloud` và Render Cloud). CSDL SQL Server gốc `EMS_KHAIVY` được bảo toàn nguyên vẹn 100%.
+- **Khắc phục triệt để lỗi hiển thị Tiền Cọc Đơn Tiệc (Ví dụ: Công Ty Sika `LVH26_1000000047`)**:
+  * Trước đây: Khi người dùng soạn BEO và nhập tiền cọc (550.000.000 đ), giá trị được lưu tại `stMaster_EO.fnDatCoc`. Câu truy vấn SQL hiển thị danh sách (`list_bookings` và `export_bookings_excel`) chỉ đọc từ `stBooking.fnDatCoc` (vốn là `NULL` khi mới khởi tạo đơn), khiến ngoài danh sách hiển thị `Cọc (VNĐ): 0 đ`.
+  * Bây giờ: Cập nhật câu truy vấn `ISNULL(b.fnDatCoc, ISNULL(meo.fnDatCoc, 0)) AS fnDatCoc` cả ở Web 8090 và Analytics 8088. Đồng thời bổ sung lệnh đồng bộ `UPDATE stBooking SET fnDatCoc = ?` khi lưu BEO trong `save_beo`. Đơn tiệc Sika và tất cả các đơn tiệc có cọc trong BEO đều hiển thị chuẩn xác số tiền cọc (Sika: `550,000,000 đ`).
+- **Chuyển đổi thẻ KPI số 4 trên trang Thống Kê (Port 8088) thành "DOANH THU PHÒNG"**:
+  * Trước đây: Thẻ số 4 hiển thị "Đặt Cọc & Hủy Đơn" (tổng tiền cọc, số lượng đơn hủy và tỷ lệ hủy).
+  * Bây giờ:
+    * **Tiêu đề mới**: `DOANH THU PHÒNG` (Room Revenue).
+    * **Icon & Màu sắc**: Icon giường ngủ `bed-double` tông màu tím hiện đại sang trọng (`bg-purple-50 text-purple-600` và thanh accent `bg-purple-500`).
+    * **Số tiền chính**: Hiển thị tổng doanh thu tiền phòng phát sinh trong kỳ lọc thời gian (`170.633.818.002 đ`).
+    * **Dòng thông tin phụ**: Hiển thị `Đơn có phòng: 440 đơn` và `Tỷ trọng: 66.2%` (tỷ lệ doanh thu phòng trên tổng doanh thu).
+  * **Tách bạch Doanh thu trong CSDL `EMS_KHAIVY`**:
+    * Nhóm Doanh thu phòng: Nhóm mã `'05'` trong `stDoanhThu_Loai` và các mã `'24'` (PHÒNG NGHỈ), `'56'` (TIỀN PHÒNG KHÁCH SẠN).
+    * Nhóm Doanh thu tiệc: Các nhóm `'01', '02', '03', '04', '06'` (Sảnh, Thức ăn, Đồ uống, Dịch vụ tiệc, Phòng họp).
+  * **Bổ sung cột DT Phòng trong Tab 7 (Tra Cứu Đơn Tiệc)**: Giúp nhân viên và ban giám đốc đối chiếu chi tiết từng đơn tiệc: Doanh thu Tiệc | Doanh thu Phòng | Tổng Doanh Thu.
+- **Kiểm thử thực tế & Bằng chứng xác nhận**:
+  * Kiểm thử API Web 8090: Sika trả về `deposit: 550000000.0` (100% PASS).
+  * Kiểm thử API Analytics 8088: Trả về `total_room_revenue: 170,633,818,002 đ`, `room_bookings_count: 440`, `room_revenue_pct: 66.2%` (100% PASS).
+  * Chụp 3 ảnh màn hình Playwright trực tiếp trên máy chủ Production `10.17.10.12`:
+    * [verified_sika_booking_deposit_550m.png](file:///C:/Users/THIETKE/.gemini/antigravity/brain/31d29f9b-771e-4162-b382-634be45d35df/verified_sika_booking_deposit_550m.png): Danh sách Web 8090 hiển thị đơn Sika cọc `550.000.000 đ`.
+    * [verified_analytics_room_revenue_card.png](file:///C:/Users/THIETKE/.gemini/antigravity/brain/31d29f9b-771e-4162-b382-634be45d35df/verified_analytics_room_revenue_card.png): Dashboard Analytics 8088 hiển thị thẻ DOANH THU PHÒNG.
+    * [verified_analytics_sika_room_and_deposit.png](file:///C:/Users/THIETKE/.gemini/antigravity/brain/31d29f9b-771e-4162-b382-634be45d35df/verified_analytics_sika_room_and_deposit.png): Tab 7 hiển thị cột DT Phòng và đơn Sika cọc 550 triệu.
+- **Đồng bộ hệ thống**:
+  * Đã đồng bộ lên máy chủ `10.17.10.12`, restart 3 services và tạo snapshot `EMS_SNAPSHOT_20261123_120917.zip`.
+  * Đã commit và push lên GitHub `tommywoong/ems-banquet-cloud` (commit `6161349`).
+  * Đã cập nhật file nén [EMS_Banquet_Portable_Bundle.zip](file:///d:/DATTIEC/EMS_Banquet_Portable_Bundle.zip).
+
 - **Phạm vi tác động**: Toàn hệ thống (`d:\DATTIEC/ems-ai`, máy chủ Production `10.17.10.12:8092`, `EMS_Banquet_Portable_Bundle`, GitHub `tommywoong/ems-banquet-cloud` và Render Cloud). CSDL SQL Server gốc `EMS_KHAIVY` được bảo toàn nguyên vẹn 100%.
 - **Tích hợp Quản lý Đa Nhà Cung Cấp AI (Multi-Provider AI Engine)**:
   * Xây dựng engine `AIProviderManager` trong `ems-ai/ai_coder_engine.py` hỗ trợ 8 nhà cung cấp AI hàng đầu:
