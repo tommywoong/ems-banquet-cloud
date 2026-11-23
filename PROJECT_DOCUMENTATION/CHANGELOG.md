@@ -1,4 +1,45 @@
-## [2026-11-23 10:05] - NÂNG CẤP TOÀN DIỆN AUDIT TRAIL: THEO DÕI XÓA, SỬA, HỦY, DỜI SẢNH/NGÀY, KHÓA CHỐT VÀ CRM
+## [2026-11-23 11:25] - NÂNG CẤP PHÂN HỆ AI CỔNG 8092: TÍCH HỢP ĐA NHÀ CUNG CẤP AI (GEMINI, ANTIGRAVITY, DEEPSEEK, OPENAI, CLAUDE, OLLAMA OFFLINE) & BỘ QUY TẮC BẮT BUỘC AGENTS.MD
+- **Phạm vi tác động**: Toàn hệ thống (`d:\DATTIEC/ems-ai`, máy chủ Production `10.17.10.12:8092`, `EMS_Banquet_Portable_Bundle`, GitHub `tommywoong/ems-banquet-cloud` và Render Cloud). CSDL SQL Server gốc `EMS_KHAIVY` được bảo toàn nguyên vẹn 100%.
+- **Tích hợp Quản lý Đa Nhà Cung Cấp AI (Multi-Provider AI Engine)**:
+  * Xây dựng engine `AIProviderManager` trong `ems-ai/ai_coder_engine.py` hỗ trợ 8 nhà cung cấp AI hàng đầu:
+    1. **Google Gemini (Khuyên dùng)**: Kết nối API OpenAI-compatible của Google AI Studio (`gemini-2.0-flash`, `gemini-1.5-pro`, `gemini-2.5-pro`), tốc độ siêu tốc, miễn phí API.
+    2. **Google Antigravity Agent**: Mô hình lập trình chuyên sâu của Google DeepMind.
+    3. **DeepSeek AI**: Hỗ trợ `deepseek-chat` (V3) và `deepseek-reasoner` (R1) chi phí rẻ, tư duy logic mạnh mẽ.
+    4. **OpenAI (ChatGPT)**: Hỗ trợ `gpt-4o`, `gpt-4o-mini`, `o3-mini`.
+    5. **Anthropic Claude**: Kết nối qua OpenRouter (`claude-3.5-sonnet`, `claude-3.7-sonnet`).
+    6. **OpenRouter**: Hỗ trợ hơn 200+ mô hình mã nguồn mở và thương mại.
+    7. **Local Ollama (100% Offline LAN)**: Chạy hoàn toàn nội bộ trong mạng LAN khách sạn không cần Internet (`qwen2.5-coder`, `deepseek-r1:8b`, `llama3.1`, `codellama`).
+    8. **Custom OpenAI-Compatible API**: Tùy biến gateway/proxy riêng của đơn vị.
+  * Tự động lưu và tải cấu hình an toàn từ `config.json` (`ai_provider_config`), che giấu API Key (`AIzaSy***`) khi hiển thị trên giao diện web.
+  * Xây dựng bằng thư viện chuẩn `urllib.request` (Zero dependencies), loại bỏ rủi ro xung đột thư viện bên thứ ba.
+- **Nạp Tự Động Toàn Bộ Quy Trình & Nguyên Tắc Dự Án Vào System Prompt**:
+  * Tự động nạp toàn bộ nội dung [AGENTS.md](file:///d:/DATTIEC/AGENTS.md) và [DEVELOPMENT_PRINCIPLES.md](file:///d:/DATTIEC/PROJECT_DOCUMENTATION/DEVELOPMENT_PRINCIPLES.md) vào System Prompt trước mọi lượt hội thoại AI.
+  * Đảm bảo AI luôn tuân thủ 5 nguyên tắc bất biến:
+    1. Không tự ý refactor / viết lại từ đầu.
+    2. Không sửa đổi cấu trúc CSDL SQL Server gốc `EMS_KHAIVY`.
+    3. Không làm hỏng chức năng cũ (Lịch sảnh 8090, Soạn BEO, Items, Analytics 8088).
+    4. Không báo cáo PASS nếu chưa kiểm thử thực tế.
+    5. Tuân thủ nghiêm ngặt quy trình 8 bước chuẩn.
+- **Bổ sung 5 API Endpoints Mới Cho Phân Hệ AI**:
+  * `GET /api/ai/config`: Lấy cấu hình nhà cung cấp AI hiện tại và danh sách các provider hỗ trợ (đã ẩn API key).
+  * `POST /api/ai/config`: Lưu thiết lập AI (Provider, Model, API Key, Base URL, Chỉ đạo riêng).
+  * `POST /api/ai/test`: Kiểm tra kết nối API tức thời và đo đạc độ trễ mạng (latency ms).
+  * `POST /api/ai/chat`: Nhận prompt người dùng kèm file đang mở, phân tích và đề xuất code blocks.
+  * `GET /api/ai/knowledge`: Trả về toàn bộ nội dung quy tắc `AGENTS.md` để người dùng có thể tra cứu trực tiếp.
+- **Nâng Cấp Giao Diện Web AI Studio Cổng 8092 (`ems-ai/static/index.html`)**:
+  * **Top Navbar**: Bổ sung `AI Status Badge` hiển thị trạng thái kết nối (xanh lá khi sẵn sàng, vàng khi chưa cấu hình key) kèm nút `📋 Quy tắc Dự án` và `⚙ Cấu hình AI`.
+  * **Tab Trợ Lý AI (Chat & Code)**: Đặt làm tab mặc định, hiển thị banner cam kết tuân thủ `AGENTS.md`, 4 nút thao tác nhanh (Soát lỗi file, Giải thích logic, Tối ưu hiệu năng, Kiểm tra an toàn SQL).
+  * **Tương tác Code Block**: Mọi đoạn mã AI trả về đều có 3 nút hành động nhanh: `📋 Sao chép`, `📝 Đưa vào Code Editor`, `🔍 Đưa vào Diff Preview`.
+  * **Modal Cấu Hình AI**: Giao diện chọn nhanh 8 nhà cung cấp, đổi model linh hoạt, nút kiểm tra kết nối hiển thị kết quả trực quan ngay tại chỗ.
+  * **Modal Quy Tắc Dự Án**: Trình chiếu toàn văn quy định dự án để lập trình viên và người dùng dễ dàng đối chiếu.
+- **Kiểm Thử Thực Tế & Triển Khai Toàn Diện**:
+  * Kiểm tra cú pháp JavaScript: Đạt 100% PASS (`node --check`).
+  * Kiểm thử đơn vị 8 kịch bản API Backend: Đạt 100% PASS.
+  * Đồng bộ lên máy chủ Production `10.17.10.12` qua `sync_and_restart.py`, khởi động lại service `EMS_Banquet_AI`, xác nhận HTTP 200 OK trên cả 3 dịch vụ: Web (8090), Analytics (8088), AI (8092).
+  * Chụp 5 ảnh màn hình kiểm thử Playwright thực tế trên máy chủ `10.17.10.12:8092`.
+  * Đồng bộ và commit lên GitHub `tommywoong/ems-banquet-cloud` (commit `ec0cc28`) cho Render Cloud.
+  * Đóng gói lại bộ cài đặt ngoại tuyến `EMS_Banquet_Portable_Bundle.zip` (52.08 MB).
+
 - **Phạm vi tác động**: Toàn hệ thống (`d:\DATTIEC`, Production `10.17.10.12`, `EMS_Banquet_Portable_Bundle`, GitHub `tommywoong/ems-banquet-cloud` và Render Cloud). CSDL SQL Server gốc `EMS_KHAIVY` được bảo toàn nguyên vẹn 100%, toàn bộ nhật ký lưu độc lập tại SQLite `data/audit.db`.
 - **Khắc phục triệt để lỗi ghi vết tài khoản**:
   * Trước đây: Khi người dùng thực hiện Sửa tiệc hoặc Hủy tiệc, backend `log_audit()` không nhận tham số `user_name` và `user_full_name` (bị để trống `""`). Khi lọc Audit Trail theo nhân viên (ví dụ chọn user `NTTL`), các bản ghi này bị ẩn hoàn toàn!

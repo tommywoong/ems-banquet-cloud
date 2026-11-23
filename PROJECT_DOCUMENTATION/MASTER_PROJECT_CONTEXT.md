@@ -110,10 +110,10 @@ D:\DATTIEC\
 │   └── static\
 │       └── index.html                 # Giao diện báo cáo phân tích, biểu đồ và xuất in
 ├── ems-ai\                            # Phân hệ AI Coding Agent & Quản trị Code - Cổng 8092
-│   ├── app.py                         # Backend API xác thực Master Pass, Diff, Apply, Rollback
-│   ├── ai_coder_engine.py             # Engine duyệt file, kiểm tra cú pháp AST, Snapshot kép
+│   ├── app.py                         # Backend API: Master Pass, AI Chat, Config, Test, Diff, Apply, Rollback
+│   ├── ai_coder_engine.py             # Multi-Provider AI (Gemini, Antigravity, DeepSeek, Claude, Ollama) & AGENTS.md
 │   └── static\
-│       └── index.html                 # Giao diện In-Browser AI Coding Agent & Snapshot Manager
+│       └── index.html                 # Giao diện AI Studio: Chat trợ lý, Code Editor, Diff, Rollback & Cấu hình AI
 ├── PROJECT_DOCUMENTATION\             # BỘ TÀI LIỆU KIẾN THỨC TRUNG TÂM (8 tài liệu chuẩn)
 ├── EMS_Banquet_Portable_Bundle\       # BỘ CÀI ĐẶT ĐỘC LẬP & CLOUD DEPLOY (v3.3)
 │   ├── cloud_deploy\                  # Công cụ triển khai Free 1C (Render.com) & Paid 2A (VPS + Cloudflare)
