@@ -1,3 +1,27 @@
+## [2026-11-23 14:15] - CẬP NHẬT THẺ KPI SỐ 4 THÀNH "DOANH THU TIỆC" (BANQUET REVENUE) TRÊN TRANG THỐNG KÊ (PORT 8088)
+- **Phạm vi tác động**: Backend Thống kê (`ems-analytics/app.py`), Giao diện Analytics (`ems-analytics/static/index.html`), Máy chủ Production `10.17.10.12:8088`, `EMS_Banquet_Portable_Bundle`, GitHub `tommywoong/ems-banquet-cloud`. CSDL SQL Server gốc `EMS_KHAIVY` được bảo toàn nguyên vẹn 100%.
+- **Nghiệp vụ thực tế**:
+  * Chuyển đổi thẻ KPI số 4 từ "DOANH THU PHÒNG" thành **"DOANH THU TIỆC"** (Banquet Revenue).
+  * Doanh thu tiệc phản ánh chính xác hoạt động cốt lõi của Trung tâm Hội nghị & Tiệc cưới (ẩm thực, đồ uống, âm thanh ánh sáng, trang trí, dịch vụ kèm theo, hội nghị phòng họp...).
+  * Số liệu thực tế được tính toán chuẩn xác:
+    * Doanh thu tiệc: **`87.193.702.854 đ`** (tổng toàn bộ các đơn tiệc phát sinh).
+    * Số đơn có tiệc: **`1.274 đơn`**.
+    * Tỷ trọng doanh thu tiệc: **`33.8%`** (tự động cập nhật theo các bộ lọc thời gian, sảnh, phân khúc).
+- **Cải tiến kỹ thuật**:
+  1. **Backend (`get_summary` trong `ems-analytics/app.py`)**:
+     * Bổ sung tính toán `SUM(CASE WHEN DoanhThuTiec > 0 THEN 1 ELSE 0 END) AS SoBookingCoTiec`.
+     * Tính toán `banquet_rev_pct = round((tong_dt_tiec / tong_doanh_thu * 100), 1)`.
+     * Trả về thêm `banquet_bookings_count` và `banquet_revenue_pct` trong JSON kết quả, giữ nguyên 100% các trường cũ để tránh hồi quy.
+  2. **Giao diện (`ems-analytics/static/index.html`)**:
+     * Thẻ số 4: Tiêu đề `DOANH THU TIỆC`, icon dao nĩa bàn tiệc `utensils` tông màu hổ phách sang trọng `bg-amber-50 text-amber-600`, thanh gạch chân `bg-amber-500`.
+     * Dòng phụ: `Đơn có tiệc: 1.274 đơn` và `Tỷ trọng: 33.8%`.
+- **Kiểm thử thực tế**:
+  * Kiểm thử Playwright trên máy chủ `http://10.17.10.12:8088`: DOM tải thành công `87.193.702.854 ₫`, `1.274 đơn`, `33.8%`.
+  * Ảnh chụp màn hình xác nhận: [verified_analytics_banquet_revenue_card.png](file:///C:/Users/THIETKE/.gemini/antigravity/brain/31d29f9b-771e-4162-b382-634be45d35df/verified_analytics_banquet_revenue_card.png).
+- **Đồng bộ hệ thống**:
+  * Đã đồng bộ sang máy chủ `10.17.10.12` qua `sync_and_restart.py`, tạo bản snapshot sao lưu `EMS_SNAPSHOT_20261123_141332.zip`.
+  * Đã push lên GitHub Render `tommywoong/ems-banquet-cloud` nhánh `main` (commit `b73bc41`).
+
 ## [2026-11-23 14:00] - KHẮC PHỤC TRIỆT ĐỂ LỖI 500 VÀ ĐIỀU HƯỚNG CỔNG TRÊN NHÁNH CLOUD ONLINE (RENDER / SQLITE MIRROR)
 - **Phạm vi tác động**: Toàn hệ thống Cloud (`ems-web`, `ems-analytics`, `cloud_gateway`, `db_adapter`, `EMS_Banquet_Portable_Bundle`, GitHub `tommywoong/ems-banquet-cloud` commit `23b3102`). Máy chủ On-premise `10.17.10.12` được đồng bộ đảm bảo tương thích 100%.
 - **Nguyên nhân gốc đã xác định & Khắc phục hoàn toàn**:
