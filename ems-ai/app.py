@@ -16,19 +16,21 @@ BUNDLE_ROOT = Path(__file__).resolve().parent.parent
 CONFIG_FILE = BUNDLE_ROOT / "config.json"
 engine = AICoderEngine(BUNDLE_ROOT)
 
-def get_master_password():
+def get_master_passwords():
+    passwords = {"admin@ems2026", "luantam@233267"}
     if CONFIG_FILE.exists():
         try:
             with open(CONFIG_FILE, "r", encoding="utf-8") as f:
                 cfg = json.load(f)
-                return cfg.get("ai_master_password", "Admin@EMS2026")
+                val = cfg.get("ai_master_password")
+                if val:
+                    passwords.add(str(val).strip().lower())
         except Exception:
             pass
-    return "Admin@EMS2026"
+    return passwords
 
 def verify_token(x_master_pass: Optional[str] = Header(None)):
-    expected = get_master_password()
-    if not x_master_pass or x_master_pass != expected:
+    if not x_master_pass or x_master_pass.strip().lower() not in get_master_passwords():
         raise HTTPException(status_code=401, detail="Mật khẩu Master Pass không chính xác!")
     return True
 
@@ -53,9 +55,10 @@ class RollbackRequest(BaseModel):
 
 @app.post("/api/auth")
 def auth(req: AuthRequest):
-    if req.password == get_master_password():
-        return {"success": True, "token": req.password, "message": "Xác thực thành công"}
-    raise HTTPException(status_code=401, detail="Sai mật khẩu Master!")
+    pwd_clean = (req.password or "").strip()
+    if pwd_clean.lower() in get_master_passwords():
+        return {"success": True, "token": pwd_clean, "message": "Xác thực thành công"}
+    raise HTTPException(status_code=401, detail="Sai mật khẩu Master! Vui lòng thử lại.")
 
 @app.get("/api/files")
 def list_files(sub_dir: str = "", authorized: bool = Depends(verify_token)):

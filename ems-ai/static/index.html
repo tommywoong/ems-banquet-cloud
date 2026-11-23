@@ -268,7 +268,8 @@
       <h2>🔐 Xác thực Master Admin</h2>
       <p>Nhập mật khẩu Master Pass để mở khóa phân hệ AI Coding Agent (Cổng 8092).</p>
       <input type="password" id="masterPassInput" placeholder="Nhập Master Password..." autofocus onkeydown="if(event.key==='Enter') verifyMaster()">
-      <button class="btn btn-primary" style="width: 100%; padding: 0.75rem;" onclick="verifyMaster()">Xác Thực & Truy Cập</button>
+      <div id="authErrorMsg" style="display:none; color: #ef4444; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px 12px; border-radius: 6px; font-size: 0.82rem; margin-bottom: 0.85rem; text-align: left;"></div>
+      <button class="btn btn-primary" id="btnSubmitAuth" style="width: 100%; padding: 0.75rem;" onclick="verifyMaster()">Xác Thực & Truy Cập</button>
     </div>
   </div>
 
@@ -282,6 +283,7 @@
       <span id="currentFileLabel" style="font-size: 0.85rem; color: var(--text-muted); font-family: monospace;">Chưa chọn file</span>
       <button class="btn btn-secondary" onclick="checkDiff()">🔍 Xem Diff</button>
       <button class="btn btn-success" onclick="applyChanges()">💾 Áp dụng an toàn</button>
+      <button class="btn btn-secondary" onclick="logoutMaster()" title="Đăng xuất Master Admin">🔒 Đăng xuất</button>
     </div>
   </header>
 
@@ -329,7 +331,27 @@
     }
 
     async function verifyMaster() {
-      const pwd = document.getElementById('masterPassInput').value;
+      const input = document.getElementById('masterPassInput');
+      const pwd = (input.value || '').trim();
+      const errEl = document.getElementById('authErrorMsg');
+      if (errEl) errEl.style.display = 'none';
+
+      if (!pwd) {
+        if (errEl) {
+          errEl.innerText = 'Vui lòng nhập mật khẩu Master Pass!';
+          errEl.style.display = 'block';
+        }
+        input.focus();
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmitAuth');
+      const oldHtml = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Đang xác thực...';
+      }
+
       try {
         const res = await fetch(`${API_BASE}/api/auth`, {
           method: 'POST',
@@ -337,15 +359,44 @@
           body: JSON.stringify({password: pwd})
         });
         const data = await res.json();
-        if (data.success) {
+        if (res.ok && data.success) {
           authToken = pwd;
           localStorage.setItem('ems_ai_token', authToken);
           document.getElementById('authModal').style.display = 'none';
           loadFiles();
+        } else {
+          const msg = data.detail || 'Mật khẩu Master Pass không chính xác!';
+          if (errEl) {
+            errEl.innerText = msg;
+            errEl.style.display = 'block';
+          } else {
+            alert(msg);
+          }
         }
       } catch (err) {
-        alert("Sai mật khẩu Master!");
+        const msg = 'Lỗi kết nối máy chủ: ' + err.message;
+        if (errEl) {
+          errEl.innerText = msg;
+          errEl.style.display = 'block';
+        } else {
+          alert(msg);
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = oldHtml;
+        }
       }
+    }
+
+    function logoutMaster() {
+      localStorage.removeItem('ems_ai_token');
+      authToken = '';
+      document.getElementById('masterPassInput').value = '';
+      document.getElementById('authModal').style.display = 'flex';
+      const errEl = document.getElementById('authErrorMsg');
+      if (errEl) errEl.style.display = 'none';
+      document.getElementById('fileTree').innerHTML = 'Đang chờ đăng nhập...';
     }
 
     async function loadFiles() {
