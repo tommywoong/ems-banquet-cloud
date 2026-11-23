@@ -1,3 +1,37 @@
+## [2026-11-23 17:25] - KHẮC PHỤC TRIỆT ĐỂ LỖI TRÙNG LẶP THẺ KHÓA SẢNH TRÊN MA TRẬN LỊCH SẢNH (SCHEDULER) KHI SỬA ĐƠN TIỆC ĐA NGÀY
+- **Phạm vi tác động**: Backend (`ems-web/app.py`), Frontend (`ems-web/static/index.html`), Máy chủ Production `10.17.10.12:8090`, `EMS_Banquet_Portable_Bundle`, GitHub `tommywoong/ems-banquet-cloud`. CSDL SQL Server gốc `EMS_KHAIVY` được bảo toàn nguyên vẹn 100%.
+- **Hiện tượng người dùng báo cáo**:
+  * User `DTPT` (Đặng Thị Phương Trang) sau khi khóa sảnh cho đoàn (`LVH26_1000000059`), quay lại modal chỉnh sửa đơn tiệc để chuyển trạng thái sang Giữ Chỗ (Tentative) thì trên ô sảnh Romance ngày 09/01/2027 bất ngờ xuất hiện thêm 2 thẻ giữ chỗ nữa (tổng cộng 3 thẻ xếp chồng).
+- **Nguyên nhân kỹ thuật đã xác minh qua Audit Log #830**:
+  * Đơn tiệc `LVH26_1000000059` là đơn tiệc tổ chức xuyên suốt 3 ngày liên tiếp (09/01, 10/01, 11/01/2027) tại Sảnh Romance. Trong CSDL SQL Server, bảng `stBookFunctionRoom` có 3 dòng con với 3 mã định danh `fnCodeID` khác nhau:
+    - `fnCodeID = '20261010114826325'` -> Ngày `2027-01-09`
+    - `fnCodeID = '20261010114909599'` -> Ngày `2027-01-10`
+    - `fnCodeID = '20261010114919307'` -> Ngày `2027-01-11`
+  * Khi người dùng mở modal sửa đơn tiệc và bấm Lưu, câu lệnh cũ trong `update_booking` thực hiện cập nhật toàn bộ bảng con theo mã đơn: `UPDATE stBookFunctionRoom SET fdDate = ? WHERE fcBookID = ?` mà không giới hạn theo `fnCodeID`. Hậu quả là cả 3 ngày tổ chức đều bị ghi đè ngày thành `2027-01-09`, làm dồn cả 3 dòng con về cùng 1 ô trên lịch sảnh.
+- **Giải pháp xử lý đã thực hiện**:
+  1. **Khôi phục dữ liệu thực tế trên SQL Server 10.17.10.12**:
+     - Đã trả lại chính xác ngày tổ chức cho 3 bản ghi con của `LVH26_1000000059`: ngày 09/01, 10/01 và 11/01/2027.
+  2. **Bảo vệ an toàn đa sảnh / đa ngày ở Backend (`update_booking` trong `ems-web/app.py`)**:
+     - Thêm trường tùy chọn `fn_code_id: Optional[str] = None` vào `UpdateBookingRequest`.
+     - Kiểm tra số lượng bản ghi sảnh của đơn tiệc:
+       - Nếu đơn chỉ có 1 sảnh: cập nhật bình thường theo `fcBookID`.
+       - Nếu đơn đa sảnh / đa ngày (số bản ghi con > 1): Backend chỉ cập nhật đúng bản ghi con có `fnCodeID` tương ứng (`WHERE fcBookID = ? AND fnCodeID = ?`). Các bản ghi của các ngày/sảnh khác được giữ nguyên 100%, tuyệt đối không bị đè ngày.
+     - API `/api/scheduler` bổ sung trả về trường `code_id` cho từng badge.
+  3. **Nâng cấp Frontend (`ems-web/static/index.html`)**:
+     - Khi bấm vào thẻ tiệc trên Lịch sảnh, hàm `openEditBookingModal` nhận thêm tham số `code_id` để biết chính xác người dùng đang thao tác trên buổi/ngày nào của đơn tiệc.
+     - Hiển thị danh sách các buổi/ngày của đơn tiệc đa ngày với thẻ highlight nổi bật (màu tím indigo) để người dùng nhận biết rõ ràng buổi đang thao tác.
+     - Gửi kèm `fn_code_id` trong payload cập nhật.
+- **Kiểm thử thực tế & Bằng chứng**:
+  * Kiểm thử Playwright trên `http://10.17.10.12:8090` với user `DTPT`:
+    - Ngày `2027-01-09`: Sảnh Romance hiển thị chính xác **DUY NHẤT 1 CARD** `Block sảnh tạm cho đoàn` (17:00-22:00, 100 khách), không còn hiện tượng trùng lặp 3 card.
+    - Modal chỉnh sửa hiển thị đầy đủ thông tin: `ĐƠN TIỆC ĐA SẢNH / ĐA NGÀY (3 SỰ KIỆN): Romance (2027-01-09), Romance (2027-01-10), Romance (2027-01-11)`.
+    - Ảnh chụp màn hình bằng chứng:
+      - [verified_scheduler_no_duplicate_lock.png](file:///C:/Users/THIETKE/.gemini/antigravity/brain/31d29f9b-771e-4162-b382-634be45d35df/verified_scheduler_no_duplicate_lock.png)
+      - [verified_edit_modal_multiday_active.png](file:///C:/Users/THIETKE/.gemini/antigravity/brain/31d29f9b-771e-4162-b382-634be45d35df/verified_edit_modal_multiday_active.png)
+- **Đồng bộ hệ thống**:
+  * Đã đồng bộ sang máy chủ `10.17.10.12` qua `sync_and_restart.py`, tạo bản snapshot an toàn `EMS_SNAPSHOT_20261123_172650.zip`.
+  * Đã push lên GitHub Render `tommywoong/ems-banquet-cloud` nhánh `main` (commit `608446b`).
+
 ## [2026-11-23 14:15] - CẬP NHẬT THẺ KPI SỐ 4 THÀNH "DOANH THU TIỆC" (BANQUET REVENUE) TRÊN TRANG THỐNG KÊ (PORT 8088)
 - **Phạm vi tác động**: Backend Thống kê (`ems-analytics/app.py`), Giao diện Analytics (`ems-analytics/static/index.html`), Máy chủ Production `10.17.10.12:8088`, `EMS_Banquet_Portable_Bundle`, GitHub `tommywoong/ems-banquet-cloud`. CSDL SQL Server gốc `EMS_KHAIVY` được bảo toàn nguyên vẹn 100%.
 - **Nghiệp vụ thực tế**:
