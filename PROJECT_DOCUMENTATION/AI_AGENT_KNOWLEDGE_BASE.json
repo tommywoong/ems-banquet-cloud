@@ -1,0 +1,77 @@
+{
+  "project_metadata": {
+    "project_name": "EMS Banquet Management & Analytics",
+    "client": "MerPerle DaLat Hotel / Khai Vy Group",
+    "production_server_ip": "10.17.10.12",
+    "ports": {
+      "banquet_web": 8090,
+      "banquet_analytics": 8088
+    },
+    "operating_system": "Windows Server 2016 / Windows 10/11",
+    "service_manager": "NSSM (Non-Sucking Service Manager)",
+    "services": [
+      "EMS_Banquet_Web",
+      "EMS_Banquet_Analytics"
+    ],
+    "last_updated": "2026-11-20"
+  },
+  "golden_rules": [
+    "RULE 1: ABSOLUTELY NEVER modify or alter the core SQL Server database 'EMS_KHAIVY' (no ALTER TABLE, no column addition, no drop, no schema change). Old desktop Cana app runs concurrently.",
+    "RULE 2: NEVER refactor or rewrite the system from scratch. Always inherit and incrementally extend.",
+    "RULE 3: NEVER report a task as PASS/COMPLETE without real verification test (e.g. Playwright script with screenshot evidence).",
+    "RULE 4: NEVER break existing core functionalities (Scheduler, Bookings, BEO Formatter & Print, Items Master, Customer CRM, Audit Trail, Analytics).",
+    "RULE 5: After modifying code, always run 'python d:\\DATTIEC\\sync_and_restart.py' to deploy, backup, and restart services on 10.17.10.12."
+  ],
+  "architecture": {
+    "backend_framework": "FastAPI / Starlette + Uvicorn (Python 3.10+)",
+    "database_systems": {
+      "sql_server": {
+        "host": "10.17.10.12\\MSSQLSERVER2016",
+        "database": "EMS_KHAIVY",
+        "role": "Central legacy hotel database (Bookings, Menus, Customers, Halls, Items)",
+        "access": "Read / Update via strict stored queries or parameterized SQL matching legacy logic"
+      },
+      "sqlite_audit": {
+        "file": "d:\\DATTIEC\\ems-web\\data\\audit.db",
+        "role": "Immutable action logs (User audit trail, booking changes, BEO saves, item edits)",
+        "access": "Local Read / Write, synced across server"
+      }
+    },
+    "frontend": "Modern Responsive Vanilla HTML5 + JavaScript ES6 + TailwindCSS / Lucide Icons",
+    "shared_scripts": {
+      "sync_and_restart": "d:\\DATTIEC\\sync_and_restart.py",
+      "create_system_snapshot": "d:\\DATTIEC\\create_system_snapshot.py"
+    }
+  },
+  "database_core_tables": {
+    "stBooking": "Master banquet booking records (stBooking_ID, stBooking_Code, stShift_ID, dtDate, numPerson, numTable, numTotal_Amount, fcStatus...)",
+    "stBooking_Detail": "Line items for booking (dishes, setup, drinks, charges, unit price, quantity, vat)",
+    "stRoom_Setup": "Hall notes, department notes, and room arrangement instructions for BEO (stBooking_ID, fcHall_ID, fcNote, fcDepartment_ID...)",
+    "sys_Customer": "Customer directory (sys_Customer_ID, fcCustomer_Name, fcPhone, fcAddress, fcTax_Code, fcNote...)",
+    "stDepartment": "Departments list (001: Bep/Kitchen, 002: Nha Hang/F&B, 005: Ky Thuat/IT, 015: Thu Ngan/Cashier, 008: Buong Phong/HK...)",
+    "stItems": "Master items and dish catalog (stItem_ID, fcItem_Name, numPrice, fcUnit, fcRevenue_Group_ID...)",
+    "stShift": "Service shifts (Shift 1: Morning/Noon, Shift 2: Evening)",
+    "stTable_Status": "Hall booking status codes (ORDER, HOLD, DEPOSIT, CONFIRM, CANCEL)"
+  },
+  "api_routes_summary": {
+    "ems_web_8090": [
+      {"path": "/api/scheduler", "method": "GET", "desc": "Returns bookings grid for halls and date range"},
+      {"path": "/api/bookings", "method": "GET/POST", "desc": "Query bookings, search by date/status, or create new booking"},
+      {"path": "/api/bookings/{id}", "method": "GET/PUT/DELETE", "desc": "Get booking details, update booking, cancel booking"},
+      {"path": "/api/beo/{id}", "method": "GET/POST", "desc": "Fetch complete BEO layout data, save BEO notes for departments"},
+      {"path": "/api/beo/print/{id}", "method": "GET", "desc": "Render formatted printable BEO view for all departments"},
+      {"path": "/api/items", "method": "GET/POST/PUT", "desc": "Query dish & item catalog, filter by revenue group A-T, update items"},
+      {"path": "/api/customers", "method": "GET/POST", "desc": "CRM customer lookup, merge duplicates, customer booking history"},
+      {"path": "/api/audit/logs", "method": "GET", "desc": "Retrieve user action logs with filtering by user, action, and date range"}
+    ],
+    "ems_analytics_8088": [
+      {"path": "/api/analytics/summary", "method": "GET", "desc": "KPI overview: revenue, pax, booking count, conversion rates"},
+      {"path": "/api/analytics/halls", "method": "GET", "desc": "Hall occupancy and revenue breakdown"},
+      {"path": "/api/analytics/revenue_groups", "method": "GET", "desc": "Revenue by groups A-T (Food, Drinks, Sound/Light, Hall rental)"}
+    ]
+  },
+  "ai_agent_instructions": {
+    "how_to_diagnose": "Read PROJECT_DOCUMENTATION/MASTER_PROJECT_CONTEXT.md and CHANGELOG.md first. Always inspect the relevant backend and frontend source files before altering code.",
+    "how_to_apply_changes": "1. Make focused edits. 2. Verify with Playwright or integration script. 3. Run sync_and_restart.py to auto-snapshot and restart services. 4. Document changes in CHANGELOG.md."
+  }
+}
